@@ -1,7 +1,7 @@
 """
 Generage a changelog straight from your git commits.
 
-Usage: gen-changelog [options]
+Usage: auto-changelog [options]
 
 Options:
     -r=REPO --repo=REPO     Path to the repository's root directory [Default: .]
