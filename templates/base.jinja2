@@ -2,7 +2,7 @@
 # {{ title }}
 
 {% if description %}
-{{ description }}
+{{ description|wordwrap() }}
 {% endif %}
 
 {% if unreleased %}

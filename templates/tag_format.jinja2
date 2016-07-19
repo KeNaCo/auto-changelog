@@ -1,37 +1,19 @@
+{% macro print_group(tag, group, title) %}
+{% if group in tag.groups %}
+### {{ title }}
+{% for commit in tag.groups[group] %}
+- {{ "[" + commit.specific + "] " if commit.specific }}{{ commit.description }}
+{% endfor %}
+
+{% endif %}
+{% endmacro %}
+
+
+
 {% macro commit_list_format(tag) %}
-{% if 'feat' in tag.groups %}
-### New Features
-{% for commit in tag.groups['feat'] %}
-- {{ "[" + commit.specific + "] " if commit.specific }}{{ commit.description }}
-{% endfor %}
-
-{% endif %}
-{% if 'fix' in tag.groups %}
-### Bug Fixes
-{% for commit in tag.groups['fix'] %}
-- {{ "[" + commit.specific + "] " if commit.specific }}{{ commit.description }}
-{% endfor %}
-
-{% endif %}
-{% if 'perf' in tag.groups %}
-### Performance Enhancements
-{% for commit in tag.groups['perf'] %}
-- {{ "[" + commit.specific + "] " if commit.specific }}{{ commit.description }}
-{% endfor %}
-
-{% endif %}
-{% if 'docs' in tag.groups %}
-### Documentation Changes
-{% for commit in tag.groups['docs'] %}
-- {{ "[" + commit.specific + "] " if commit.specific }}{{ commit.description }}
-{% endfor %}
-
-{% endif %}
-{% if 'chore' in tag.groups %}
-### Chores and Misc
-{% for commit in tag.groups['chore'] %}
-- {{ "[" + commit.specific + "] " if commit.specific }}{{ commit.description }}
-{% endfor %}
-
-{% endif %}
+{{ print_group(tag, 'feat', 'New Features') }}
+{{ print_group(tag, 'fix', 'Bug Fixes') }}
+{{ print_group(tag, 'perf', 'Performance Enhancements') }}
+{{ print_group(tag, 'docs', 'Documentation Changes') }}
+{{ print_group(tag, 'chore', 'Administration and Chores') }}
 {% endmacro %}
