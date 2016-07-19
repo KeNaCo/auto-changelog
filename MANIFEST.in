@@ -3,3 +3,4 @@ include *.txt
 include *.md
 include examples/*.md
 recursive-include docs *.rst
+include auto_changelog/templates/*.jinja2
