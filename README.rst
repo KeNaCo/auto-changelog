@@ -74,7 +74,8 @@ chore
 .. note:: The types field should be lower case, although the parser itself is 
           case insensitive.
 
-For more detailed information, please check out `Angular's contributing guide`_
+For more detailed information, please check out `Angular's contributing
+guide`_.
 
 .. _Angular commit message conventions: https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#commit
 .. _Angular's contributing guide: https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#commit

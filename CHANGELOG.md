@@ -3,7 +3,8 @@
 A quick script that will generate a changelog for any git repository using
 "conventional style" commit messages.
 
-## [Unreleased]
+
+## Version 0.1.1 (2016-09-20)
 
 ### New Features
 - Added a console script entry point, `auto-changelog`
@@ -17,7 +18,7 @@ A quick script that will generate a changelog for any git repository using
 
 
 ### Administration and Chores
-- Added a changelog and makefile
+- Bumped the version number
 
 
 
