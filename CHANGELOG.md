@@ -3,6 +3,18 @@
 A quick script that will generate a changelog for any git repository using
 "conventional style" commit messages.
 
+## [Unreleased]
+
+
+
+
+
+
+### Administration and Chores
+- Updated changelog
+
+
+
 
 ## Version 0.1.1 (2016-09-20)
 
@@ -27,6 +39,7 @@ A quick script that will generate a changelog for any git repository using
 
 ### New Features
 - Converted from a jupyter notebook to a proper package
+- Wrote the setup.py file
 
 
 

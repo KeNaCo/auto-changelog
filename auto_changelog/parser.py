@@ -12,8 +12,12 @@ from .models import Commit, Tag, Unreleased
 
 def group_commits(tags, commits):
     tags = sorted(tags, key=lambda t: t.date)
+
+    # Adding the tag's commit manually because those seem to be skipped
+    commits.extend([Commit(t._commit) for t in tags])
+
+    # Sort the commits and filter out those not formatted correctly
     commits = sorted(commits, key=lambda c: c.date)
-    
     commits = list(filter(lambda c: c.category, commits))
     
     for index, tag in enumerate(tags):
@@ -46,7 +50,7 @@ def traverse(base_dir):
         wrapped_tags.append(t)
         
     commits = list(repo.iter_commits('master'))
-    commits = map(Commit, commits) # Convert to Commit objects
+    commits = list(map(Commit, commits)) # Convert to Commit objects
 
     # Iterate through the commits, adding them to a tag's commit list
     # if it belongs to that release

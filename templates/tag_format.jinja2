@@ -2,12 +2,11 @@
 {% if group in tag.groups %}
 ### {{ title }}
 {% for commit in tag.groups[group] %}
-- {{ "[" + commit.specific + "] " if commit.specific }}{{ commit.description }}
+- {{ "[" + commit.specific + "] " if commit.specific }}{{ commit.description.strip() }}
 {% endfor %}
 
 {% endif %}
 {% endmacro %}
-
 
 
 {% macro commit_list_format(tag) %}
