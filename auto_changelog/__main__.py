@@ -18,8 +18,6 @@ Options:
     -V --version            Print the version number
 """
 
-__version__ = '0.1.0'
-
 import os
 import sys
 
@@ -27,6 +25,7 @@ import docopt
 
 from .parser import group_commits, traverse
 from .generator import generate_changelog
+from . import __version__
 
 
 def main():
