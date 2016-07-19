@@ -50,6 +50,9 @@ def main():
             unreleased=unreleased,
             tags=tags)
 
+    # Get rid of some of those unnecessary newlines
+    changelog = changelog.replace('\n\n\n', '\n')
+
     with open(args['--output'], 'w') as f:
         f.write(changelog)
 
