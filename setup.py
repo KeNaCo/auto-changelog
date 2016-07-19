@@ -33,6 +33,10 @@ setup(
             'Intended Audience :: Developers',
             'Topic :: Software Development :: Build Tools',
 
+            'Environment :: Console',
+            'Operating System :: POSIX :: Linux',
+            'Topic :: Software Development :: Documentation',
+
             # Pick your license as you wish (should match "license" above)
             'License :: OSI Approved :: MIT License',
 
