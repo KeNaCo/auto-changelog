@@ -10,6 +10,10 @@ A quick script that will generate a changelog for any git repository using
 
 
 
+### Refactoring
+- [templates] Refactored the templates to use a print_group() macro instead of manual copy/paste
+
+
 
 
 ### Administration and Chores
@@ -22,6 +26,7 @@ A quick script that will generate a changelog for any git repository using
 
 ### New Features
 - Converted from a jupyter notebook to a proper package
+
 
 
 
