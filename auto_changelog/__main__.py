@@ -29,7 +29,9 @@ from .parser import group_commits, traverse
 from .generator import generate_changelog
 
 
-def main(args):
+def main():
+    args = docopt.docopt(__doc__, version=__version__)
+
     if args.get('--template-dir'):
         template_dir = args['--template-dir']
     else:
@@ -53,5 +55,4 @@ def main(args):
         f.write(changelog)
 
 if __name__ == "__main__":
-    args = docopt.docopt(__doc__, version=__version__)
-    main(args)
+    main()

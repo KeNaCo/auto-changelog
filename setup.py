@@ -15,6 +15,9 @@ setup(
         data_files=[
             ('templates', ['templates/base.jinja2', 'templates/tag_format.jinja2']),
             ],
+        entry_points={
+            'console_scripts': ['auto-changelog=auto_changelog.__main__:main'],
+            },
 
         install_requires=[
             'jinja2',
