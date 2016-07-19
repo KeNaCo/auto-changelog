@@ -1,0 +1,4 @@
+include *.rst
+include *.md
+include examples/*.md
+recursive-include docs *.rst

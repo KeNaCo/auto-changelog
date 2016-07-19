@@ -34,7 +34,8 @@ def main():
     if args.get('--template-dir'):
         template_dir = args['--template-dir']
     else:
-        BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        # The templates are sitting at ./templates/*.jinja2
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
         template_dir = os.path.join(BASE_DIR, 'templates')
 
     # Convert the repository name to an absolute path

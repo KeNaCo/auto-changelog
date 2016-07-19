@@ -3,7 +3,7 @@ Auto Changelog
 ==============
 
 A quick script that will generate a changelog for any git repository using 
-`conventional style`_ commit messages.
+`conventional style` commit messages.
 
 
 Installation

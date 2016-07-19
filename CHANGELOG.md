@@ -4,9 +4,15 @@ A quick script that will generate a changelog for any git repository using
 "conventional style" commit messages.
 
 ## [Unreleased]
+
+### New Features
+- Added an intermediate step to remove unnecessary newlines from the changelog
 ### Bug Fixes
 - Fixed the issue of missing commits [#1]
 
+
+### Documentation Changes
+- [examples] Updated the examples with cz-cli's changelog
 ### Administration and Chores
 - Updated changelog
 
