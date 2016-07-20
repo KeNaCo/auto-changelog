@@ -41,6 +41,9 @@ def traverse(base_dir):
     repo = git.Repo(base_dir)
     tags = repo.tags
 
+    if len(tags) < 1:
+        raise ValueError('Not enough tags to generate changelog')
+
     wrapped_tags = []
     for tagref in tags:        
         t = Tag(

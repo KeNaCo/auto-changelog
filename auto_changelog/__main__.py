@@ -41,9 +41,13 @@ def main():
     # Convert the repository name to an absolute path
     repo = os.path.abspath(args['--repo'])
 
-    # Traverse the repository and group all commits to master by release
-    tags, unreleased = traverse(args['--repo'])
-
+    try:
+        # Traverse the repository and group all commits to master by release
+        tags, unreleased = traverse(args['--repo'])
+    except ValueError as e:
+        print('ERROR:', e)
+        sys.exit(1)
+    
     changelog = generate_changelog(
             template_dir=template_dir,
             title=args['--title'],
@@ -52,7 +56,7 @@ def main():
             tags=tags)
 
     # Get rid of some of those unnecessary newlines
-    changelog = changelog.replace('\n\n\n', '\n')
+    # changelog = changelog.replace('\n\n\n', '\n')
 
     with open(args['--output'], 'w') as f:
         f.write(changelog)

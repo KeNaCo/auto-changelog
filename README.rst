@@ -9,7 +9,17 @@ A quick script that will generate a changelog for any git repository using
 Installation
 ============
 
-Clone the repository from Github::
+Pip
+---
+
+auto-changelog is up on PyPI, so you can install it with::
+
+    pip install auto-changelog
+
+From Source
+-----------
+
+Otherwise, you can install from source by cloning the repository from Github::
 
     git clone https://github.com/Michael-F-Bryan/auto-changelog.git
 
