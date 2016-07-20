@@ -94,10 +94,10 @@ Below are a couple screenshots showing the result of the `auto-changelog`
 command.
 
 .. image:: examples/git_log_one_line.jpg
-    alt: Result of "git log --oneline --graph --decorate"
+    :alt: Result of "git log --oneline --graph --decorate"
 
 .. image:: examples/generated_commit_message.jpg
-    alt: Generated change log
+    :alt: Generated change log
 
 
 .. _Angular commit message conventions: https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#commit
