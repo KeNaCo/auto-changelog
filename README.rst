@@ -87,5 +87,18 @@ chore
 For more detailed information, please check out `Angular's contributing
 guide`_.
 
+Examples
+========
+
+Below are a couple screenshots showing the result of the `auto-changelog`
+command.
+
+![Result of "git log --oneline --graph --decorate"]
+(./examples/git_log_one_line.jpg)
+
+![Generated change log]
+(./examples/generated_commit_message.jpg)
+
+
 .. _Angular commit message conventions: https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#commit
 .. _Angular's contributing guide: https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#commit
