@@ -93,11 +93,11 @@ Examples
 Below are a couple screenshots showing the result of the `auto-changelog`
 command.
 
-![Result of "git log --oneline --graph
---decorate"](https://github.com/Michael-F-Bryan/auto-changelog/blob/master/examples/git_log_one_line.jpg?raw=true)
+.. image:: examples/git_log_one_line.jpg
+    alt: Result of "git log --oneline --graph --decorate"
 
-![Generated change
-log](https://github.com/Michael-F-Bryan/auto-changelog/blob/master/examples/generated_commit_message.jpg)
+.. image:: examples/generated_commit_message.jpg
+    alt: Generated change log
 
 
 .. _Angular commit message conventions: https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#commit
