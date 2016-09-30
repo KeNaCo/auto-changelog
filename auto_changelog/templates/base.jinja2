@@ -12,7 +12,7 @@
 {% endif %}
 
 {% for tag in tags %}
-## {{ tag.name }} ({{ tag.date.strftime('%Y-%M-%d') }})
+## {{ tag.name }} ({{ tag.date.strftime('%Y-%m-%d') }})
 
 {{ macros.commit_list_format(tag) }}
 
