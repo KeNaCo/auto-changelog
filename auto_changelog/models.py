@@ -56,7 +56,7 @@ class Commit:
         self.category, self.specific, self.description = self.categorize()
         
     def categorize(self):
-        match = re.match(r'(\w+)(\(\w+\))?:\s*(.*)', self.first_line)
+        match = re.match(r'(\w+)\ ?(\(\w+\))?:\s*(.*)', self.first_line)
         
         if match:
             category, specific, description = match.groups()
