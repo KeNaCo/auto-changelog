@@ -3,38 +3,31 @@ The parser module will traverse a git repository, gathering all the commits
 that follow the AngularJS commit message convention, and linking them with
 the releases they correspond to.
 """
-
 import git
 
 from .models import Commit, Tag, Unreleased
 
 
-
 def group_commits(tags, commits):
     tags = sorted(tags, key=lambda t: t.date)
 
-    # Adding the tag's commit manually because those seem to be skipped
-    commits.extend([Commit(t._commit) for t in tags])
-
     # Sort the commits and filter out those not formatted correctly
-    commits = sorted(commits, key=lambda c: c.date)
-    commits = list(filter(lambda c: c.category, commits))
-    
-    for index, tag in enumerate(tags):
-        # Everything is sorted in ascending order (earliest to most recent), 
-        # So everything before the first tag belongs to that one
-        if index == 0:
-            children = filter(lambda c: c.date <= tag.date, commits)
-        else:
-            prev_tag = tags[index-1]
-            children = filter(lambda c: prev_tag.date < c.date <= tag.date, commits)
-            
-        for child in children:
-            commits.remove(child)
-            tag.add_commit(child)
-            
-    left_overs = list(filter(lambda c: c.date > tags[-1].date, commits))
-    return left_overs
+    commits = [
+        c for c in sorted(set(commits), key=lambda c: c.date)
+        if c.category
+    ]
+
+    for prev_tag, this_tag in zip([None] + tags[:-1], tags):
+        commits_this_tag = (
+            c for c in commits
+            if prev_tag is None or prev_tag.date < c.date
+            if c.date <= this_tag.date
+        )
+        for commit in commits_this_tag:
+            this_tag.add_commit(commit)
+
+    unreleased = [c for c in commits if c.date > tags[-1].date]
+    return unreleased
 
 
 def traverse(base_dir):
@@ -67,4 +60,3 @@ def traverse(base_dir):
         unreleased = None
 
     return wrapped_tags, unreleased
-

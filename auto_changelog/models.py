@@ -1,7 +1,6 @@
 """
 The basic data structures used in the project.
 """
-
 import datetime
 import re
 from collections import defaultdict
@@ -10,8 +9,8 @@ from collections import defaultdict
 class Tag:
     def __init__(self, name, date, commit):
         self.name = 'Version ' + name if not name.lower().startswith('v') else name
-        self._commit = commit
-        self.date = datetime.datetime.fromtimestamp(date)
+        self._commit = Commit(commit)
+        self.date = self._commit.date
         self.commits = []
         self.groups = defaultdict(list)
         
@@ -25,6 +24,7 @@ class Tag:
                 self.__class__.__name__,
                 self.name)
     
+
 class Unreleased:
     def __init__(self, commits):
         self.name = 'Unreleased'
@@ -41,6 +41,7 @@ class Unreleased:
         return '<{}: {!r}>'.format(
                 self.__class__.__name__,
                 self.name)        
+
         
 class Commit:
     def __init__(self, commit):
@@ -64,11 +65,9 @@ class Commit:
             return category, specific, description
         else:
             return None, None, None
-        
-        
+
     def __repr__(self):
         return '<{}: {} "{}">'.format(
                 self.__class__.__name__,
                 self.commit_hash[:7],
                 self.date.strftime('%x %X'))
-
