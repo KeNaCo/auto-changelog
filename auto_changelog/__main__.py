@@ -18,6 +18,9 @@ Options:
                             How many releases to be generated from the latest
                             If 0, the whole changelog will be regenerated and the outfile will be overwritten
                             Default: 1
+    -b=BRANCH --branch=BRANCH
+                            Retrieve commits
+                            Default: master
     -h --help               Print this help text
     -V --version            Print the version number
 """
@@ -50,9 +53,14 @@ def main():
     # Convert the repository name to an absolute path
     repo = os.path.abspath(args['--repo'])
 
+    if args.get('--branch'):
+        branch = args['--branch']
+    else:
+        branch = 'master'
+
     try:
         # Traverse the repository and group all commits to master by release
-        tags, unreleased = traverse(args['--repo'])
+        tags, unreleased = traverse(args['--repo'], branch)
     except ValueError as e:
         print('ERROR:', e)
         sys.exit(1)

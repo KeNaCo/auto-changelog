@@ -37,7 +37,7 @@ def group_commits(tags, commits):
     return left_overs
 
 
-def traverse(base_dir):
+def traverse(base_dir, branch='master'):
     repo = git.Repo(base_dir)
     tags = repo.tags
 
@@ -52,7 +52,7 @@ def traverse(base_dir):
             commit=tagref.commit)
         wrapped_tags.append(t)
         
-    commits = list(repo.iter_commits('master'))
+    commits = list(repo.iter_commits(branch))
     commits = list(map(Commit, commits)) # Convert to Commit objects
 
     # Iterate through the commits, adding them to a tag's commit list
