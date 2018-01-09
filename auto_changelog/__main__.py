@@ -14,6 +14,10 @@ Options:
     -t=TEMPLATEDIR --template-dir=TEMPLATEDIR
                             The directory containing the templates used for
                             rendering the changelog 
+    -c=RELEASE_COUNT --count=RELEASE_COUNT
+                            How many releases to be generated from the latest
+                            If 0, the whole changelog will be regenerated and the outfile will be overwritten
+                            Default: 1
     -h --help               Print this help text
     -V --version            Print the version number
 """
@@ -38,6 +42,11 @@ def main():
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
         template_dir = os.path.join(BASE_DIR, 'templates')
 
+    if args.get('--count'):
+        count = int(args['--count'])
+    else:
+        count = 1
+
     # Convert the repository name to an absolute path
     repo = os.path.abspath(args['--repo'])
 
@@ -52,6 +61,7 @@ def main():
             template_dir=template_dir,
             title=args['--title'],
             description=args.get('--description'),
+            count=count,
             unreleased=unreleased,
             tags=tags)
 
