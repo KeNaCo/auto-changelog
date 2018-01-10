@@ -2,7 +2,7 @@
 {% if group in tag.groups %}
 ### {{ title }}
 {% for commit in tag.groups[group] %}
-- {{ "[" + commit.specific + "] " if commit.specific }}{{ commit.description.strip() }}
+- {{ "[" + commit.specific + "] " if commit.specific }}{{ commit.description.strip()}}{{" (" + commit._commit.committer.name + ")"}}
 {% endfor %}
 
 {% endif %}
