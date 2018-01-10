@@ -32,4 +32,4 @@ def generate_changelog(template_dir, title, description, count, unreleased, tags
                 unreleased=unreleased,
                 tags=[])
 
-    return changelog
+    return changelog.encode('utf-8') if isinstance(changelog, unicode) else changelog
