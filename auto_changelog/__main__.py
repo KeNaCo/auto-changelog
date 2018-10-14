@@ -22,6 +22,7 @@ import os
 import sys
 
 import docopt
+from git import InvalidGitRepositoryError
 
 from .parser import group_commits, traverse
 from .generator import generate_changelog
@@ -46,6 +47,9 @@ def main():
         tags, unreleased = traverse(args['--repo'])
     except ValueError as e:
         print('ERROR:', e)
+        sys.exit(1)
+    except InvalidGitRepositoryError as e:
+        print('Root directory is not a valid git repository!')
         sys.exit(1)
     
     changelog = generate_changelog(

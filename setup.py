@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from setuptools import setup, find_packages
 
 
@@ -19,13 +20,13 @@ setup(
         entry_points={
             'console_scripts': ['auto-changelog=auto_changelog.__main__:main'],
             },
-
+        setup_requires=["pytest-runner"],
+        tests_require=["pytest"],
         install_requires=[
             'jinja2',
             'gitpython',
             'docopt',
             ],
-
         classifiers=[
             'Development Status :: 3 - Alpha',
 
@@ -47,8 +48,8 @@ setup(
             'Programming Language :: Python :: 3.4',
             'Programming Language :: Python :: 3.5',
             'Programming Language :: Python :: 3.6',
+            'Programming Language :: Python :: 3.7',
             ],
         keywords='git changelog generator',
 
 )
-
