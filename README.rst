@@ -2,6 +2,9 @@
 Auto Changelog
 ==============
 
+.. image:: https://gitlab.com/KeNaCo/auto-changelog-ci/badges/master/pipeline.svg
+   :target: https://gitlab.com/KeNaCo/auto-changelog-ci/commits/master
+
 A quick script that will generate a changelog for any git repository using 
 `conventional style` commit messages.
 
