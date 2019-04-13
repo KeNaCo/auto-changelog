@@ -5,9 +5,20 @@ the releases they correspond to.
 """
 
 import git
+from typing import Dict, List
 
 from .models import Commit, Tag, Unreleased
 
+
+def create_reverse_tag_index(repo: git.Repo) -> Dict[git.Commit, List[git.TagReference]]:
+    """ Create reverse index """
+    reverse_tag_index = {}
+    for tagref in repo.tags:
+        commit = tagref.commit
+        if commit not in reverse_tag_index:
+            reverse_tag_index[commit] = []
+        reverse_tag_index[commit].append(tagref)
+    return reverse_tag_index
 
 
 def group_commits(tags, commits):

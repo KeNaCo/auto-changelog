@@ -1,0 +1,13 @@
+{% import 'macros.jinja2' as macros -%}
+# {{ changelog.title }}
+
+{% if changelog.description -%}
+{{ changelog.description }}
+{% endif %}
+
+{%- for release in changelog.releases %}
+## {{ release.title }}
+
+{{- macros.section('New Features', release.features) -}}
+{{- macros.section('Fixes', release.fixes) -}}
+{% endfor -%}
