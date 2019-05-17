@@ -4,7 +4,7 @@ from textwrap import dedent
 
 from git import Repo
 
-from auto_changelog.repository import GitlabRepository
+from auto_changelog.repository import GitRepository
 
 
 def test_index_init():
@@ -15,7 +15,7 @@ def test_index_init():
     tagref3 = Mock(commit=commit2)
     repo_mock = Mock(spec=Repo, tags=[tagref1, tagref2, tagref3])
 
-    index = GitlabRepository._init_commit_tags_index(repo_mock)
+    index = GitRepository._init_commit_tags_index(repo_mock)
     assert index == {commit1: [tagref1], commit2: [tagref2, tagref3]}
 
 
@@ -28,4 +28,4 @@ def test_index_init():
     ("feat(scope): description\n\nbody\n\nfooter", ("feat", "scope", "description", "body", "footer")),
 ])
 def test_parse_conventional_commit_with_empty_message(message, expected):
-    assert expected == GitlabRepository._parse_conventional_commit(message)
+    assert expected == GitRepository._parse_conventional_commit(message)

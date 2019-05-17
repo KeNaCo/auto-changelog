@@ -101,7 +101,7 @@ class Changelog:
 
 class RepositoryInterface(ABC):
     @abstractmethod
-    def generate_changelog(self) -> Changelog:
+    def generate_changelog(self, title: str, description: str) -> Changelog:
         raise NotImplementedError
 
 

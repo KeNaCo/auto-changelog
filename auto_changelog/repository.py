@@ -8,9 +8,9 @@ from git import Repo, Commit, TagReference
 from auto_changelog.domain_model import RepositoryInterface, Changelog
 
 
-class GitlabRepository(RepositoryInterface):
-    def __init__(self, reporitory_path):
-        self.repository = Repo(reporitory_path)
+class GitRepository(RepositoryInterface):
+    def __init__(self, repository_path):
+        self.repository = Repo(repository_path)
         self.commit_tags_index = self._init_commit_tags_index(self.repository)
 
     def generate_changelog(self, title: str = 'Changelog', description: str = '') -> Changelog:
@@ -60,7 +60,7 @@ class GitlabRepository(RepositoryInterface):
         """ Extracts arguments for release Note from commit """
         sha = commit.hexsha
         message = commit.message
-        type_, scope, description, body, footer = GitlabRepository._parse_conventional_commit(message)
+        type_, scope, description, body, footer = GitRepository._parse_conventional_commit(message)
         return sha, type_, description, scope, body, footer
 
     @staticmethod
