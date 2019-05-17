@@ -11,55 +11,34 @@ Options:
     -o=OUTFILE --output=OUTFILE
                             The place to save the generated changelog 
                             [Default: CHANGELOG.md]
-    -t=TEMPLATEDIR --template-dir=TEMPLATEDIR
-                            The directory containing the templates used for
-                            rendering the changelog 
     -h --help               Print this help text
     -V --version            Print the version number
 """
 
 import os
-import sys
 
 import docopt
 
-from .parser import group_commits, traverse
-from .generator import generate_changelog
-from . import __version__
+from auto_changelog import generate_changelog
+from auto_changelog.presenter import MarkdownPresenter
+from auto_changelog.repository import GitRepository
+from auto_changelog import __version__
 
 
 def main():
     args = docopt.docopt(__doc__, version=__version__)
-
-    if args.get('--template-dir'):
-        template_dir = args['--template-dir']
-    else:
-        # The templates are sitting at ./templates/*.jinja2
-        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-        template_dir = os.path.join(BASE_DIR, 'templates')
-
     # Convert the repository name to an absolute path
     repo = os.path.abspath(args['--repo'])
 
-    try:
-        # Traverse the repository and group all commits to master by release
-        tags, unreleased = traverse(args['--repo'])
-    except ValueError as e:
-        print('ERROR:', e)
-        sys.exit(1)
-    
-    changelog = generate_changelog(
-            template_dir=template_dir,
-            title=args['--title'],
-            description=args.get('--description'),
-            unreleased=unreleased,
-            tags=tags)
-
-    # Get rid of some of those unnecessary newlines
-    # changelog = changelog.replace('\n\n\n', '\n')
+    repository = GitRepository(repo)
+    presenter = MarkdownPresenter()
+    title = args['--title']
+    description = args['--description']
+    changelog = generate_changelog(repository, presenter, title, description)
 
     with open(args['--output'], 'w') as f:
         f.write(changelog)
+
 
 if __name__ == "__main__":
     main()
