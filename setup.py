@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
         name='auto_changelog',
-        version='0.1.7',
+        version='1.0.0dev1',
         description='A quick script to generate changelogs from git commit messages',
         long_description=open('README.rst').read(),
         author='Michael F Bryan',
