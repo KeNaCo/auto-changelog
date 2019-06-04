@@ -26,9 +26,11 @@ Otherwise, you can install from source by cloning the repository from Github::
 
     git clone https://github.com/Michael-F-Bryan/auto-changelog.git
 
-And install the package::
+Project uses Poetry to manage dependencies and build::
 
-    python3 setup.py install
+    poetry install
+    poetry build
+    pip install dist/*.whl
 
 
 Usage
