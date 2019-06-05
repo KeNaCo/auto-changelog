@@ -7,7 +7,9 @@ from auto_changelog.presenter import MarkdownPresenter
 from auto_changelog.repository import GitRepository
 
 
-def main():
+@click.command()
+@click.option('-o', '--output', type=click.File('w'), default='CHANGELOG.md')
+def main(output):
     # Convert the repository name to an absolute path
     repo = os.path.abspath('.')
 
@@ -16,6 +18,7 @@ def main():
     title = 'Changelog'
     description = ''
     changelog = generate_changelog(repository, presenter, title, description)
+    output.write(changelog)
 
 
 if __name__ == "__main__":
