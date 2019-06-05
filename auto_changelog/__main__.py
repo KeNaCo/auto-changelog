@@ -9,12 +9,13 @@ from auto_changelog.repository import GitRepository
 
 @click.command()
 @click.option('-o', '--output', type=click.File('w'), default='CHANGELOG.md')
+@click.option('-u', '--unreleased', is_flag=True, default=False)
 @click.option('--stdout', is_flag=True)
-def main(output, stdout: bool):
+def main(output, unreleased: bool, stdout: bool):
     # Convert the repository name to an absolute path
     repo = os.path.abspath('.')
 
-    repository = GitRepository(repo)
+    repository = GitRepository(repo, skip_unreleased=not unreleased)
     presenter = MarkdownPresenter()
     title = 'Changelog'
     description = ''
