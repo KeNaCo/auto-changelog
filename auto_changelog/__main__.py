@@ -9,7 +9,8 @@ from auto_changelog.repository import GitRepository
 
 @click.command()
 @click.option('-o', '--output', type=click.File('w'), default='CHANGELOG.md')
-def main(output):
+@click.option('--stdout', is_flag=True)
+def main(output, stdout: bool):
     # Convert the repository name to an absolute path
     repo = os.path.abspath('.')
 
@@ -19,6 +20,8 @@ def main(output):
     description = ''
     changelog = generate_changelog(repository, presenter, title, description)
     output.write(changelog)
+    if stdout:
+        print(changelog)
 
 
 if __name__ == "__main__":
