@@ -88,7 +88,12 @@ class Changelog:
 
     def add_note(self, *args, **kwargs):
         """ Add new Note to current release. Require same arguments as :class:`Note` """
-        note = Note(*args, **kwargs)
+        try:
+            note = Note(*args, **kwargs)
+        except ValueError:
+            # Ignore exceptions raised by unsupported commit type.
+            return
+
         if not self._current_release:
             raise ValueError('There is no release, note can be added to')
         self._current_release.add_note(note)
