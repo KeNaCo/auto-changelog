@@ -1,9 +1,10 @@
 .test: &test
   stage: test
   before_script:
-    - pip install -r requirements.txt
+    - pip install poetry
+    - poetry install
   script:
-    - ./setup.py test
+    - poetry run py.test
 
 test-python3.5:
   image: python:3.5
