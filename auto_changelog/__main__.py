@@ -12,11 +12,12 @@ from auto_changelog.repository import GitRepository
 @click.option('-t', '--title', default='Changelog', help="The changelog's title [Default: Changelog]")
 @click.option('-d', '--description', help="Your project's description")
 @click.option('-o', '--output', type=click.File('w'), default='CHANGELOG.md', help="The place to save the generated changelog [Default: CHANGELOG.md]")
+@click.option('-v', '--latest-version', type=str, help='use specified version as latest release')
 @click.option('-u', '--unreleased', is_flag=True, default=False, help="Include section for unreleased changes")
 @click.option('--stdout', is_flag=True)
 @click.option('--starting-commit', help='Starting commit to use for changelog generation', default='')
 @click.option('--stopping-commit', help='Stopping commit to use for changelog generation', default='HEAD')
-def main(repo, title, description, output, unreleased: bool, stdout: bool, starting_commit: str, stopping_commit: str):
+def main(repo, title, description, output, latest_version: str, unreleased: bool, stdout: bool, starting_commit: str, stopping_commit: str):
     # Convert the repository name to an absolute path
     repo = os.path.abspath(repo)
 

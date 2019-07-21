@@ -1,7 +1,7 @@
 import re
 from datetime import date
 from hashlib import sha256
-from typing import Dict, List, Tuple, Any
+from typing import Dict, List, Tuple, Any, Optional
 
 from git import Repo, Commit, TagReference
 
@@ -9,10 +9,17 @@ from auto_changelog.domain_model import RepositoryInterface, Changelog
 
 
 class GitRepository(RepositoryInterface):
-    def __init__(self, repository_path, *, skip_unreleased: bool = True):
+    def __init__(
+            self,
+            repository_path,
+            *,
+            latest_version: Optional[str] = None,
+            skip_unreleased: bool = True):
         self.repository = Repo(repository_path)
         self.commit_tags_index = self._init_commit_tags_index(self.repository)
-        self._skip_unreleased = skip_unreleased
+        # in case of defined latest version, unreleased is used as latest release
+        self._skip_unreleased = skip_unreleased and not bool(latest_version)
+        self._latest_version = latest_version or 'Unreleased'
 
     def generate_changelog(self, title: str = 'Changelog', description: str = '', starting_commit: str = '', stopping_commit: str = 'HEAD') -> Changelog:
         changelog = Changelog(title, description)
@@ -30,7 +37,7 @@ class GitRepository(RepositoryInterface):
                 skip = False
 
             if first_commit and commit not in self.commit_tags_index:
-                changelog.add_release('Unreleased', date.today(), sha256())
+                changelog.add_release(self._latest_version, date.today(), sha256())
             first_commit = False
 
             if commit in self.commit_tags_index:
