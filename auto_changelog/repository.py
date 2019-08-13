@@ -9,9 +9,10 @@ from auto_changelog.domain_model import RepositoryInterface, Changelog
 
 
 class GitRepository(RepositoryInterface):
-    def __init__(self, repository_path):
+    def __init__(self, repository_path, *, skip_unreleased: bool = True):
         self.repository = Repo(repository_path)
         self.commit_tags_index = self._init_commit_tags_index(self.repository)
+        self._skip_unreleased = skip_unreleased
 
     def generate_changelog(self, title: str = 'Changelog', description: str = '') -> Changelog:
         changelog = Changelog(title, description)
@@ -20,7 +21,13 @@ class GitRepository(RepositoryInterface):
         #  First we need to check if all commits are "released". If not, we have to create our special "Unreleased"
         #  release. Then we simply iter over all commits, assign them to current release or create new if we find it.
         first_commit = True
+        skip = self._skip_unreleased
         for commit in commits:
+            if skip and commit not in self.commit_tags_index:
+                continue
+            else:
+                skip = False
+
             if first_commit and commit not in self.commit_tags_index:
                 changelog.add_release('Unreleased', date.today(), sha256())
             first_commit = False
