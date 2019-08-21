@@ -11,7 +11,8 @@ from auto_changelog.repository import GitRepository
 @click.option('-o', '--output', type=click.File('w'), default='CHANGELOG.md')
 @click.option('-u', '--unreleased', is_flag=True, default=False)
 @click.option('--stdout', is_flag=True)
-def main(output, unreleased: bool, stdout: bool):
+@click.option('--stopping-commit', help='Stopping commit to use for changelog generation', default='HEAD')
+def main(output, unreleased: bool, stdout: bool, stopping_commit: str):
     # Convert the repository name to an absolute path
     repo = os.path.abspath('.')
 
@@ -19,7 +20,7 @@ def main(output, unreleased: bool, stdout: bool):
     presenter = MarkdownPresenter()
     title = 'Changelog'
     description = ''
-    changelog = generate_changelog(repository, presenter, title, description)
+    changelog = generate_changelog(repository, presenter, title, description, stopping_commit=stopping_commit)
     output.write(changelog)
     if stdout:
         print(changelog)

@@ -14,9 +14,9 @@ class GitRepository(RepositoryInterface):
         self.commit_tags_index = self._init_commit_tags_index(self.repository)
         self._skip_unreleased = skip_unreleased
 
-    def generate_changelog(self, title: str = 'Changelog', description: str = '') -> Changelog:
+    def generate_changelog(self, title: str = 'Changelog', description: str = '', stopping_commit: str = 'HEAD') -> Changelog:
         changelog = Changelog(title, description)
-        commits = self.repository.iter_commits('master')  # TODO don't forget to finish revision options
+        commits = self.repository.iter_commits(stopping_commit)
         # Some thoughts here
         #  First we need to check if all commits are "released". If not, we have to create our special "Unreleased"
         #  release. Then we simply iter over all commits, assign them to current release or create new if we find it.
