@@ -14,9 +14,10 @@ class GitRepository(RepositoryInterface):
         self.commit_tags_index = self._init_commit_tags_index(self.repository)
         self._skip_unreleased = skip_unreleased
 
-    def generate_changelog(self, title: str = 'Changelog', description: str = '') -> Changelog:
+    def generate_changelog(self, title: str = 'Changelog', description: str = '', starting_commit: str = '', stopping_commit: str = 'HEAD') -> Changelog:
         changelog = Changelog(title, description)
-        commits = self.repository.iter_commits('master')  # TODO don't forget to finish revision options
+        iter_rev = self._get_iter_rev(starting_commit, stopping_commit)
+        commits = self.repository.iter_commits(iter_rev)
         # Some thoughts here
         #  First we need to check if all commits are "released". If not, we have to create our special "Unreleased"
         #  release. Then we simply iter over all commits, assign them to current release or create new if we find it.
@@ -39,6 +40,23 @@ class GitRepository(RepositoryInterface):
             attributes = self._extract_note_args(commit)
             changelog.add_note(*attributes)
         return changelog
+
+    def _get_iter_rev(self, starting_commit: str, stopping_commit: str):
+        if starting_commit:
+            c = self.repository.commit(starting_commit)
+            if not c.parents:
+                # starting_commit is initial commit,
+                # treat as default
+                starting_commit = ''
+            else:
+                # iter_commits iters from the first rev to the second rev,
+                # but not contains the second rev.
+                # Here we set the second rev to its previous one then the
+                # second rev would be included.
+                starting_commit = '{}~1'.format(starting_commit)
+
+        iter_rev = '{0}...{1}'.format(stopping_commit, starting_commit) if starting_commit else stopping_commit
+        return iter_rev
 
     @staticmethod
     def _init_commit_tags_index(repo: Repo) -> Dict[Commit, List[TagReference]]:
