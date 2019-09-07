@@ -8,6 +8,10 @@
 {%- for release in changelog.releases %}
 ## {{ release.title }}
 
-{{- macros.section('New Features', release.features) -}}
+{{ macros.section('New Features', release.features) -}}
 {{- macros.section('Fixes', release.fixes) -}}
+{{- macros.section('Performance improvements', release.performance_improvements) -}}
+{{- macros.section('Refactorings', release.refactorings) -}}
+{{- macros.section('Docs', release.docs) -}}
+{{- macros.section('Others', release.builds+release.ci+release.chore+release.reverts+release.style_changes+release.tests) -}}
 {% endfor -%}
