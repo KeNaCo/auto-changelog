@@ -1,7 +1,7 @@
 import pytest
 from textwrap import dedent
 
-from auto_changelog.domain_model import Changelog
+from auto_changelog.domain_model import Changelog, default_issue_pattern
 from auto_changelog.presenter import MarkdownPresenter
 
 
@@ -73,3 +73,22 @@ def test_markdown_presenter_changelog_with_fixes(changelog, markdown_presenter):
     '''.format(changelog.title, description))
     markdown = markdown_presenter.present(changelog)
     assert assert_markdown == markdown
+
+
+@pytest.mark.parametrize('text, expected', [
+    ('Some text about #42', 'Some text about [#42](http://gitlab.com/issues/42)'),
+    ('Some text with #12 and #42',
+     'Some text with [#12](http://gitlab.com/issues/12) and [#42](http://gitlab.com/issues/42)'),
+    ('Some text will be unchanged', 'Some text will be unchanged'),
+    ('This is also valid ticket id #ACH-123',
+     'This is also valid ticket id [#ACH-123](http://gitlab.com/issues/ACH-123)'),
+])
+def test_link_default_match(text, expected, markdown_presenter):
+    issue_url = 'http://gitlab.com/issues/{id}'
+    linked_text = markdown_presenter._link(issue_url, default_issue_pattern, text)
+    assert linked_text == expected
+
+
+def test_link_default_url(markdown_presenter):
+    linked_text = markdown_presenter._link('', default_issue_pattern, 'Some text about #42')
+    assert linked_text == 'Some text about #42'
