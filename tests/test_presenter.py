@@ -55,7 +55,7 @@ def test_markdown_presenter_changelog_with_features(changelog, markdown_presente
     assert assert_markdown == markdown
 
 
-def test_markdown_presenter_changelog_with_features(changelog, markdown_presenter):
+def test_markdown_presenter_changelog_with_fixes(changelog, markdown_presenter):
     changelog.add_release('Unreleased', None, None)
     changelog.add_note('', 'fix', 'description')
     changelog.add_note('', 'fix', 'description', scope='scope')
