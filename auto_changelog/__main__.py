@@ -21,7 +21,7 @@ def main(repo, title, description, output, latest_version: str, unreleased: bool
     # Convert the repository name to an absolute path
     repo = os.path.abspath(repo)
 
-    repository = GitRepository(repo, skip_unreleased=not unreleased)
+    repository = GitRepository(repo, latest_version=latest_version, skip_unreleased=not unreleased)
     presenter = MarkdownPresenter()
     changelog = generate_changelog(repository, presenter, title, description, starting_commit=starting_commit, stopping_commit=stopping_commit)
     output.write(changelog)
