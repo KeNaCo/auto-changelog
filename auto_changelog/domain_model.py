@@ -44,6 +44,22 @@ class Release(Note):
         self._changes_indicators = {type_: False for type_ in ChangeType}
 
     @property
+    def builds(self):
+        return self._notes_with_type(ChangeType.BUILD)
+
+    @property
+    def ci(self):
+        return self._notes_with_type(ChangeType.CI)
+
+    @property
+    def chore(self):
+        return self._notes_with_type(ChangeType.CHORE)
+
+    @property
+    def docs(self):
+        return self._notes_with_type(ChangeType.DOCS)
+
+    @property
     def features(self):
         return self._notes_with_type(ChangeType.FEAT)
 
@@ -52,12 +68,68 @@ class Release(Note):
         return self._notes_with_type(ChangeType.FIX)
 
     @property
+    def performance_improvements(self):
+        return self._notes_with_type(ChangeType.PERF)
+
+    @property
+    def refactorings(self):
+        return self._notes_with_type(ChangeType.REFACTOR)
+
+    @property
+    def reverts(self):
+        return self._notes_with_type(ChangeType.REVERT)
+
+    @property
+    def style_changes(self):
+        return self._notes_with_type(ChangeType.STYLE)
+
+    @property
+    def tests(self):
+        return self._notes_with_type(ChangeType.TEST)
+
+    @property
+    def has_builds(self):
+        return self._has(ChangeType.BUILD)
+
+    @property
+    def has_ci(self):
+        return self._has(ChangeType.CI)
+
+    @property
+    def has_chore(self):
+        return self._has(ChangeType.CHORE)
+
+    @property
+    def has_docs(self):
+        return self._has(ChangeType.DOCS)
+
+    @property
     def has_features(self):
         return self._has(ChangeType.FEAT)
 
     @property
     def has_fixes(self):
         return self._has(ChangeType.FIX)
+
+    @property
+    def has_performance_improvements(self):
+        return self._has(ChangeType.PERF)
+
+    @property
+    def has_refactorings(self):
+        return self._has(ChangeType.REFACTOR)
+
+    @property
+    def has_reverts(self):
+        return self._has(ChangeType.REVERT)
+
+    @property
+    def has_style_changes(self):
+        return self._has(ChangeType.STYLE)
+
+    @property
+    def has_tests(self):
+        return self._has(ChangeType.TEST)
 
     def add_note(self, note: Note):
         self._notes.append(note)

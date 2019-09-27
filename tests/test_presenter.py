@@ -46,16 +46,16 @@ def test_markdown_presenter_changelog_with_features(changelog, markdown_presente
     {}
     ## Unreleased
     
-    #### Features
+    #### New Features
     
     * description
     * (scope): description
     '''.format(changelog.title, description))
     markdown = markdown_presenter.present(changelog)
-    assert assert_markdown in markdown
+    assert assert_markdown == markdown
 
 
-def test_markdown_presenter_changelog_with_features(changelog, markdown_presenter):
+def test_markdown_presenter_changelog_with_fixes(changelog, markdown_presenter):
     changelog.add_release('Unreleased', None, None)
     changelog.add_note('', 'fix', 'description')
     changelog.add_note('', 'fix', 'description', scope='scope')
@@ -72,4 +72,4 @@ def test_markdown_presenter_changelog_with_features(changelog, markdown_presente
     * (scope): description
     '''.format(changelog.title, description))
     markdown = markdown_presenter.present(changelog)
-    assert assert_markdown in markdown
+    assert assert_markdown == markdown
