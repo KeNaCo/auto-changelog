@@ -24,9 +24,11 @@ def main(repo, title, description, output, latest_version: str, unreleased: bool
     repository = GitRepository(repo, latest_version=latest_version, skip_unreleased=not unreleased)
     presenter = MarkdownPresenter()
     changelog = generate_changelog(repository, presenter, title, description, starting_commit=starting_commit, stopping_commit=stopping_commit)
-    output.write(changelog)
+
     if stdout:
         print(changelog)
+    else:
+        output.write(changelog)
 
 
 if __name__ == "__main__":
