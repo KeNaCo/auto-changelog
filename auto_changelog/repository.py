@@ -73,8 +73,15 @@ class GitRepository(RepositoryInterface):
     # This part is hard to mock, separate method is nice approach how to overcome this problem
     def _get_git_url(self, remote: str) -> str:
         remote_config = self.repository.remote(name=remote).config_reader
-        url = remote_config.get('pushurl') or remote_config.get('pullurl')
-        if not url:
+        # remote url can be in one of this three options
+        # Test is the option exits before access it, otherwise the program crashes
+        if remote_config.has_option('url'):
+            return remote_config.get('url')
+        elif remote_config.has_option('pushurl'):
+            return remote_config.get('pushurl')
+        elif remote_config.has_option('pullurl'):
+            return remote_config.get('pullurl')
+        else:
             return ''
 
     def _get_iter_rev(self, starting_commit: str, stopping_commit: str):
