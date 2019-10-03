@@ -64,7 +64,7 @@ class GitRepository(RepositoryInterface):
         return urljoin(url, 'issues')
 
     def _remote_url(self, remote: str) -> str:
-        """ Extract remote url( from remote url """
+        """ Extract remote url from remote url """
         url = self._get_git_url(remote=remote)
         # 'git@github.com:Michael-F-Bryan/auto-changelog.git' -> 'https://github.com/Michael-F-Bryan/auto-changelog'
         url = re.sub(r'.*@(.*):(.*)\..*', r'https://\1/\2', url)

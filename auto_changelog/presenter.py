@@ -29,7 +29,7 @@ class MarkdownPresenter(PresenterInterface):
 
     @staticmethod
     def _link(url, pattern, text: str) -> str:
-        """ Replaces all occurences of pattern in text with markdown links based on url template """
+        """ Replaces all occurrences of pattern in text with markdown links based on url template """
         if not url or not pattern:
             return text
 
