@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Callable, Union, List, Optional, Tuple, Any
 
+default_issue_pattern = r'(#([\w-]+))'
+
 
 class ChangeType(Enum):
     BUILD = 'build'
@@ -146,9 +148,17 @@ class Release(Note):
 
 
 class Changelog:
-    def __init__(self, title: str = 'Changelog', description: str = ''):
+    def __init__(
+            self,
+            title: str = 'Changelog',
+            description: str = '',
+            issue_pattern: Optional[str] = None,
+            issue_url: Optional[str] = None,
+    ):
         self.title = title
         self.description = description
+        self.issue_pattern = issue_pattern or default_issue_pattern
+        self.issue_url = issue_url or ''
         self._releases = []  # type: List[Release]
         self._current_release = None  # type: Optional[Release]
 
@@ -178,7 +188,8 @@ class Changelog:
 
 class RepositoryInterface(ABC):
     @abstractmethod
-    def generate_changelog(self, title: str, description: str, starting_commit: str, stopping_commit: str) -> Changelog:
+    def generate_changelog(self, title: str, description: str, remote: str, issue_pattern: Optional[str],
+                           issue_url: Optional[str], starting_commit: str, stopping_commit: str) -> Changelog:
         raise NotImplementedError
 
 

@@ -2,6 +2,7 @@ import re
 from datetime import date
 from hashlib import sha256
 from typing import Dict, List, Tuple, Any, Optional
+from urllib.parse import urljoin
 
 from git import Repo, Commit, TagReference
 
@@ -21,8 +22,18 @@ class GitRepository(RepositoryInterface):
         self._skip_unreleased = skip_unreleased and not bool(latest_version)
         self._latest_version = latest_version or 'Unreleased'
 
-    def generate_changelog(self, title: str = 'Changelog', description: str = '', starting_commit: str = '', stopping_commit: str = 'HEAD') -> Changelog:
-        changelog = Changelog(title, description)
+    def generate_changelog(
+            self,
+            title: str = 'Changelog',
+            description: str = '',
+            remote: str = 'origin',
+            issue_pattern: Optional[str] = None,
+            issue_url: Optional[str] = None,
+            starting_commit: str = '',
+            stopping_commit: str = 'HEAD'
+    ) -> Changelog:
+        issue_url = issue_url or self._issue_from_git_remote_url(remote)
+        changelog = Changelog(title, description, issue_pattern, issue_url)
         iter_rev = self._get_iter_rev(starting_commit, stopping_commit)
         commits = self.repository.iter_commits(iter_rev)
         # Some thoughts here
@@ -47,6 +58,31 @@ class GitRepository(RepositoryInterface):
             attributes = self._extract_note_args(commit)
             changelog.add_note(*attributes)
         return changelog
+
+    def _issue_from_git_remote_url(self, remote: str):
+        url = self._remote_url(remote)
+        return urljoin(url, 'issues')
+
+    def _remote_url(self, remote: str) -> str:
+        """ Extract remote url from remote url """
+        url = self._get_git_url(remote=remote)
+        # 'git@github.com:Michael-F-Bryan/auto-changelog.git' -> 'https://github.com/Michael-F-Bryan/auto-changelog'
+        url = re.sub(r'(git@|ssh@|https?://)(.*):(.*)\..*', r'https://\2/\3', url)
+        return url
+
+    # This part is hard to mock, separate method is nice approach how to overcome this problem
+    def _get_git_url(self, remote: str) -> str:
+        remote_config = self.repository.remote(name=remote).config_reader
+        # remote url can be in one of this three options
+        # Test is the option exits before access it, otherwise the program crashes
+        if remote_config.has_option('url'):
+            return remote_config.get('url')
+        elif remote_config.has_option('pushurl'):
+            return remote_config.get('pushurl')
+        elif remote_config.has_option('pullurl'):
+            return remote_config.get('pullurl')
+        else:
+            return ''
 
     def _get_iter_rev(self, starting_commit: str, stopping_commit: str):
         if starting_commit:
