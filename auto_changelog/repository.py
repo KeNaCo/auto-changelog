@@ -67,7 +67,7 @@ class GitRepository(RepositoryInterface):
         """ Extract remote url from remote url """
         url = self._get_git_url(remote=remote)
         # 'git@github.com:Michael-F-Bryan/auto-changelog.git' -> 'https://github.com/Michael-F-Bryan/auto-changelog'
-        url = re.sub(r'.*@(.*):(.*)\..*', r'https://\1/\2', url)
+        url = re.sub(r'(git@|ssh@|https?://)(.*):(.*)\..*', r'https://\2/\3', url)
         return url
 
     # This part is hard to mock, separate method is nice approach how to overcome this problem
