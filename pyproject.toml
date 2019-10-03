@@ -30,6 +30,10 @@ classifiers = [
 
 include = ["auto_changelog/templates/*.jinja2"]
 
+[tool.black]
+line-length = 120
+target-version = ['py35','py36','py37']
+
 [tool.poetry.dependencies]
 python = ">=3.5"
 jinja2 = "^2.10"
