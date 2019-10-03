@@ -6,8 +6,8 @@ from jinja2 import FileSystemLoader, Environment
 from auto_changelog.domain_model import Changelog, PresenterInterface
 
 
-default_template_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'templates')
-default_template_name = 'default.jinja2'
+default_template_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), "templates")
+default_template_name = "default.jinja2"
 
 
 class MarkdownPresenter(PresenterInterface):
@@ -37,5 +37,6 @@ class MarkdownPresenter(PresenterInterface):
             matching_text = match.group(1)
             ticket_id = match.group(2) or match.group(1)
             ticket_url = url.format(id=ticket_id)
-            return '[{matching_text}]({ticket_url})'.format(matching_text=matching_text, ticket_url=ticket_url)
+            return "[{matching_text}]({ticket_url})".format(matching_text=matching_text, ticket_url=ticket_url)
+
         return re.sub(pattern, replace, text)
