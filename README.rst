@@ -38,9 +38,8 @@ or directly from source(via poetry):
 A simple example
 ----------------
 
-.. todo::
-
-    Add terminal video with example usage
+.. image:: example-usage.gif
+   :alt: Example usage of auto-changelog
 
 Contributing
 ------------
