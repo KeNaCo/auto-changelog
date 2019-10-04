@@ -1,109 +1,79 @@
-==============
 Auto Changelog
 ==============
 
-.. image:: https://gitlab.com/KeNaCo/auto-changelog-ci/badges/master/pipeline.svg
-   :target: https://gitlab.com/KeNaCo/auto-changelog-ci/commits/master
+|ci| |pypi| |version| |licence| |black|
 
-A quick script that will generate a changelog for any git repository using 
-`conventional style` commit messages.
+.. |ci| image:: https://gitlab.com/KeNaCo/auto-changelog-ci-test/badges/master/pipeline.svg
+   :target: https://gitlab.com/KeNaCo/auto-changelog-ci-test/commits/master
+   :alt: CI Pipeline
+.. |pypi| image:: https://img.shields.io/pypi/v/auto-changelog
+   :target: https://pypi.org/project/auto-changelog/
+   :alt: PyPI
+.. |version| image:: https://img.shields.io/pypi/pyversions/auto-changelog
+   :alt: PyPI - Python Version
+.. |licence| image:: https://img.shields.io/pypi/l/auto-changelog
+   :alt: PyPI - License
+.. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
+   :alt: Code style - Black
 
+A quick script that will generate a changelog for any git repository using `conventional style`_ commit messages.
 
 Installation
-============
+------------
 
-Pip
----
+Install and update using `pip`_:
 
-auto-changelog is up on PyPI, so you can install it with::
+.. code-block:: text
 
     pip install auto-changelog
 
-From Source
------------
+or directly from source(via poetry):
 
-Otherwise, you can install from source by cloning the repository from Github::
-
-    git clone https://github.com/Michael-F-Bryan/auto-changelog.git
-
-Project uses Poetry to manage dependencies and build::
+.. code-block:: text
 
     poetry install
     poetry build
     pip install dist/*.whl
 
+A simple example
+----------------
 
-Usage
-=====
+.. image:: example-usage.gif
+   :alt: Example usage of auto-changelog
 
-Calling The Program
--------------------
+Contributing
+------------
 
-The package is callable using the `python -m` shortcut::
+To setup development environment, you may use `Poetry`_:
 
-    python3 -m auto_changelog
+.. code-block:: text
 
-Or alternatively, you can use the provided command::
+    poetry install --dev
 
-    auto-changelog
+To activate virtualenv:
 
+.. code-block:: text
 
-Formatting Your Commit Messages
--------------------------------
+    poetry shell
 
-Of course, none of this is going to work if your commit messages are all over
-the place. The program currently only understands commit messages written
-following the `Angular commit message conventions`_. This means that your
-commit messages should look something like this::
+To run tests:
 
-    <type>(<scope>): <subject>
-    <BLANK LINE>
-    <body>
-    <BLANK LINE>
-    <footer>
+.. code-block:: text
 
-The `type` and `subject` fields are mandatory, everything else is optional.
+    pytest
 
-These are some of the valid types that `Angular` use:
+For consistent formatting, you may use `Black`_:
 
+.. code-block:: text
 
-feat 
-    A new feature
-fix 
-    A bug fix
-docs
-    Documentation only changes
-style
-    Changes that do not affect the meaning of the code (white-space, 
-    formatting, missing semi-colons, etc) 
-refactor
-    A code change that neither fixes a bug nor adds a feature
-perf
-    A code change that improves performance
-test
-    Adding missing tests
-chore
-    Changes to the build process or auxiliary tools and libraries such as 
-    documentation generation 
+    black .
 
-.. note:: The types field should be lower case, although the parser itself is 
-          case insensitive.
+.. note::
 
-For more detailed information, please check out `Angular's contributing
-guide`_.
+    Instead of manual run of black tool, you can consider using `Pre-commit`_.
 
-Examples
-========
-
-Below are a couple screenshots showing the result of the `auto-changelog`
-command.
-
-.. image:: examples/git_log_one_line.jpg
-    :alt: Result of "git log --oneline --graph --decorate"
-
-.. image:: examples/generated_commit_message.jpg
-    :alt: Generated change log
-
-
-.. _Angular commit message conventions: https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#commit
-.. _Angular's contributing guide: https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#commit
+.. _Black: https://black.readthedocs.io/en/stable/
+.. _conventional style: https://www.conventionalcommits.org/en
+.. _pip: https://pip.pypa.io/en/stable/quickstart/
+.. _Poetry: https://poetry.eustace.io/
+.. _Pre-commit: https://pre-commit.com/

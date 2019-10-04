@@ -2,26 +2,33 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Callable, Union, List, Optional, Tuple, Any
 
-default_issue_pattern = r'(#([\w-]+))'
+default_issue_pattern = r"(#([\w-]+))"
 
 
 class ChangeType(Enum):
-    BUILD = 'build'
-    CI = 'ci'
-    CHORE = 'chore'
-    DOCS = 'docs'
-    FEAT = 'feat'
-    FIX = 'fix'
-    PERF = 'perf'
-    REFACTOR = 'refactor'
-    REVERT = 'revert'
-    STYLE = 'style'
-    TEST = 'test'
+    BUILD = "build"
+    CI = "ci"
+    CHORE = "chore"
+    DOCS = "docs"
+    FEAT = "feat"
+    FIX = "fix"
+    PERF = "perf"
+    REFACTOR = "refactor"
+    REVERT = "revert"
+    STYLE = "style"
+    TEST = "test"
 
 
 class Note:
-    def __init__(self, sha: str, change_type: Union[ChangeType, str], description: str,
-                 scope: str = '', body: str = '', footer: str = ''):
+    def __init__(
+        self,
+        sha: str,
+        change_type: Union[ChangeType, str],
+        description: str,
+        scope: str = "",
+        body: str = "",
+        footer: str = "",
+    ):
         self.sha = sha
         self.change_type = ChangeType(change_type) if change_type else change_type  # TODO Hmm..
         self.scope = scope
@@ -30,15 +37,17 @@ class Note:
         self.footer = footer
 
     def __eq__(self, other):
-        return self.sha == other.sha \
-               and self.change_type == other.change_type \
-               and self.description == other.description \
-               and self.body == other.body \
-               and self.footer == other.footer
+        return (
+            self.sha == other.sha
+            and self.change_type == other.change_type
+            and self.description == other.description
+            and self.body == other.body
+            and self.footer == other.footer
+        )
 
 
 class Release(Note):
-    def __init__(self, title, date, sha, change_type='chore', description='', *args, **kwargs):
+    def __init__(self, title, date, sha, change_type="chore", description="", *args, **kwargs):
         super(Release, self).__init__(sha, change_type, description, *args, **kwargs)
         self.title = title
         self.date = date
@@ -149,16 +158,16 @@ class Release(Note):
 
 class Changelog:
     def __init__(
-            self,
-            title: str = 'Changelog',
-            description: str = '',
-            issue_pattern: Optional[str] = None,
-            issue_url: Optional[str] = None,
+        self,
+        title: str = "Changelog",
+        description: str = "",
+        issue_pattern: Optional[str] = None,
+        issue_url: Optional[str] = None,
     ):
         self.title = title
         self.description = description
         self.issue_pattern = issue_pattern or default_issue_pattern
-        self.issue_url = issue_url or ''
+        self.issue_url = issue_url or ""
         self._releases = []  # type: List[Release]
         self._current_release = None  # type: Optional[Release]
 
@@ -177,7 +186,7 @@ class Changelog:
             return
 
         if not self._current_release:
-            raise ValueError('There is no release, note can be added to')
+            raise ValueError("There is no release, note can be added to")
         self._current_release.add_note(note)
 
     @property
@@ -188,8 +197,16 @@ class Changelog:
 
 class RepositoryInterface(ABC):
     @abstractmethod
-    def generate_changelog(self, title: str, description: str, remote: str, issue_pattern: Optional[str],
-                           issue_url: Optional[str], starting_commit: str, stopping_commit: str) -> Changelog:
+    def generate_changelog(
+        self,
+        title: str,
+        description: str,
+        remote: str,
+        issue_pattern: Optional[str],
+        issue_url: Optional[str],
+        starting_commit: str,
+        stopping_commit: str,
+    ) -> Changelog:
         raise NotImplementedError
 
 
