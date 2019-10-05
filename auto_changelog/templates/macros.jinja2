@@ -4,6 +4,6 @@
 
 {% for note in notes -%}
 *{% if note.scope %} ({{ note.scope }}):{% endif %} {{ note.description }}
-{% endfor %}
+{% endfor -%}
 {% endif -%}
-{% endmacro %}
+{% endmacro -%}
