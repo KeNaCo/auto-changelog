@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "auto-changelog"
-version = "1.0.0dev1"
+version = "0.3.0rc1"
 description = "Simple tool to generate nice, formatted changelogs from vcs"
 authors = ["Michael F Bryan <michaelfbryan@gmail.com>", "Ken Mijime <kenaco666@gmail.com>"]
 license = "MIT"
@@ -8,7 +8,11 @@ readme = "README.rst"
 repository = "https://github.com/Michael-F-Bryan/auto-changelog"
 keywords = ['git', 'changelog']
 classifiers = [
-    'Development Status :: 3 - Alpha',
+#    'Development Status :: 1 - Planning',
+#    'Development Status :: 2 - Pre-Alpha',
+#    'Development Status :: 3 - Alpha',
+    'Development Status :: 4 - Beta',
+#    'Development Status :: 5 - Production/Stable',
 
     # Indicate who your project is intended for
     'Intended Audience :: Developers',

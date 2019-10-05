@@ -1,3 +1,8 @@
+stages:
+  - test
+  - build
+  - release
+
 .test: &test
   stage: test
   before_script:
@@ -17,3 +22,31 @@ test-python3.6:
 test-python3.7:
   image: python:3.7
   <<: *test
+
+build:
+  image: python:3.7
+  stage: build
+  only:
+    - tags
+  before_script:
+    - pip install poetry
+    - poetry install
+  script:
+    - poetry build
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 30 days
+
+release:
+  image: python:3.7
+  stage: release
+  only:
+    - tags
+  dependencies:
+    - build
+  before_script:
+    - pip install poetry
+  script:
+    - echo $PYPI_USERNAME
+    - poetry publish -u $PYPI_USERNAME -p $PYPI_PASSWORD
