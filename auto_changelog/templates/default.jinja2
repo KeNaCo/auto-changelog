@@ -2,8 +2,7 @@
 # {{ changelog.title }}
 {% if changelog.description %}
 {{ changelog.description }}
-{% endif %}
-
+{% endif -%}
 {%- for release in changelog.releases %}
 ## {{ release.title }}
 
