@@ -56,13 +56,14 @@ class GitRepository(RepositoryInterface):
 
     def _issue_from_git_remote_url(self, remote: str):
         url = self._remote_url(remote)
-        return urljoin(url, "issues")
+        return urljoin(url + '/', "issues")
 
     def _remote_url(self, remote: str) -> str:
         """ Extract remote url from remote url """
         url = self._get_git_url(remote=remote)
         # 'git@github.com:Michael-F-Bryan/auto-changelog.git' -> 'https://github.com/Michael-F-Bryan/auto-changelog'
-        url = re.sub(r"(git@|ssh@|https?://)(.*):(.*)\..*", r"https://\2/\3", url)
+        # 'https://github.com/Michael-F-Bryan/auto-changelog.git' -> 'https://github.com/Michael-F-Bryan/auto-changelog'
+        url = re.sub(r"^(https|git)(:\/\/|@)([^\/:]+)[\/:]([^\/:]+)\/(.+).git$", r"https://\3/\4/\5", url)
         return url
 
     # This part is hard to mock, separate method is nice approach how to overcome this problem
