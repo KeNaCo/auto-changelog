@@ -56,11 +56,7 @@ class GitRepository(RepositoryInterface):
 
     def _issue_from_git_remote_url(self, remote: str):
         url = self._remote_url(remote)
-<<<<<<< Updated upstream
         return urljoin(url, "issues")
-=======
-        return urljoin(url + '/', "issues/{id}")
->>>>>>> Stashed changes
 
     def _remote_url(self, remote: str) -> str:
         """ Extract remote url from remote url """
