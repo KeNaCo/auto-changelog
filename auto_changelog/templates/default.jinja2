@@ -4,7 +4,7 @@
 {{ changelog.description }}
 {% endif -%}
 {%- for release in changelog.releases %}
-## {{ release.title }}
+## {{ release.title }} ({{release.date}})
 
 {{ macros.section('New Features', release.features) -}}
 {{- macros.section('Fixes', release.fixes) -}}

@@ -56,7 +56,11 @@ class GitRepository(RepositoryInterface):
 
     def _issue_from_git_remote_url(self, remote: str):
         url = self._remote_url(remote)
+<<<<<<< Updated upstream
         return urljoin(url, "issues")
+=======
+        return urljoin(url + '/', "issues/{id}")
+>>>>>>> Stashed changes
 
     def _remote_url(self, remote: str) -> str:
         """ Extract remote url from remote url """
@@ -111,7 +115,7 @@ class GitRepository(RepositoryInterface):
     def _extract_release_args(commit, tags) -> Tuple[str, Any, Any]:
         """ Extracts arguments for release """
         title = ", ".join(map(lambda tag: "{}".format(tag.name), tags))
-        date_ = date.today()
+        date_ = commit.authored_datetime.date()
         sha = commit.hexsha
 
         # TODO parse message, be carefull about commit message and tags message
