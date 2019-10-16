@@ -111,7 +111,7 @@ class GitRepository(RepositoryInterface):
     def _extract_release_args(commit, tags) -> Tuple[str, Any, Any]:
         """ Extracts arguments for release """
         title = ", ".join(map(lambda tag: "{}".format(tag.name), tags))
-        date_ = date.today()
+        date_ = commit.authored_datetime.date()
         sha = commit.hexsha
 
         # TODO parse message, be carefull about commit message and tags message
