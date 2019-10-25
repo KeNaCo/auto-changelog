@@ -37,12 +37,55 @@ def test_index_init():
     commit1 = Mock()
     commit2 = Mock()
     tagref1 = Mock(commit=commit1)
+    tagref1.name = "1.0.0"
     tagref2 = Mock(commit=commit2)
+    tagref2.name = "2.0.0"
     tagref3 = Mock(commit=commit2)
+    tagref3.name = "2.0.0"
+
     repo_mock = Mock(spec=Repo, tags=[tagref1, tagref2, tagref3])
 
-    index = GitRepository._init_commit_tags_index(repo_mock)
+    # no prefix
+    tag_prefix = ""
+    # we are using default tag pattern => semantic versioning
+    tag_pattern = None
+
+    index = GitRepository._init_commit_tags_index(repo_mock, tag_prefix, tag_pattern)
     assert index == {commit1: [tagref1], commit2: [tagref2, tagref3]}
+
+
+@pytest.mark.parametrize("tags", [["1.0.0", "1.0.0-beta", "v2.0.0", "v3.0.0", "4.0", "5", "v6"]])
+@pytest.mark.parametrize(
+    "tag_prefix, tag_pattern, expected_tags",
+    [
+        ("", None, ["1.0.0", "1.0.0-beta"]),
+        ("v", None, ["v2.0.0", "v3.0.0"]),
+        ("x", None, []),
+        ("", "([1-9])", ["5"]),
+        ("v", "([1-9])", ["v6"]),
+        ("x", "([1-9])", []),
+    ],
+)
+def test_tag_pattern(tags, tag_prefix, tag_pattern, expected_tags):
+    tag_refs = []
+    for tag in tags:
+        tag_ref = Mock(commit=Mock())
+        tag_ref.name = tag
+        tag_refs.append(tag_ref)
+
+    repo_mock = Mock(spec=Repo, tags=tag_refs)
+
+    selected_tag_refs = GitRepository._init_commit_tags_index(repo_mock, tag_prefix, tag_pattern)
+
+    selected_tags = []
+    for selected_tag_ref_list in selected_tag_refs.values():
+        for selected_tag_ref in selected_tag_ref_list:
+            selected_tags.append(selected_tag_ref.name)
+
+    if len(selected_tags) == 0:
+        assert len(expected_tags) == 0
+    else:
+        assert all([a == b for a, b in zip(selected_tags, expected_tags)])
 
 
 @pytest.mark.parametrize(
