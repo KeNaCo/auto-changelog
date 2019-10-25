@@ -166,11 +166,17 @@ class Changelog:
         description: str = "",
         issue_pattern: Optional[str] = None,
         issue_url: Optional[str] = None,
+        tag_prefix: str = "",
+        tag_pattern: Optional[str] = None,
+        compare_url: Optional[str] = None,
     ):
         self.title = title
         self.description = description
         self.issue_pattern = issue_pattern or default_issue_pattern
         self.issue_url = issue_url or ""
+        self.tag_prefix = tag_prefix
+        self.tag_pattern = tag_pattern or default_tag_pattern
+        self.compare_url = compare_url or ""
         self._releases = []  # type: List[Release]
         self._current_release = None  # type: Optional[Release]
 
@@ -207,6 +213,7 @@ class RepositoryInterface(ABC):
         remote: str,
         issue_pattern: Optional[str],
         issue_url: Optional[str],
+        compare_url: Optional[str],
         starting_commit: str,
         stopping_commit: str,
     ) -> Changelog:
