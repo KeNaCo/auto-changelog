@@ -2,7 +2,7 @@ from datetime import date
 
 import pytest
 
-from auto_changelog.domain_model import Changelog, default_issue_pattern
+from auto_changelog.domain_model import Changelog, default_issue_pattern, default_tag_pattern
 from auto_changelog.presenter import MarkdownPresenter
 
 
@@ -85,3 +85,87 @@ def test_link_default_match(text, expected, markdown_presenter):
 def test_link_default_url(markdown_presenter):
     linked_text = markdown_presenter._link("", default_issue_pattern, "Some text about #42")
     assert linked_text == "Some text about #42"
+
+
+@pytest.mark.parametrize("compare_url", ["https://github.com/LeMimit/auto-changelog/compare/{previous}...{current}"])
+@pytest.mark.parametrize(
+    "text, prefix, expected",
+    [
+        ("## 0.3.0", "", "## 0.3.0"),
+        (
+            "## 0.3.0 \n## 0.1.7",
+            "",
+            "## [0.3.0](https://github.com/LeMimit/auto-changelog/compare/0.3.0...0.1.7) \n## 0.1.7",
+        ),
+        (
+            "# 0.3.0 \n# 0.1.7",
+            "",
+            "# [0.3.0](https://github.com/LeMimit/auto-changelog/compare/0.3.0...0.1.7) \n# 0.1.7",
+        ),
+        (
+            "### 0.3.0 \n### 0.1.7",
+            "",
+            "### [0.3.0](https://github.com/LeMimit/auto-changelog/compare/0.3.0...0.1.7) \n### 0.1.7",
+        ),
+        (
+            "## 0.3.0 \n## 0.1.7\n## 0.1.1",
+            "",
+            "## [0.3.0](https://github.com/LeMimit/auto-changelog/compare/0.3.0...0.1.7)"
+            " \n## [0.1.7](https://github.com/LeMimit/auto-changelog/compare/0.1.7...0.1.1)\n## 0.1.1",
+        ),
+        ("## 0.3.0 \n## 0.1.7", "v", "## 0.3.0 \n## 0.1.7"),
+        (
+            "## v0.3.0 \n## v0.1.7",
+            "v",
+            "## [v0.3.0](https://github.com/LeMimit/auto-changelog/compare/0.3.0...0.1.7) \n## v0.1.7",
+        ),
+        (
+            "## v0.3.0 \n## v0.1.7\n## v0.1.1",
+            "v",
+            "## [v0.3.0](https://github.com/LeMimit/auto-changelog/compare/0.3.0...0.1.7)"
+            " \n## [v0.1.7](https://github.com/LeMimit/auto-changelog/compare/0.1.7...0.1.1)\n## v0.1.1",
+        ),
+    ],
+)
+def test_compare_default_match(compare_url, text, prefix, expected, markdown_presenter):
+    linked_text = markdown_presenter._title(compare_url, default_tag_pattern, prefix, text)
+    assert linked_text == expected
+
+
+@pytest.mark.parametrize("compare_url", ["https://github.com/LeMimit/auto-changelog/compare/{previous}...{current}"])
+@pytest.mark.parametrize(
+    "text, tag_pattern, prefix, expected",
+    [
+        ("## 0.3.0", "(?P<version>[1-9])", "", "## 0.3.0"),
+        ("## 3", "(?P<version>[1-9])", "", "## 3"),
+        ("## 3", "([1-9])", "", "## 3"),
+        ("## 0.3.0 \n## 0.1.7", "(?P<version>[1-9])", "", "## 0.3.0 \n## 0.1.7"),
+        (
+            "## 3 \n## 2",
+            "(?P<version>[1-9])",
+            "",
+            "## [3](https://github.com/LeMimit/auto-changelog/compare/3...2) \n## 2",
+        ),
+        ("# 3 \n# 2", "(?P<version>[1-9])", "", "# [3](https://github.com/LeMimit/auto-changelog/compare/3...2) \n# 2"),
+        ("## 3 \n## 2", "([1-9])", "", "## 3 \n## 2"),
+        ("## 0.3.0 \n## 0.1.7\n## 0.1.1", "(?P<version>[1-9])", "", "## 0.3.0 \n## 0.1.7\n## 0.1.1"),
+        (
+            "## 3 \n## 2\n## 1",
+            "(?P<version>[1-9])",
+            "",
+            "## [3](https://github.com/LeMimit/auto-changelog/compare/3...2)"
+            " \n## [2](https://github.com/LeMimit/auto-changelog/compare/2...1)\n## 1",
+        ),
+        ("## 3 \n## 2\n## 1", "([1-9])", "", "## 3 \n## 2\n## 1"),
+        (
+            "# 3 \n# 2\n# 1",
+            "(?P<version>[1-9])",
+            "",
+            "# [3](https://github.com/LeMimit/auto-changelog/compare/3...2)"
+            " \n# [2](https://github.com/LeMimit/auto-changelog/compare/2...1)\n# 1",
+        ),
+    ],
+)
+def test_compare_custom_match(compare_url, text, tag_pattern, prefix, expected, markdown_presenter):
+    linked_text = markdown_presenter._title(compare_url, tag_pattern, prefix, text)
+    assert linked_text == expected
