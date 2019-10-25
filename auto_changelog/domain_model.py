@@ -3,6 +3,8 @@ from enum import Enum
 from typing import Callable, Union, List, Optional, Tuple, Any
 
 default_issue_pattern = r"(#([\w-]+))"
+# https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
+default_tag_pattern = "(?P<fulltitle>(?P<version>(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*))(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)"
 
 
 class ChangeType(Enum):
@@ -163,11 +165,17 @@ class Changelog:
         description: str = "",
         issue_pattern: Optional[str] = None,
         issue_url: Optional[str] = None,
+        tag_prefix: str = "",
+        tag_pattern: Optional[str] = None,
+        compare_url: Optional[str] = None,
     ):
         self.title = title
         self.description = description
         self.issue_pattern = issue_pattern or default_issue_pattern
         self.issue_url = issue_url or ""
+        self.tag_prefix = tag_prefix
+        self.tag_pattern = tag_pattern or default_tag_pattern
+        self.compare_url = compare_url or ""
         self._releases = []  # type: List[Release]
         self._current_release = None  # type: Optional[Release]
 
@@ -204,6 +212,7 @@ class RepositoryInterface(ABC):
         remote: str,
         issue_pattern: Optional[str],
         issue_url: Optional[str],
+        compare_url: Optional[str],
         starting_commit: str,
         stopping_commit: str,
     ) -> Changelog:
