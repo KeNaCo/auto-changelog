@@ -61,8 +61,26 @@ def test_parse_conventional_commit_with_empty_message(message, expected):
 
 
 @patch("auto_changelog.repository.Repo", autospec=True)
-@patch.object(GitRepository, "_get_git_url", return_value="git@github.com:Michael-F-Bryan/auto-changelog.git")
+@patch.object(GitRepository, "_get_git_url")
 def test_get_remote_url(mock_ggu, mock_repo):
+    mock_ggu.return_value = "git@github.com:Michael-F-Bryan/auto-changelog.git"
     remote_url = GitRepository(".")._remote_url(remote="origin")
     expected = "https://github.com/Michael-F-Bryan/auto-changelog"
     assert expected == remote_url
+    mock_ggu.return_value = "https://github.com/Michael-F-Bryan/auto-changelog.git"
+    remote_url = GitRepository(".")._remote_url(remote="origin")
+    expected = "https://github.com/Michael-F-Bryan/auto-changelog"
+    assert expected == remote_url
+
+
+@patch("auto_changelog.repository.Repo", autospec=True)
+@patch.object(GitRepository, "_remote_url", return_value='https://github.com/Michael-F-Bryan/auto-changelog')
+def test_issue_from_git_remote_url(mock_ru, mock_repo):
+    remote_url = GitRepository(".")._issue_from_git_remote_url(remote="origin")
+    expected = "https://github.com/Michael-F-Bryan/auto-changelog/issues"
+    assert expected == remote_url
+
+
+
+
+
