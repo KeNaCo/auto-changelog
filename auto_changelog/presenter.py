@@ -60,8 +60,8 @@ class MarkdownPresenter(PresenterInterface):
             if (index_version + 1) < len(all_versions):
                 # get version to build compare url
                 current_version = all_versions[index_version]["version"]
-                next_version = all_versions[index_version + 1]["version"]
-                compare_url = url.format(previous=current_version, current=next_version)
+                previous_version = all_versions[index_version + 1]["version"]
+                compare_url = url.format(previous=previous_version, current=current_version)
                 index_version += 1
                 return "{format}[{prefix}{version}]({url})".format(
                     format=tag, prefix=prefix, version=version, url=compare_url
