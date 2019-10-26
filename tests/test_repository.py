@@ -82,10 +82,7 @@ def test_tag_pattern(tags, tag_prefix, tag_pattern, expected_tags):
         for selected_tag_ref in selected_tag_ref_list:
             selected_tags.append(selected_tag_ref.name)
 
-    if len(selected_tags) == 0:
-        assert len(expected_tags) == 0
-    else:
-        assert all([a == b for a, b in zip(selected_tags, expected_tags)])
+    assert selected_tags == expected_tags
 
 
 @pytest.mark.parametrize(
