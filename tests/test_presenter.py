@@ -98,6 +98,11 @@ def test_link_default_url(markdown_presenter):
             "## [0.3.0](https://github.com/LeMimit/auto-changelog/compare/0.1.7...0.3.0) \n## 0.1.7",
         ),
         (
+            "## 0.3.0 \n## 1.0.0-alpha",
+            "",
+            "## [0.3.0](https://github.com/LeMimit/auto-changelog/compare/1.0.0-alpha...0.3.0) \n## 1.0.0-alpha",
+        ),
+        (
             "# 0.3.0 \n# 0.1.7",
             "",
             "# [0.3.0](https://github.com/LeMimit/auto-changelog/compare/0.1.7...0.3.0) \n# 0.1.7",
@@ -113,17 +118,31 @@ def test_link_default_url(markdown_presenter):
             "## [0.3.0](https://github.com/LeMimit/auto-changelog/compare/0.1.7...0.3.0)"
             " \n## [0.1.7](https://github.com/LeMimit/auto-changelog/compare/0.1.1...0.1.7)\n## 0.1.1",
         ),
+        (
+            "## 0.3.0 \n## 1.2.3-SNAPSHOT-123\n## 1.0.0-rc.1+build.1",
+            "",
+            "## [0.3.0](https://github.com/LeMimit/auto-changelog/compare/1.2.3-SNAPSHOT-123...0.3.0)"
+            " \n## [1.2.3-SNAPSHOT-123](https://github.com/LeMimit/auto-changelog/compare/1.0.0-rc.1+build.1...1.2.3-SNAPSHOT-123)"
+            "\n## 1.0.0-rc.1+build.1",
+        ),
         ("## 0.3.0 \n## 0.1.7", "v", "## 0.3.0 \n## 0.1.7"),
         (
             "## v0.3.0 \n## v0.1.7",
             "v",
-            "## [v0.3.0](https://github.com/LeMimit/auto-changelog/compare/0.1.7...0.3.0) \n## v0.1.7",
+            "## [v0.3.0](https://github.com/LeMimit/auto-changelog/compare/v0.1.7...v0.3.0) \n## v0.1.7",
         ),
         (
             "## v0.3.0 \n## v0.1.7\n## v0.1.1",
             "v",
-            "## [v0.3.0](https://github.com/LeMimit/auto-changelog/compare/0.1.7...0.3.0)"
-            " \n## [v0.1.7](https://github.com/LeMimit/auto-changelog/compare/0.1.1...0.1.7)\n## v0.1.1",
+            "## [v0.3.0](https://github.com/LeMimit/auto-changelog/compare/v0.1.7...v0.3.0)"
+            " \n## [v0.1.7](https://github.com/LeMimit/auto-changelog/compare/v0.1.1...v0.1.7)\n## v0.1.1",
+        ),
+        (
+            "## v0.3.0 \n## v1.2.3-SNAPSHOT-123\n## v1.0.0-rc.1+build.1",
+            "v",
+            "## [v0.3.0](https://github.com/LeMimit/auto-changelog/compare/v1.2.3-SNAPSHOT-123...v0.3.0)"
+            " \n## [v1.2.3-SNAPSHOT-123](https://github.com/LeMimit/auto-changelog/compare/v1.0.0-rc.1+build.1...v1.2.3-SNAPSHOT-123)"
+            "\n## v1.0.0-rc.1+build.1",
         ),
     ],
 )
@@ -164,6 +183,14 @@ def test_compare_default_match(compare_url, text, prefix, expected, markdown_pre
             "# [3](https://github.com/LeMimit/auto-changelog/compare/2...3)"
             " \n# [2](https://github.com/LeMimit/auto-changelog/compare/1...2)\n# 1",
         ),
+        ("## v3 \n## v2\n## v1", "([1-9])", "v", "## v3 \n## v2\n## v1"),
+        (
+                "# v3 \n# v2\n# v1",
+                "(?P<version>[1-9])",
+                "v",
+                "# [v3](https://github.com/LeMimit/auto-changelog/compare/v2...v3)"
+                " \n# [v2](https://github.com/LeMimit/auto-changelog/compare/v1...v2)\n# v1",
+        )
     ],
 )
 def test_compare_custom_match(compare_url, text, tag_pattern, prefix, expected, markdown_presenter):
