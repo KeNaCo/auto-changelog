@@ -1,5 +1,4 @@
 import pytest
-from textwrap import dedent
 
 from auto_changelog.domain_model import Changelog, default_issue_pattern
 from auto_changelog.presenter import MarkdownPresenter
