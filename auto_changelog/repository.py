@@ -81,7 +81,7 @@ class GitRepository(RepositoryInterface):
 
     def _compare_from_git_remote_url(self, remote: str):
         url = self._remote_url(remote)
-        return urljoin(url + "/", "compare/{current}...{previous}")
+        return urljoin(url + "/", "compare/{previous}...{current}")
 
     def _remote_url(self, remote: str) -> str:
         """ Extract remote url from remote url """
