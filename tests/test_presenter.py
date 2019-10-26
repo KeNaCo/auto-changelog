@@ -185,12 +185,12 @@ def test_compare_default_match(compare_url, text, prefix, expected, markdown_pre
         ),
         ("## v3 \n## v2\n## v1", "([1-9])", "v", "## v3 \n## v2\n## v1"),
         (
-                "# v3 \n# v2\n# v1",
-                "(?P<version>[1-9])",
-                "v",
-                "# [v3](https://github.com/LeMimit/auto-changelog/compare/v2...v3)"
-                " \n# [v2](https://github.com/LeMimit/auto-changelog/compare/v1...v2)\n# v1",
-        )
+            "# v3 \n# v2\n# v1",
+            "(?P<version>[1-9])",
+            "v",
+            "# [v3](https://github.com/LeMimit/auto-changelog/compare/v2...v3)"
+            " \n# [v2](https://github.com/LeMimit/auto-changelog/compare/v1...v2)\n# v1",
+        ),
     ],
 )
 def test_compare_custom_match(compare_url, text, tag_pattern, prefix, expected, markdown_presenter):
