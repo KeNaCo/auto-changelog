@@ -59,8 +59,8 @@ class MarkdownPresenter(PresenterInterface):
             # this is not the last versions of the file
             if (index_version + 1) < len(all_versions):
                 # get version to build compare url
-                current_version = all_versions[index_version]["version"]
-                previous_version = all_versions[index_version + 1]["version"]
+                current_version = "%s%s" % (prefix, all_versions[index_version]["version"])
+                previous_version = "%s%s" % (prefix, all_versions[index_version + 1]["version"])
                 compare_url = url.format(previous=previous_version, current=current_version)
                 index_version += 1
                 return "{format}[{prefix}{version}]({url})".format(
