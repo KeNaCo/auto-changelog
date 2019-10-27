@@ -77,5 +77,5 @@ def test_get_remote_url(mock_ggu, mock_repo):
 @patch.object(GitRepository, "_remote_url", return_value="https://github.com/Michael-F-Bryan/auto-changelog")
 def test_issue_from_git_remote_url(mock_ru, mock_repo):
     remote_url = GitRepository(".")._issue_from_git_remote_url(remote="origin")
-    expected = "https://github.com/Michael-F-Bryan/auto-changelog/issues"
+    expected = "https://github.com/Michael-F-Bryan/auto-changelog/issues/{id}"
     assert expected == remote_url
