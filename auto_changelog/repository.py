@@ -11,7 +11,7 @@ from auto_changelog.domain_model import RepositoryInterface, Changelog
 
 class GitRepository(RepositoryInterface):
     def __init__(self, repository_path, *, latest_version: Optional[str] = None, skip_unreleased: bool = True):
-        self.repository = Repo(repository_path)
+        self.repository = Repo(repository_path, search_parent_directories=True)
         self.commit_tags_index = self._init_commit_tags_index(self.repository)
         # in case of defined latest version, unreleased is used as latest release
         self._skip_unreleased = skip_unreleased and not bool(latest_version)
