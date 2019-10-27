@@ -55,8 +55,9 @@ class GitRepository(RepositoryInterface):
         return changelog
 
     def _issue_from_git_remote_url(self, remote: str):
+        """ Creates issue url with {id} format key """
         url = self._remote_url(remote)
-        return urljoin(url + "/", "issues")
+        return url + "/issues/{id}"
 
     def _remote_url(self, remote: str) -> str:
         """ Extract remote url from remote url """
