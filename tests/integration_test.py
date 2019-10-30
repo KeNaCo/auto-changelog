@@ -15,7 +15,7 @@ def commands():
 @pytest.fixture
 def test_repo(tmp_path, commands):
     cwd = os.getcwd()
-    os.chdir(str(tmp_path))
+    os.chdir(tmp_path)
     for command in commands:
         subprocess.run(command.split())
     yield tmp_path
@@ -33,7 +33,7 @@ def open_changelog(test_repo):
 
     def _open_changelog():
         nonlocal file
-        file = open("CHANGELOG.md", "r")
+        file = open(changelog_name, "r")
         return file
 
     yield _open_changelog
