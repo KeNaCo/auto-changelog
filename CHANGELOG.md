@@ -1,59 +1,81 @@
 # Changelog
 
-## 0.3.0
+## 0.4.0 (2019-10-31)
+
+#### New Features
+
+* (template): add release date to template
+#### Fixes
+
+* Missing {id} key in default issue template [#42](https://github.com/Michael-F-Bryan/auto-changelog/issues/42)
+* Git Repo now search in parent directories [#44](https://github.com/Michael-F-Bryan/auto-changelog/issues/44)
+* Missing release date in tests [#43](https://github.com/Michael-F-Bryan/auto-changelog/issues/43)
+* add support of ssh configuration of the remote
+* fix generation of issue url
+* clean old changes
+#### Refactorings
+
+* Remove unused import from test [#43](https://github.com/Michael-F-Bryan/auto-changelog/issues/43)
+#### Others
+
+* (black): Black reformatting [#43](https://github.com/Michael-F-Bryan/auto-changelog/issues/43)
+* add tests to test new generation of issue url
+
+## 0.3.0 (2019-10-05)
 
 #### New Features
 
 * add --remote, --issue-url, --issue-pattern options, markdown links
-* Latest version [#19](https://github.com/KeNaCo/issues)
+* Latest version [#19](https://github.com/Michael-F-Bryan/auto-changelog/issues/19)
 * add --starting-commit option
 * add --description option
 * add --title option
 * add --repo option
 * add --stopping-commit option
-* Unreleased option implemented [#19](https://github.com/KeNaCo/issues)
-* Stdout option implemented [#19](https://github.com/KeNaCo/issues)
-* Output option implemented [#19](https://github.com/KeNaCo/issues)
-* Replace docopt with click [#19](https://github.com/KeNaCo/issues)
+* Unreleased option implemented [#19](https://github.com/Michael-F-Bryan/auto-changelog/issues/19)
+* Stdout option implemented [#19](https://github.com/Michael-F-Bryan/auto-changelog/issues/19)
+* Output option implemented [#19](https://github.com/Michael-F-Bryan/auto-changelog/issues/19)
+* Replace docopt with click [#19](https://github.com/Michael-F-Bryan/auto-changelog/issues/19)
 * New composing/parsing algorithm
 #### Fixes
 
-* Re-fix last fix in template and tests [#40](https://github.com/KeNaCo/issues)
+* Re-fix last fix in template and tests [#40](https://github.com/Michael-F-Bryan/auto-changelog/issues/40)
 * Missing empty space at the end of sections
 * Remote url transformation cover all protocols ssh,git,http,https
 * fix how to get url from remote
 * add missing parameters
 * disable file writing when stdout specified
 * fix latest_version
-* Use all change types in template [#24](https://github.com/KeNaCo/issues)
+* Use all change types in template [#24](https://github.com/Michael-F-Bryan/auto-changelog/issues/24)
 #### Refactorings
 
-* Remove unused modules and files [#17](https://github.com/KeNaCo/issues)
+* Remove unused modules and files [#17](https://github.com/Michael-F-Bryan/auto-changelog/issues/17)
 * Typo in repository class name
 #### Docs
 
-* (Readme): Add gif with usage example [#21](https://github.com/KeNaCo/issues)
-* (Readme): Update Readme [#21](https://github.com/KeNaCo/issues)
+* (Readme): Add gif with usage example [#21](https://github.com/Michael-F-Bryan/auto-changelog/issues/21)
+* (Readme): Update Readme [#21](https://github.com/Michael-F-Bryan/auto-changelog/issues/21)
 #### Others
 
-* (ci): Add build and release jobs [#21](https://github.com/KeNaCo/issues)
-* Update pyproject.toml [#21](https://github.com/KeNaCo/issues)
+* Release 0.3.0
+* (ci): Add build and release jobs [#21](https://github.com/Michael-F-Bryan/auto-changelog/issues/21)
+* Update pyproject.toml [#21](https://github.com/Michael-F-Bryan/auto-changelog/issues/21)
 * Add black for formatting
 * Remove docs and examples
-* (poetry): Upgrade dependencies [#27](https://github.com/KeNaCo/issues)
-* Use Poetry as dependency and build managing tool [#18](https://github.com/KeNaCo/issues)
-* Set version to 1.0.0dev1 [#17](https://github.com/KeNaCo/issues)
-* (git): Replace manual gitignore with new generated one [#17](https://github.com/KeNaCo/issues)
+* (poetry): Upgrade dependencies [#27](https://github.com/Michael-F-Bryan/auto-changelog/issues/27)
+* Use Poetry as dependency and build managing tool [#18](https://github.com/Michael-F-Bryan/auto-changelog/issues/18)
+* Set version to 1.0.0dev1 [#17](https://github.com/Michael-F-Bryan/auto-changelog/issues/17)
+* (git): Replace manual gitignore with new generated one [#17](https://github.com/Michael-F-Bryan/auto-changelog/issues/17)
 * (CI): Add gitlab CI support
 * Reformatted by black
 * Typo in docstrings
 * Typo in test name
 * Add pytest as testing framework
 
-## 0.1.7
+## 0.1.7 (2017-11-18)
 
 
-## 0.1.6
+## 0.1.6 (2017-08-09)
 
 #### Fixes
 
@@ -63,23 +85,23 @@
 * Removed a space so the images are displayed correctly
 * (README): Added example images to show what the script will do
 
-## 0.1.5
+## 0.1.5 (2016-07-20)
 
 #### Fixes
 
-* Fixed IndexError when run with no tags in the repo [[#2](https://github.com/KeNaCo/issues)]
+* Fixed IndexError when run with no tags in the repo [[#2](https://github.com/Michael-F-Bryan/auto-changelog/issues/2)]
 #### Others
 
 * Bumped version number
 * Bumping versions and trying to make PyPI installs see the template dir
 
-## 0.1.3
+## 0.1.3 (2016-07-20)
 
 #### Others
 
 * Bumping version numbers to make pypi install properly
 
-## 0.1.2
+## 0.1.2 (2016-07-20)
 
 #### New Features
 
@@ -87,7 +109,7 @@
 * Added an intermediate step to remove unnecessary newlines from the changelog
 #### Fixes
 
-* Fixed the issue of missing commits [[#1](https://github.com/KeNaCo/issues)]
+* Fixed the issue of missing commits [[#1](https://github.com/Michael-F-Bryan/auto-changelog/issues/1)]
 #### Docs
 
 * (examples): Updated the examples with cz-cli's changelog
@@ -96,7 +118,7 @@
 * Added a requirements.txt
 * Updated changelog
 
-## 0.1.1
+## 0.1.1 (2016-07-20)
 
 #### New Features
 
@@ -110,7 +132,7 @@
 * Bumped the version number
 * Added a changelog and makefile
 
-## 0.1.0
+## 0.1.0 (2016-07-20)
 
 #### New Features
 

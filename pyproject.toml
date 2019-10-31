@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "auto-changelog"
-version = "0.3.0"
+version = "0.4.0"
 description = "Simple tool to generate nice, formatted changelogs from vcs"
 authors = ["Michael F Bryan <michaelfbryan@gmail.com>", "Ken Mijime <kenaco666@gmail.com>"]
 license = "MIT"
