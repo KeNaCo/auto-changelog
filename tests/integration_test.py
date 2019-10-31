@@ -55,3 +55,10 @@ def test_help(runner):
     assert result.exit_code == 0, result.stderr
     assert result.output
 
+
+def test_option_repo(test_repo, runner, open_changelog):
+    result = runner.invoke(main, ["--repo", test_repo])
+    assert result.exit_code == 0, result.stderr
+    assert result.output == ""
+    changelog = open_changelog().read()
+    assert changelog
