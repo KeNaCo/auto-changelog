@@ -28,7 +28,12 @@ def runner():
 
 
 @pytest.fixture
-def open_changelog(test_repo):
+def changelog_name():
+    return "CHANGELOG.md"
+
+
+@pytest.fixture
+def open_changelog(test_repo, changelog_name):
     file = None
 
     def _open_changelog():
@@ -78,3 +83,12 @@ def test_option_description(test_repo, runner, open_changelog):
     assert result.output == ""
     changelog = open_changelog().read()
     assert "My description\n" in changelog
+
+
+@pytest.mark.parametrize("changelog_name", ["a.out"])
+def test_option_output(test_repo, runner, open_changelog):
+    result = runner.invoke(main, ["--output", "a.out"])
+    assert result.exit_code == 0, result.stderr
+    assert result.output == ""
+    changelog = open_changelog().read()
+    assert changelog
