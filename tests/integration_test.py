@@ -48,3 +48,10 @@ def test_empty_repo(test_repo, runner, open_changelog):
     assert result.output == ""
     changelog = open_changelog().read()
     assert changelog == "# Changelog\n"
+
+
+def test_help(runner):
+    result = runner.invoke(main, ["--help"])
+    assert result.exit_code == 0, result.stderr
+    assert result.output
+
