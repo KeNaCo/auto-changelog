@@ -70,3 +70,11 @@ def test_option_title(test_repo, runner, open_changelog):
     assert result.output == ""
     changelog = open_changelog().read()
     assert "# Title\n" == changelog
+
+
+def test_option_description(test_repo, runner, open_changelog):
+    result = runner.invoke(main, ["--description", "My description"])
+    assert result.exit_code == 0, result.stderr
+    assert result.output == ""
+    changelog = open_changelog().read()
+    assert "My description\n" in changelog
