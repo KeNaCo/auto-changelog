@@ -17,7 +17,9 @@ def test_repo(tmp_path, commands):
     cwd = os.getcwd()
     os.chdir(tmp_path)
     for command in commands:
-        subprocess.run(command.split())
+        # shell argument fixes error for strings. Details in link below:
+        # https://stackoverflow.com/questions/9935151/popen-error-errno-2-no-such-file-or-directory
+        subprocess.run(command, shell=True)
     yield tmp_path
     os.chdir(cwd)
 
@@ -92,3 +94,23 @@ def test_option_output(test_repo, runner, open_changelog):
     assert result.output == ""
     changelog = open_changelog().read()
     assert changelog
+
+
+@pytest.mark.parametrize(
+    "commands",
+    [
+        [
+            "git init -q",
+            "touch file",
+            "git add file",
+            "git commit -m 'feat: Add file #1' -q",
+            "git remote add upstream git@github.com:Michael-F-Bryan/auto-changelog.git",
+        ]
+    ],
+)
+def test_option_remote(test_repo, runner, open_changelog):
+    result = runner.invoke(main, ["--remote", "upstream", "--unreleased"])
+    assert result.exit_code == 0, result.stderr
+    assert result.output == ""
+    changelog = open_changelog().read()
+    assert "[#1](https://github.com/Michael-F-Bryan/auto-changelog/issues/1)" in changelog
