@@ -24,7 +24,7 @@ class GitRepository(RepositoryInterface):
         self.commit_tags_index = self._init_commit_tags_index(self.repository, self.tag_prefix, self.tag_pattern)
         # in case of defined latest version, unreleased is used as latest release
         self._skip_unreleased = skip_unreleased and not bool(latest_version)
-        self._latest_version = latest_version or "Unreleased"
+        self._latest_version = latest_version or None
 
     def generate_changelog(
         self,
@@ -59,7 +59,11 @@ class GitRepository(RepositoryInterface):
                 skip = False
 
             if first_commit and commit not in self.commit_tags_index:
-                changelog.add_release(self._latest_version, date.today(), sha256())
+                # if no last version specified by the user => consider HEAD
+                if not self._latest_version:
+                    changelog.add_release("Unreleased", "HEAD", date.today(), sha256())
+                else:
+                    changelog.add_release(self._latest_version, self._latest_version, date.today(), sha256())
             first_commit = False
 
             if commit in self.commit_tags_index:
@@ -68,6 +72,13 @@ class GitRepository(RepositoryInterface):
 
             attributes = self._extract_note_args(commit)
             changelog.add_note(*attributes)
+
+        # create the compare url for each release
+        releases = changelog.releases
+        # we are using len(changelog.releases) - 1 because there is not compare url for the oldest version
+        for release_index in reversed(range(len(changelog.releases) - 1)):
+            releases[release_index].set_compare_url(compare_url, releases[release_index + 1].title)
+
         return changelog
 
     def _issue_from_git_remote_url(self, remote: str) -> Optional[str]:
@@ -158,7 +169,7 @@ class GitRepository(RepositoryInterface):
         return reverse_tag_index
 
     @staticmethod
-    def _extract_release_args(commit, tags) -> Tuple[str, Any, Any]:
+    def _extract_release_args(commit, tags) -> Tuple[str, str, Any, Any]:
         """ Extracts arguments for release """
         title = ", ".join(map(lambda tag: "{}".format(tag.name), tags))
         date_ = commit.authored_datetime.date()
@@ -166,7 +177,7 @@ class GitRepository(RepositoryInterface):
 
         # TODO parse message, be carefull about commit message and tags message
 
-        return title, date_, sha
+        return title, title, date_, sha
 
     @staticmethod
     def _extract_note_args(commit) -> Tuple[str, str, str, str, str, str]:
