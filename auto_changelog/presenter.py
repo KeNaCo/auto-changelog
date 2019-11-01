@@ -34,8 +34,14 @@ class MarkdownPresenter(PresenterInterface):
             return text
 
         def replace(match):
-            matching_text = match.group(1)
-            ticket_id = match.group(2) or match.group(1)
+            groups = match.groups()
+            if len(groups) == 2:
+                matching_text = groups[0]
+                ticket_id = groups[1]
+            elif len(groups) == 1:
+                matching_text = ticket_id = groups[0]
+            else:
+                raise ValueError("Invalid pattern")
             ticket_url = url.format(id=ticket_id)
             return "[{matching_text}]({ticket_url})".format(matching_text=matching_text, ticket_url=ticket_url)
 
