@@ -160,3 +160,9 @@ def test_option_issue_pattern(test_repo, runner, open_changelog):
     assert result.output == ""
     changelog = open_changelog().read()
     assert "[PRO-1](issues.custom.com/PRO-1)" in changelog
+
+
+def test_option_stdout(test_repo, runner):
+    result = runner.invoke(main, ["--stdout"])
+    assert result.exit_code == 0, result.stderr
+    assert "# Changelog" in result.output
