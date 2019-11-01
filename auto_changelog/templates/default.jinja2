@@ -12,7 +12,7 @@
 {{- macros.section('Refactorings', release.refactorings) -}}
 {{- macros.section('Docs', release.docs) -}}
 {{- macros.section('Others', release.builds+release.ci+release.chore+release.reverts+release.style_changes+release.tests) -}}
-{% if release.compare_url %}
-Full set of changes: [`{{release.previous_tag}}...{{release.tag}}`]({{release.compare_url}})
+{% if release.diff_url %}
+Full set of changes: [`{{release.previous_tag}}...{{release.tag}}`]({{release.diff_url}})
 {% endif -%}
 {% endfor -%}

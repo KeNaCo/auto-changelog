@@ -33,15 +33,13 @@ class GitRepository(RepositoryInterface):
         remote: str = "origin",
         issue_pattern: Optional[str] = None,
         issue_url: Optional[str] = None,
-        compare_url: Optional[str] = None,
+        diff_url: Optional[str] = None,
         starting_commit: str = "",
         stopping_commit: str = "HEAD",
     ) -> Changelog:
         issue_url = issue_url or self._issue_from_git_remote_url(remote)
-        compare_url = compare_url or self._compare_from_git_remote_url(remote)
-        changelog = Changelog(
-            title, description, issue_pattern, issue_url, self.tag_prefix, self.tag_pattern, compare_url
-        )
+        diff_url = diff_url or self._diff_from_git_remote_url(remote)
+        changelog = Changelog(title, description, issue_pattern, issue_url, self.tag_prefix, self.tag_pattern)
         if self._repository_is_empty():
             logging.info("Repository is empty.")
             return changelog
@@ -77,7 +75,7 @@ class GitRepository(RepositoryInterface):
         releases = changelog.releases
         # we are using len(changelog.releases) - 1 because there is not compare url for the oldest version
         for release_index in reversed(range(len(changelog.releases) - 1)):
-            releases[release_index].set_compare_url(compare_url, releases[release_index + 1].title)
+            releases[release_index].set_compare_url(diff_url, releases[release_index + 1].title)
 
         return changelog
 
@@ -90,9 +88,9 @@ class GitRepository(RepositoryInterface):
             logging.error("%s. Turning off issue links.", e)
             return None
 
-    def _compare_from_git_remote_url(self, remote: str):
+    def _diff_from_git_remote_url(self, remote: str):
         url = self._remote_url(remote)
-        return urljoin(url + "/", "compare/{previous}...{current}")
+        return url + "/compare/{previous}...{current}"
 
     def _remote_url(self, remote: str) -> str:
         """ Extract remote url from remote url """

@@ -56,7 +56,7 @@ class Release(Note):
         self.date = date
         self._notes = []  # type: List[Note]
         self._changes_indicators = {type_: False for type_ in ChangeType}
-        self.compare_url = None
+        self.diff_url = None
         self.previous_tag = None
 
     @property
@@ -151,9 +151,9 @@ class Release(Note):
         self._notes.append(note)
         self._changes_indicators[note.change_type] = True
 
-    def set_compare_url(self, compare_url: str, previous_tag: str):
+    def set_compare_url(self, diff_url: str, previous_tag: str):
         self.previous_tag = previous_tag
-        self.compare_url = compare_url.format(previous=previous_tag, current=self.tag)
+        self.diff_url = diff_url.format(previous=previous_tag, current=self.tag)
 
     def _notes_with(self, predicate: Callable) -> Tuple[Note]:
         return tuple(filter(predicate, self._notes))
@@ -174,7 +174,6 @@ class Changelog:
         issue_url: Optional[str] = None,
         tag_prefix: str = "",
         tag_pattern: Optional[str] = None,
-        compare_url: Optional[str] = None,
     ):
         self.title = title
         self.description = description
@@ -182,7 +181,6 @@ class Changelog:
         self.issue_url = issue_url or ""
         self.tag_prefix = tag_prefix
         self.tag_pattern = tag_pattern or default_tag_pattern
-        self.compare_url = compare_url or ""
         self._releases = []  # type: List[Release]
         self._current_release = None  # type: Optional[Release]
 
@@ -219,7 +217,7 @@ class RepositoryInterface(ABC):
         remote: str,
         issue_pattern: Optional[str],
         issue_url: Optional[str],
-        compare_url: Optional[str],
+        diff_url: Optional[str],
         starting_commit: str,
         stopping_commit: str,
     ) -> Changelog:
