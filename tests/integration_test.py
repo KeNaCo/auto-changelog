@@ -189,3 +189,26 @@ def test_starting_commit(test_repo, runner, open_changelog):
     changelog = open_changelog().read()
     assert "Add file PRO-1" not in changelog
     assert "Some file fix" in changelog
+
+
+@pytest.mark.parametrize(
+    "commands",
+    [
+        [
+            "git init -q",
+            "touch file",
+            "git add file",
+            "git commit -m 'feat: Add file PRO-1' -q",
+            "git tag stop",
+            "echo 'change' > file",
+            "git add file",
+            "git commit -m 'fix: Some file fix' -q",
+        ]
+    ],
+)
+def test_stopping_commit(test_repo, runner, open_changelog):
+    result = runner.invoke(main, ["--stopping-commit", "stop"])
+    assert result.exit_code == 0, result.stderr
+    changelog = open_changelog().read()
+    assert "Add file PRO-1" in changelog
+    assert "Some file fix" not in changelog
