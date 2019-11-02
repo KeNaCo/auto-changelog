@@ -166,3 +166,26 @@ def test_option_stdout(test_repo, runner):
     result = runner.invoke(main, ["--stdout"])
     assert result.exit_code == 0, result.stderr
     assert "# Changelog" in result.output
+
+
+@pytest.mark.parametrize(
+    "commands",
+    [
+        [
+            "git init -q",
+            "touch file",
+            "git add file",
+            "git commit -m 'feat: Add file PRO-1' -q",
+            "echo 'change' > file",
+            "git add file",
+            "git commit -m 'fix: Some file fix' -q",
+            "git tag start",
+        ]
+    ],
+)
+def test_starting_commit(test_repo, runner, open_changelog):
+    result = runner.invoke(main, ["--starting-commit", "start"])
+    assert result.exit_code == 0, result.stderr
+    changelog = open_changelog().read()
+    assert "Add file PRO-1" not in changelog
+    assert "Some file fix" in changelog
