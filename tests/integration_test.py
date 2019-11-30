@@ -141,6 +141,17 @@ def test_option_unreleased(test_repo, runner, open_changelog):
 @pytest.mark.parametrize(
     "commands", [["git init -q", "touch file", "git add file", "git commit -m 'feat: Add file #1' -q"]]
 )
+def test_option_skipping_unreleased(test_repo, runner, open_changelog):
+    result = runner.invoke(main)
+    assert result.exit_code == 0, result.stderr
+    assert result.output == ""
+    changelog = open_changelog().read()
+    assert "## Unreleased" not in changelog
+
+
+@pytest.mark.parametrize(
+    "commands", [["git init -q", "touch file", "git add file", "git commit -m 'feat: Add file #1' -q"]]
+)
 def test_option_issue_url(test_repo, runner, open_changelog):
     result = runner.invoke(main, ["--issue-url", "issues.custom.com/{id}", "--unreleased"])
     assert result.exit_code == 0, result.stderr
