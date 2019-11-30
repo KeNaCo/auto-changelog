@@ -173,6 +173,16 @@ def test_option_issue_pattern(test_repo, runner, open_changelog):
     assert "[PRO-1](issues.custom.com/PRO-1)" in changelog
 
 
+@pytest.mark.parametrize(
+    "commands", [["git init -q", "touch file", "git add file", "git commit -m 'feat: Add file PRO-1' -q"]]
+)
+def test_option_invalid_issue_pattern(test_repo, runner, open_changelog):
+    result = runner.invoke(
+        main, ["--issue-pattern", r" \w\w\w-\d+", "--issue-url", "issues.custom.com/{id}", "--unreleased"]
+    )
+    assert result.exit_code != 0, result.stderr
+
+
 def test_option_stdout(test_repo, runner):
     result = runner.invoke(main, ["--stdout"])
     assert result.exit_code == 0, result.stderr
@@ -211,6 +221,15 @@ def test_starting_commit_is_only_commit(test_repo, runner, open_changelog):
     assert result.exit_code == 0, result.stderr
     changelog = open_changelog().read()
     assert "Some file fix" in changelog
+
+
+@pytest.mark.parametrize(
+    "commands",
+    [["git init -q", "touch file", "git add file", "git commit -m 'fix: Some file fix' -q", "git tag start"]],
+)
+def test_starting_commit_not_exist(test_repo, runner, open_changelog):
+    result = runner.invoke(main, ["--starting-commit", "nonexist"])
+    assert result.exit_code != 0, result.stderr
 
 
 @pytest.mark.parametrize(
