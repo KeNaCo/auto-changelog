@@ -30,13 +30,14 @@ classifiers = [
     'Programming Language :: Python :: 3.5',
     'Programming Language :: Python :: 3.6',
     'Programming Language :: Python :: 3.7',
+    'Programming Language :: Python :: 3.8',
 ]
 
 include = ["auto_changelog/templates/*.jinja2"]
 
 [tool.black]
 line-length = 120
-target-version = ['py35','py36','py37']
+target-version = ['py35','py36','py37', 'py38']
 
 [tool.poetry.dependencies]
 python = ">=3.5"
