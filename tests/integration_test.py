@@ -204,6 +204,17 @@ def test_starting_commit(test_repo, runner, open_changelog):
 
 @pytest.mark.parametrize(
     "commands",
+    [["git init -q", "touch file", "git add file", "git commit -m 'fix: Some file fix' -q", "git tag start"]],
+)
+def test_starting_commit_is_only_commit(test_repo, runner, open_changelog):
+    result = runner.invoke(main, ["--starting-commit", "start"])
+    assert result.exit_code == 0, result.stderr
+    changelog = open_changelog().read()
+    assert "Some file fix" in changelog
+
+
+@pytest.mark.parametrize(
+    "commands",
     [
         [
             "git init -q",
