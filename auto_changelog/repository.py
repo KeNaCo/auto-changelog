@@ -6,7 +6,13 @@ from typing import Dict, List, Tuple, Any, Optional
 
 from git import Repo, Commit, TagReference
 
-from auto_changelog.domain_model import RepositoryInterface, Changelog, default_tag_pattern
+from auto_changelog.domain_model import (
+    RepositoryInterface,
+    Changelog,
+    default_tag_pattern,
+    anything_tag_pattern,
+    default_tag_prefix,
+)
 
 
 class GitRepository(RepositoryInterface):
@@ -16,11 +22,26 @@ class GitRepository(RepositoryInterface):
         *,
         latest_version: Optional[str] = None,
         skip_unreleased: bool = True,
-        tag_pattern: Optional[str] = None
+        tag_pattern: Optional[str] = None,
+        tag_prefix: Optional[str] = None
     ):
         self.repository = Repo(repository_path, search_parent_directories=True)
-        tag_pattern = tag_pattern or default_tag_pattern
-        self.commit_tags_index = self._init_commit_tags_index(self.repository, tag_pattern)
+
+        # tag-pattern, tag-prefix combination logic, for default prefix is ""
+        # tag-pattern | tag-prefix | logic filter             | actual filter
+        # not set     | not set    | default pattern (semver) | default_prefix and default_pattern
+        # not set     | prefix     | prefix                   | prefix and anything
+        # pattern     | not set    | pattern                  | default_prefix and pattern
+        # pattern     | prefix     | prefix and pattern       | prefix and pattern
+        if tag_pattern is None and tag_prefix is None:
+            tag_pattern = default_tag_pattern
+            tag_prefix = default_tag_prefix
+        elif tag_pattern is None:
+            tag_pattern = anything_tag_pattern
+        elif tag_prefix is None:
+            tag_prefix = default_tag_prefix
+
+        self.commit_tags_index = self._init_commit_tags_index(self.repository, tag_pattern, tag_prefix)
         # in case of defined latest version, unreleased is used as latest release
         self._skip_unreleased = skip_unreleased and not bool(latest_version)
         self._latest_version = latest_version or "Unreleased"
@@ -117,10 +138,12 @@ class GitRepository(RepositoryInterface):
         return not bool(self.repository.references)
 
     @staticmethod
-    def _init_commit_tags_index(repo: Repo, tag_pattern: str) -> Dict[Commit, List[TagReference]]:
+    def _init_commit_tags_index(repo: Repo, tag_pattern: str, tag_prefix: str) -> Dict[Commit, List[TagReference]]:
         """ Create reverse index """
         reverse_tag_index = {}
-        for tagref in filter(lambda tagref_: re.fullmatch(tag_pattern, tagref_.name), repo.tags):
+        for tagref in filter(
+            lambda tagref_: tagref_.name.startswith(tag_prefix) and re.fullmatch(tag_pattern, tagref_.name), repo.tags
+        ):
             commit = tagref.commit
             if commit not in reverse_tag_index:
                 reverse_tag_index[commit] = []

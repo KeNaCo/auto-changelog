@@ -192,9 +192,9 @@ def test_option_stdout(test_repo, runner):
         ]
     ],
 )
-def test_option_tag_pattern(test_repo, runner, open_changelog):
-    result = runner.invoke(main, ["--tag-pattern", r"\d+.\d+.\d+"])
-    assert result.exit_code == 0, result.stderr
+def test_default_semver_tag_pattern(test_repo, runner, open_changelog):
+    result = runner.invoke(main, [])
+    assert result.exit_code == 0
     changelog = open_changelog().read()
     assert "1.0.0" in changelog
     assert "custom-tag" not in changelog
@@ -204,6 +204,99 @@ def test_option_tag_pattern(test_repo, runner, open_changelog):
     "commands",
     [
         [
+            "touch file",
+            "git add file",
+            "git commit -m 'feat: Add file' -q",
+            "git tag custom-tag",
+            "echo 'change' > file",
+            "git add file",
+            "git commit -m 'chore: Change' -q",
+            "git tag v1.0.0",
+        ]
+    ],
+)
+def test_option_tag_pattern(test_repo, runner, open_changelog):
+    result = runner.invoke(main, ["--tag-pattern", r"v\d+.\d+.\d+"])
+    assert result.exit_code == 0, result.stderr
+    changelog = open_changelog().read()
+    assert "v1.0.0" in changelog
+    assert "custom-tag" not in changelog
+
+
+@pytest.mark.parametrize(
+    "commands",
+    [
+        [
+            "touch file",
+            "git add file",
+            "git commit -m 'feat: Add file' -q",
+            "git tag 2.0.0",
+            "echo 'change' > file",
+            "git add file",
+            "git commit -m 'chore: Change' -q",
+            "git tag v1.0.0",
+        ]
+    ],
+)
+def test_option_tag_prefix(test_repo, runner, open_changelog):
+    result = runner.invoke(main, ["--tag-prefix", "v"])
+    assert result.exit_code == 0, result.stderr
+    changelog = open_changelog().read()
+    assert "v1.0.0" in changelog
+    assert "2.0.0" not in changelog
+
+
+@pytest.mark.parametrize(
+    "commands",
+    [
+        [
+            "touch file",
+            "git add file",
+            "git commit -m 'feat: Add file' -q",
+            "git tag 2.0.0",
+            "echo 'change' > file",
+            "git add file",
+            "git commit -m 'chore: Change' -q",
+            "git tag v1.0.0",
+        ]
+    ],
+)
+def test_option_tag_prefix_and_tag_pattern(test_repo, runner, open_changelog):
+    result = runner.invoke(main, ["--tag-prefix", "v", "--tag-pattern", r"v\d+.\d+.\d+"])
+    assert result.exit_code == 0, result.stderr
+    changelog = open_changelog().read()
+    assert "v1.0.0" in changelog
+    assert "2.0.0" not in changelog
+
+
+@pytest.mark.parametrize(
+    "commands",
+    [
+        [
+            "touch file",
+            "git add file",
+            "git commit -m 'feat: Add file' -q",
+            "git tag 1.0.0",
+            "echo 'change' > file",
+            "git add file",
+            "git commit -m 'chore: Change' -q",
+            "git tag v1.0.0",
+        ]
+    ],
+)
+def test_option_tag_prefix_and_tag_pattern_exclusive(test_repo, runner, open_changelog):
+    result = runner.invoke(main, ["--tag-prefix", "v", "--tag-pattern", r"\d+.\d+.\d+"])
+    assert result.exit_code == 0, result.stderr
+    changelog = open_changelog().read()
+    assert "v1.0.0" not in changelog
+    assert "1.0.0" not in changelog
+
+
+@pytest.mark.parametrize(
+    "commands",
+    [
+        [
+            "git init -q",
             "touch file",
             "git add file",
             "git commit -m 'feat: Add file PRO-1' -q",

@@ -47,7 +47,7 @@ def test_index_init():
     tagref3.name = "c"
     repo_mock = Mock(spec=Repo, tags=[tagref1, tagref2, tagref3])
 
-    index = GitRepository._init_commit_tags_index(repo_mock, r".*")
+    index = GitRepository._init_commit_tags_index(repo_mock, tag_pattern=r".*", tag_prefix="")
     assert index == {commit1: [tagref1], commit2: [tagref2, tagref3]}
 
 

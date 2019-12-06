@@ -36,6 +36,7 @@ from auto_changelog.repository import GitRepository
 )
 @click.option("--stdout", is_flag=True)
 @click.option("--tag-pattern", default=None, help="Override regex pattern for release tags")
+@click.option("--tag-prefix", default=None, help="Prefix used in version tags [Default: '']")
 @click.option("--starting-commit", help="Starting commit to use for changelog generation", default="")
 @click.option("--stopping-commit", help="Stopping commit to use for changelog generation", default="HEAD")
 def main(
@@ -50,6 +51,7 @@ def main(
     issue_pattern,
     stdout: bool,
     tag_pattern: Optional[str],
+    tag_prefix: Optional[str],
     starting_commit: str,
     stopping_commit: str,
 ):
@@ -57,7 +59,11 @@ def main(
     repo = os.path.abspath(repo)
 
     repository = GitRepository(
-        repo, latest_version=latest_version, skip_unreleased=not unreleased, tag_pattern=tag_pattern
+        repo,
+        latest_version=latest_version,
+        skip_unreleased=not unreleased,
+        tag_pattern=tag_pattern,
+        tag_prefix=tag_prefix,
     )
     presenter = MarkdownPresenter()
     changelog = generate_changelog(
