@@ -1,8 +1,8 @@
+import logging
 import re
 from datetime import date
 from hashlib import sha256
 from typing import Dict, List, Tuple, Any, Optional
-from urllib.parse import urljoin
 
 from git import Repo, Commit, TagReference
 
@@ -29,6 +29,9 @@ class GitRepository(RepositoryInterface):
     ) -> Changelog:
         issue_url = issue_url or self._issue_from_git_remote_url(remote)
         changelog = Changelog(title, description, issue_pattern, issue_url)
+        if self._repository_is_empty():
+            logging.info("Repository is empty.")
+            return changelog
         iter_rev = self._get_iter_rev(starting_commit, stopping_commit)
         commits = self.repository.iter_commits(iter_rev)
         # Some thoughts here
@@ -54,10 +57,14 @@ class GitRepository(RepositoryInterface):
             changelog.add_note(*attributes)
         return changelog
 
-    def _issue_from_git_remote_url(self, remote: str):
+    def _issue_from_git_remote_url(self, remote: str) -> Optional[str]:
         """ Creates issue url with {id} format key """
-        url = self._remote_url(remote)
-        return url + "/issues/{id}"
+        try:
+            url = self._remote_url(remote)
+            return url + "/issues/{id}"
+        except ValueError as e:
+            logging.error("%s. Turning off issue links.", e)
+            return None
 
     def _remote_url(self, remote: str) -> str:
         """ Extract remote url from remote url """
@@ -97,6 +104,9 @@ class GitRepository(RepositoryInterface):
 
         iter_rev = "{0}...{1}".format(stopping_commit, starting_commit) if starting_commit else stopping_commit
         return iter_rev
+
+    def _repository_is_empty(self):
+        return not bool(self.repository.references)
 
     @staticmethod
     def _init_commit_tags_index(repo: Repo) -> Dict[Commit, List[TagReference]]:

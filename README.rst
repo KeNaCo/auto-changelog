@@ -48,7 +48,7 @@ To setup development environment, you may use `Poetry`_:
 
 .. code-block:: text
 
-    poetry install --dev
+    poetry install
 
 To activate virtualenv:
 
