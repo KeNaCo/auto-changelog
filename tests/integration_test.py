@@ -15,12 +15,12 @@ def commands():
 @pytest.fixture
 def test_repo(tmp_path, commands):
     cwd = os.getcwd()
-    os.chdir(tmp_path)
+    os.chdir(str(tmp_path))
     for command in commands:
         # shell argument fixes error for strings. Details in link below:
         # https://stackoverflow.com/questions/9935151/popen-error-errno-2-no-such-file-or-directory
         subprocess.run(command, shell=True)
-    yield tmp_path
+    yield str(tmp_path)
     os.chdir(cwd)
 
 
