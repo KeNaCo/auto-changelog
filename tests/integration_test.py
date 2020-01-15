@@ -9,14 +9,15 @@ from auto_changelog.__main__ import main
 
 @pytest.fixture
 def commands():
-    return ["git init -q"]
+    return []
 
 
 @pytest.fixture
 def test_repo(tmp_path, commands):
     cwd = os.getcwd()
     os.chdir(str(tmp_path))
-    for command in commands:
+    init_commands = ["git init -q", "git config user.name 'John Doe'", "git config user.email john.doe@email"]
+    for command in init_commands + commands:
         # shell argument fixes error for strings. Details in link below:
         # https://stackoverflow.com/questions/9935151/popen-error-errno-2-no-such-file-or-directory
         subprocess.run(command, shell=True)
@@ -100,7 +101,6 @@ def test_option_output(test_repo, runner, open_changelog):
     "commands",
     [
         [
-            "git init -q",
             "touch file",
             "git add file",
             "git commit -m 'feat: Add file #1' -q",
@@ -116,9 +116,7 @@ def test_option_remote(test_repo, runner, open_changelog):
     assert "[#1](https://github.com/Michael-F-Bryan/auto-changelog/issues/1)" in changelog
 
 
-@pytest.mark.parametrize(
-    "commands", [["git init -q", "touch file", "git add file", "git commit -m 'feat: Add file #1' -q"]]
-)
+@pytest.mark.parametrize("commands", [["touch file", "git add file", "git commit -m 'feat: Add file #1' -q"]])
 def test_option_latest_version(test_repo, runner, open_changelog):
     result = runner.invoke(main, ["--latest-version", "1.0.0"])
     assert result.exit_code == 0, result.stderr
@@ -127,9 +125,7 @@ def test_option_latest_version(test_repo, runner, open_changelog):
     assert "## 1.0.0" in changelog
 
 
-@pytest.mark.parametrize(
-    "commands", [["git init -q", "touch file", "git add file", "git commit -m 'feat: Add file #1' -q"]]
-)
+@pytest.mark.parametrize("commands", [["touch file", "git add file", "git commit -m 'feat: Add file #1' -q"]])
 def test_option_unreleased(test_repo, runner, open_changelog):
     result = runner.invoke(main, ["--unreleased"])
     assert result.exit_code == 0, result.stderr
@@ -138,9 +134,7 @@ def test_option_unreleased(test_repo, runner, open_changelog):
     assert "## Unreleased" in changelog
 
 
-@pytest.mark.parametrize(
-    "commands", [["git init -q", "touch file", "git add file", "git commit -m 'feat: Add file #1' -q"]]
-)
+@pytest.mark.parametrize("commands", [["touch file", "git add file", "git commit -m 'feat: Add file #1' -q"]])
 def test_option_skipping_unreleased(test_repo, runner, open_changelog):
     result = runner.invoke(main)
     assert result.exit_code == 0, result.stderr
@@ -149,9 +143,7 @@ def test_option_skipping_unreleased(test_repo, runner, open_changelog):
     assert "## Unreleased" not in changelog
 
 
-@pytest.mark.parametrize(
-    "commands", [["git init -q", "touch file", "git add file", "git commit -m 'feat: Add file #1' -q"]]
-)
+@pytest.mark.parametrize("commands", [["touch file", "git add file", "git commit -m 'feat: Add file #1' -q"]])
 def test_option_issue_url(test_repo, runner, open_changelog):
     result = runner.invoke(main, ["--issue-url", "issues.custom.com/{id}", "--unreleased"])
     assert result.exit_code == 0, result.stderr
@@ -160,9 +152,7 @@ def test_option_issue_url(test_repo, runner, open_changelog):
     assert "[#1](issues.custom.com/1)" in changelog
 
 
-@pytest.mark.parametrize(
-    "commands", [["git init -q", "touch file", "git add file", "git commit -m 'feat: Add file PRO-1' -q"]]
-)
+@pytest.mark.parametrize("commands", [["touch file", "git add file", "git commit -m 'feat: Add file PRO-1' -q"]])
 def test_option_issue_pattern(test_repo, runner, open_changelog):
     result = runner.invoke(
         main, ["--issue-pattern", r" (\w\w\w-\d+)", "--issue-url", "issues.custom.com/{id}", "--unreleased"]
@@ -173,9 +163,7 @@ def test_option_issue_pattern(test_repo, runner, open_changelog):
     assert "[PRO-1](issues.custom.com/PRO-1)" in changelog
 
 
-@pytest.mark.parametrize(
-    "commands", [["git init -q", "touch file", "git add file", "git commit -m 'feat: Add file PRO-1' -q"]]
-)
+@pytest.mark.parametrize("commands", [["touch file", "git add file", "git commit -m 'feat: Add file PRO-1' -q"]])
 def test_option_invalid_issue_pattern(test_repo, runner, open_changelog):
     result = runner.invoke(
         main, ["--issue-pattern", r" \w\w\w-\d+", "--issue-url", "issues.custom.com/{id}", "--unreleased"]
@@ -193,7 +181,6 @@ def test_option_stdout(test_repo, runner):
     "commands",
     [
         [
-            "git init -q",
             "touch file",
             "git add file",
             "git commit -m 'feat: Add file PRO-1' -q",
@@ -213,8 +200,7 @@ def test_starting_commit(test_repo, runner, open_changelog):
 
 
 @pytest.mark.parametrize(
-    "commands",
-    [["git init -q", "touch file", "git add file", "git commit -m 'fix: Some file fix' -q", "git tag start"]],
+    "commands", [["touch file", "git add file", "git commit -m 'fix: Some file fix' -q", "git tag start"]],
 )
 def test_starting_commit_is_only_commit(test_repo, runner, open_changelog):
     result = runner.invoke(main, ["--starting-commit", "start"])
@@ -224,8 +210,7 @@ def test_starting_commit_is_only_commit(test_repo, runner, open_changelog):
 
 
 @pytest.mark.parametrize(
-    "commands",
-    [["git init -q", "touch file", "git add file", "git commit -m 'fix: Some file fix' -q", "git tag start"]],
+    "commands", [["touch file", "git add file", "git commit -m 'fix: Some file fix' -q", "git tag start"]],
 )
 def test_starting_commit_not_exist(test_repo, runner, open_changelog):
     result = runner.invoke(main, ["--starting-commit", "nonexist"])
@@ -236,7 +221,6 @@ def test_starting_commit_not_exist(test_repo, runner, open_changelog):
     "commands",
     [
         [
-            "git init -q",
             "touch file",
             "git add file",
             "git commit -m 'feat: Add file PRO-1' -q",
