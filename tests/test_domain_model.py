@@ -1,6 +1,6 @@
-import pytest
 from datetime import date, timedelta
 
+import pytest
 from auto_changelog.domain_model import Changelog
 
 
@@ -24,15 +24,20 @@ def test_changelog_add_note():
     changelog.add_note(sha="345", change_type="feat", description="")
     # unsupported_type should be ignored
     changelog.add_note(sha="567", change_type="unsupported_type", description="")
+    # breaking change
+    changelog.add_note(sha="789", change_type="feat", description="", breaking_change="deprecated")
 
     releases = changelog.releases
     assert len(releases) == 1
     assert releases[0].title == "Unreleased"
     assert len(releases[0].fixes) == 1
     assert releases[0].fixes[0].sha == "123"
-    assert len(releases[0].features) == 1
+    assert len(releases[0].features) == 2
     assert releases[0].features[0].sha == "345"
-    assert len(releases[0]._notes) == 2
+    assert releases[0].features[1].sha == "789"
+    assert len(releases[0].breaking_changes) == 1
+    assert releases[0].breaking_changes[0].sha == "789"
+    assert len(releases[0]._notes) == 3
 
 
 def test_changelog_sorted_releases():

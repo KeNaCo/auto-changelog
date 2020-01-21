@@ -12,4 +12,11 @@
 {{- macros.section('Refactorings', release.refactorings) -}}
 {{- macros.section('Docs', release.docs) -}}
 {{- macros.section('Others', release.builds+release.ci+release.chore+release.reverts+release.style_changes+release.tests) -}}
+{%- if release.breaking_changes %}
+#### BREAKING CHANGES
+
+{% for note in release.breaking_changes -%}
+*{% if note.scope %} ({{ note.scope }}):{% endif %} {{ note.breaking_change }}
+{% endfor -%}
+{% endif -%}
 {% endfor -%}

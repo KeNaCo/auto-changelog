@@ -1,7 +1,6 @@
 from datetime import date
 
 import pytest
-
 from auto_changelog.domain_model import Changelog, default_issue_pattern
 from auto_changelog.presenter import MarkdownPresenter
 
@@ -56,6 +55,30 @@ def test_markdown_presenter_changelog_with_fixes(changelog, markdown_presenter):
     description = "{}\n\n".format(changelog.description) if changelog.description else ""
     assert_markdown = (
         "# {title}\n\n{description}## Unreleased (2020-01-01)\n\n#### Fixes\n\n* description\n* (scope): description\n"
+    ).format(title=changelog.title, description=description)
+    markdown = markdown_presenter.present(changelog)
+    assert assert_markdown == markdown
+
+
+def test_markdown_presenter_changelog_with_breaking_changes(changelog, markdown_presenter):
+
+    changelog.add_release("Unreleased", date(2020, 1, 1), None)
+    changelog.add_note("", "feat", "description", breaking_change="breaking_change1")
+    changelog.add_note("", "feat", "description", scope="scope", breaking_change="breaking_change2")
+    description = "{}\n\n".format(changelog.description) if changelog.description else ""
+    assert_markdown = (
+        """# {title}\n\n{description}## Unreleased (2020-01-01)
+
+#### New Features
+
+* description
+* (scope): description
+
+#### BREAKING CHANGES
+
+* breaking_change1
+* (scope): breaking_change2
+"""
     ).format(title=changelog.title, description=description)
     markdown = markdown_presenter.present(changelog)
     assert assert_markdown == markdown

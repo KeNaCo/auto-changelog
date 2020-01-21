@@ -1,10 +1,8 @@
+from unittest.mock import Mock, patch
+
 import pytest
-from unittest.mock import Mock
-from unittest.mock import patch
-
-from git import Repo, Commit
-
 from auto_changelog.repository import GitRepository
+from git import Commit, Repo
 
 
 @patch("auto_changelog.repository.Repo", autospec=True)
@@ -48,12 +46,18 @@ def test_index_init():
 @pytest.mark.parametrize(
     "message, expected",
     [
-        ("", ("", "", "", "", "")),
-        ("feat: description", ("feat", "", "description", "", "")),
-        ("feat(scope): description", ("feat", "scope", "description", "", "")),
-        ("feat: description\n\nbody", ("feat", "", "description", "body", "")),
-        ("feat: description\n\nbody\n\nfooter", ("feat", "", "description", "body", "footer")),
-        ("feat(scope): description\n\nbody\n\nfooter", ("feat", "scope", "description", "body", "footer")),
+        ("", ("", "", "", "", "", "")),
+        ("feat: description", ("feat", "", "description", "", "", "")),
+        ("feat(scope): description", ("feat", "scope", "description", "", "", "")),
+        ("feat: description\n\nbody", ("feat", "", "description", "body", "", "")),
+        ("feat: description\n\nbody\n\nfooter", ("feat", "", "description", "body", "footer", "")),
+        ("feat(scope): description\n\nbody\n\nfooter", ("feat", "scope", "description", "body", "footer", "")),
+        ("feat!: description", ("feat", "", "description", "", "", "description")),
+        ("feat(scope)!: description", ("feat", "scope", "description", "", "", "description")),
+        (
+            "feat(scope): description\n\nBREAKING CHANGE: breaking_change",
+            ("feat", "scope", "description", "", "", "breaking_change"),
+        ),
     ],
 )
 def test_parse_conventional_commit_with_empty_message(message, expected):
