@@ -138,25 +138,42 @@ class GitRepository(RepositoryInterface):
         return sha, type_, description, scope, body, footer, breaking_change
 
     @staticmethod
-    def _parse_conventional_commit(message: str) -> Tuple[str, str, str, str, str]:
+    def _parse_conventional_commit(message: str) -> Tuple[str, str, str, str, str, str]:
         type_ = scope = breaking_flag = breaking_change = description = body = footer = ""
-        # TODO this is less restrictive version of re. I have somewhere more restrictive one, maybe as option?
-        match = re.match(r"^(\w+)(\(\w+\))?(!)?: (.*)(\n\n.+)?(\n\n.+)?$", message)
-        if match:
-            type_, scope, breaking_flag, description, body, footer = match.groups(default="")
+
+        msg_lines = message.splitlines(True)
+
+        if len(msg_lines) > 0:
+            # extract Headers
+            # TODO this is less restrictive version of re. I have somewhere more restrictive one, maybe as option?
+            type_, scope, breaking_flag, description = re.match(r"^(\w+)(\(\w+\))?(!)?: (.*)", msg_lines[0]).groups(
+                default=""
+            )
+
+            # extract body and footers
+            footer_found = False
+            for line in msg_lines[1:]:
+                if footer_found or GitRepository._is_footer_line(line):
+                    footer_found = True
+                    footer += line
+                else:
+                    body += line
+
         if scope:
             scope = scope[1:-1]
         if breaking_flag:
             breaking_change = description
         if body:
-            body = body[2:]
-            if body.strip().startswith("BREAKING CHANGE: "):
-                breaking_change = body.strip().split("BREAKING CHANGE: ", 1)[1]
-                body = ""
+            body = body.strip()
         if footer:
-            footer = footer[2:]
-            if footer.strip().startswith("BREAKING CHANGE: "):
-                breaking_change = footer.strip().split("BREAKING CHANGE: ", 1)[1]
+            footer = footer.strip()
+            match = re.match(r"BREAKING[ -]CHANGE: (.*)", footer)
+            if match:
+                breaking_change = match.groups(default="")[0]
                 footer = ""
 
         return type_, scope, description, body, footer, breaking_change
+
+    @staticmethod
+    def _is_footer_line(line: str) -> bool:
+        return re.match(r"\w+-?\w+?(: | #).*", line) or re.match(r"BREAKING[ -]CHANGE: .*", line)
