@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Callable, Union, List, Optional, Tuple, Any
+from typing import Any, Callable, List, Optional, Tuple, Union
 
 default_issue_pattern = r"(#([\w-]+))"
 
@@ -28,6 +28,7 @@ class Note:
         scope: str = "",
         body: str = "",
         footer: str = "",
+        breaking_change: str = "",
     ):
         self.sha = sha
         self.change_type = ChangeType(change_type) if change_type else change_type  # TODO Hmm..
@@ -35,6 +36,7 @@ class Note:
         self.description = description
         self.body = body
         self.footer = footer
+        self.breaking_change = breaking_change
 
     def __eq__(self, other):
         return (
@@ -43,6 +45,7 @@ class Note:
             and self.description == other.description
             and self.body == other.body
             and self.footer == other.footer
+            and self.breaking_change == other.breaking_change
         )
 
 
@@ -97,6 +100,10 @@ class Release(Note):
     @property
     def tests(self):
         return self._notes_with_type(ChangeType.TEST)
+
+    @property
+    def breaking_changes(self):
+        return self._notes_with(lambda x: x.breaking_change)
 
     @property
     def has_builds(self):

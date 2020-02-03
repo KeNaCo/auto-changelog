@@ -2,11 +2,10 @@ import logging
 import re
 from datetime import date
 from hashlib import sha256
-from typing import Dict, List, Tuple, Any, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
-from git import Repo, Commit, TagReference
-
-from auto_changelog.domain_model import RepositoryInterface, Changelog
+from auto_changelog.domain_model import Changelog, RepositoryInterface
+from git import Commit, Repo, TagReference
 
 
 class GitRepository(RepositoryInterface):
@@ -135,20 +134,46 @@ class GitRepository(RepositoryInterface):
         """ Extracts arguments for release Note from commit """
         sha = commit.hexsha
         message = commit.message
-        type_, scope, description, body, footer = GitRepository._parse_conventional_commit(message)
-        return sha, type_, description, scope, body, footer
+        type_, scope, description, body, footer, breaking_change = GitRepository._parse_conventional_commit(message)
+        return sha, type_, description, scope, body, footer, breaking_change
 
     @staticmethod
-    def _parse_conventional_commit(message: str) -> Tuple[str, str, str, str, str]:
-        type_ = scope = description = body = footer = ""
-        # TODO this is less restrictive version of re. I have somewhere more restrictive one, maybe as option?
-        match = re.match(r"^(\w+)(\(\w+\))?: (.*)(\n\n.+)?(\n\n.+)?$", message)
-        if match:
-            type_, scope, description, body, footer = match.groups(default="")
+    def _parse_conventional_commit(message: str) -> Tuple[str, str, str, str, str, str]:
+        type_ = scope = breaking_flag = breaking_change = description = body = footer = ""
+
+        msg_lines = message.splitlines(True)
+
+        if len(msg_lines) > 0:
+            # extract Headers
+            # TODO this is less restrictive version of re. I have somewhere more restrictive one, maybe as option?
+            type_, scope, breaking_flag, description = re.match(r"^(\w+)(\(\w+\))?(!)?: (.*)", msg_lines[0]).groups(
+                default=""
+            )
+
+            # extract body and footers
+            footer_found = False
+            for line in msg_lines[1:]:
+                if footer_found or GitRepository._is_footer_line(line):
+                    footer_found = True
+                    footer += line
+                else:
+                    body += line
+
         if scope:
             scope = scope[1:-1]
+        if breaking_flag:
+            breaking_change = description
         if body:
-            body = body[2:]
+            body = body.strip()
         if footer:
-            footer = footer[2:]
-        return type_, scope, description, body, footer
+            footer = footer.strip()
+            match = re.match(r"BREAKING[ -]CHANGE: (.*)", footer)
+            if match:
+                breaking_change = match.groups(default="")[0]
+                footer = ""
+
+        return type_, scope, description, body, footer, breaking_change
+
+    @staticmethod
+    def _is_footer_line(line: str) -> bool:
+        return re.match(r"\w+-?\w+?(: | #).*", line) or re.match(r"BREAKING[ -]CHANGE: .*", line)
