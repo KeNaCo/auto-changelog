@@ -36,12 +36,18 @@ def test_latest_version(mock_ggu, mock_ena, mock_era, mock_repo):
 def test_index_init():
     commit1 = Mock()
     commit2 = Mock()
-    tagref1 = Mock(commit=commit1)
-    tagref2 = Mock(commit=commit2)
-    tagref3 = Mock(commit=commit2)
+    tagref1 = Mock()
+    tagref1.commit = commit1
+    tagref1.name = "a"
+    tagref2 = Mock()
+    tagref2.commit = commit2
+    tagref2.name = "b"
+    tagref3 = Mock()
+    tagref3.commit = commit2
+    tagref3.name = "c"
     repo_mock = Mock(spec=Repo, tags=[tagref1, tagref2, tagref3])
 
-    index = GitRepository._init_commit_tags_index(repo_mock)
+    index = GitRepository._init_commit_tags_index(repo_mock, r".*")
     assert index == {commit1: [tagref1], commit2: [tagref2, tagref3]}
 
 

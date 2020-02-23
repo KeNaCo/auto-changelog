@@ -183,11 +183,35 @@ def test_option_stdout(test_repo, runner):
         [
             "touch file",
             "git add file",
+            "git commit -m 'feat: Add file' -q",
+            "git tag custom-tag",
+            "echo 'change' > file",
+            "git add file",
+            "git commit -m 'chore: Change' -q",
+            "git tag 1.0.0",
+        ]
+    ],
+)
+def test_option_tag_pattern(test_repo, runner, open_changelog):
+    result = runner.invoke(main, ["--tag-pattern", r"\d+.\d+.\d+"])
+    assert result.exit_code == 0, result.stderr
+    changelog = open_changelog().read()
+    assert "1.0.0" in changelog
+    assert "custom-tag" not in changelog
+
+
+@pytest.mark.parametrize(
+    "commands",
+    [
+        [
+            "touch file",
+            "git add file",
             "git commit -m 'feat: Add file PRO-1' -q",
             "echo 'change' > file",
             "git add file",
             "git commit -m 'fix: Some file fix' -q",
             "git tag start",
+            "git tag 1.0.0",
         ]
     ],
 )
@@ -200,17 +224,17 @@ def test_starting_commit(test_repo, runner, open_changelog):
 
 
 @pytest.mark.parametrize(
-    "commands", [["touch file", "git add file", "git commit -m 'fix: Some file fix' -q", "git tag start"]],
+    "commands", [["touch file", "git add file", "git commit -m 'fix: Some file fix' -q", "git tag 1.0.0"]],
 )
 def test_starting_commit_is_only_commit(test_repo, runner, open_changelog):
-    result = runner.invoke(main, ["--starting-commit", "start"])
+    result = runner.invoke(main, ["--starting-commit", "1.0.0"])
     assert result.exit_code == 0, result.stderr
     changelog = open_changelog().read()
     assert "Some file fix" in changelog
 
 
 @pytest.mark.parametrize(
-    "commands", [["touch file", "git add file", "git commit -m 'fix: Some file fix' -q", "git tag start"]],
+    "commands", [["touch file", "git add file", "git commit -m 'fix: Some file fix' -q", "git tag 1.0.0"]],
 )
 def test_starting_commit_not_exist(test_repo, runner, open_changelog):
     result = runner.invoke(main, ["--starting-commit", "nonexist"])
@@ -232,7 +256,7 @@ def test_starting_commit_not_exist(test_repo, runner, open_changelog):
     ],
 )
 def test_stopping_commit(test_repo, runner, open_changelog):
-    result = runner.invoke(main, ["--stopping-commit", "stop"])
+    result = runner.invoke(main, ["--stopping-commit", "stop", "--unreleased"])
     assert result.exit_code == 0, result.stderr
     changelog = open_changelog().read()
     assert "Add file PRO-1" in changelog

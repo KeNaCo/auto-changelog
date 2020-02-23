@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 
 import click
 
@@ -34,6 +35,7 @@ from auto_changelog.repository import GitRepository
     help="Override regex pattern for issues in commit messages. Should contain two groups, original match and ID used by issue-url.",
 )
 @click.option("--stdout", is_flag=True)
+@click.option("--tag-pattern", default=None, help="Override regex pattern for release tags")
 @click.option("--starting-commit", help="Starting commit to use for changelog generation", default="")
 @click.option("--stopping-commit", help="Stopping commit to use for changelog generation", default="HEAD")
 def main(
@@ -47,13 +49,16 @@ def main(
     issue_url,
     issue_pattern,
     stdout: bool,
+    tag_pattern: Optional[str],
     starting_commit: str,
     stopping_commit: str,
 ):
     # Convert the repository name to an absolute path
     repo = os.path.abspath(repo)
 
-    repository = GitRepository(repo, latest_version=latest_version, skip_unreleased=not unreleased)
+    repository = GitRepository(
+        repo, latest_version=latest_version, skip_unreleased=not unreleased, tag_pattern=tag_pattern
+    )
     presenter = MarkdownPresenter()
     changelog = generate_changelog(
         repository,
