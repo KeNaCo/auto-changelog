@@ -35,7 +35,9 @@ from auto_changelog.repository import GitRepository
     help="Override regex pattern for issues in commit messages. Should contain two groups, original match and ID used by issue-url.",
 )
 @click.option("--stdout", is_flag=True)
-@click.option("--tag-pattern", default=None, help="Override regex pattern for release tags")
+@click.option(
+    "--tag-pattern", default=None, help="Override regex pattern for release tags [Default: semantic versioning]"
+)
 @click.option("--tag-prefix", default=None, help="Prefix used in version tags [Default: '']")
 @click.option("--starting-commit", help="Starting commit to use for changelog generation", default="")
 @click.option("--stopping-commit", help="Stopping commit to use for changelog generation", default="HEAD")
