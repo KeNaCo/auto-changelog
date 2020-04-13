@@ -82,7 +82,7 @@ def test_tag_pattern(tags, tag_prefix, tag_pattern, expected_tags):
         for selected_tag_ref in selected_tag_ref_list:
             selected_tags.append(selected_tag_ref.name)
 
-    assert selected_tags == expected_tags
+    assert sorted(selected_tags) == sorted(expected_tags)
 
 
 @pytest.mark.parametrize(
