@@ -5,7 +5,6 @@ from jinja2 import FileSystemLoader, Environment
 
 from auto_changelog.domain_model import Changelog, PresenterInterface
 
-
 default_template_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), "templates")
 default_template_name = "default.jinja2"
 

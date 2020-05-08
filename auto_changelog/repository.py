@@ -3,6 +3,7 @@ import re
 from datetime import date
 from hashlib import sha256
 from typing import Dict, List, Tuple, Any, Optional
+from urllib.parse import urljoin
 
 from git import Repo, Commit, TagReference
 
@@ -13,17 +14,18 @@ class GitRepository(RepositoryInterface):
     def __init__(
         self,
         repository_path,
-        *,
         latest_version: Optional[str] = None,
         skip_unreleased: bool = True,
-        tag_pattern: Optional[str] = None
+        tag_prefix: str = "",
+        tag_pattern: Optional[str] = None,
     ):
-        self.repository = Repo(repository_path, search_parent_directories=True)
-        tag_pattern = tag_pattern or default_tag_pattern
-        self.commit_tags_index = self._init_commit_tags_index(self.repository, tag_pattern)
+        self.repository = Repo(repository_path)
+        self.tag_prefix = tag_prefix
+        self.tag_pattern = tag_pattern
+        self.commit_tags_index = self._init_commit_tags_index(self.repository, self.tag_prefix, self.tag_pattern)
         # in case of defined latest version, unreleased is used as latest release
         self._skip_unreleased = skip_unreleased and not bool(latest_version)
-        self._latest_version = latest_version or "Unreleased"
+        self._latest_version = latest_version or None
 
     def generate_changelog(
         self,
@@ -32,11 +34,13 @@ class GitRepository(RepositoryInterface):
         remote: str = "origin",
         issue_pattern: Optional[str] = None,
         issue_url: Optional[str] = None,
+        diff_url: Optional[str] = None,
         starting_commit: str = "",
         stopping_commit: str = "HEAD",
     ) -> Changelog:
         issue_url = issue_url or self._issue_from_git_remote_url(remote)
-        changelog = Changelog(title, description, issue_pattern, issue_url)
+        diff_url = diff_url or self._diff_from_git_remote_url(remote)
+        changelog = Changelog(title, description, issue_pattern, issue_url, self.tag_prefix, self.tag_pattern)
         if self._repository_is_empty():
             logging.info("Repository is empty.")
             return changelog
@@ -54,7 +58,11 @@ class GitRepository(RepositoryInterface):
                 skip = False
 
             if first_commit and commit not in self.commit_tags_index:
-                changelog.add_release(self._latest_version, date.today(), sha256())
+                # if no last version specified by the user => consider HEAD
+                if not self._latest_version:
+                    changelog.add_release("Unreleased", "HEAD", date.today(), sha256())
+                else:
+                    changelog.add_release(self._latest_version, self._latest_version, date.today(), sha256())
             first_commit = False
 
             if commit in self.commit_tags_index:
@@ -63,6 +71,13 @@ class GitRepository(RepositoryInterface):
 
             attributes = self._extract_note_args(commit)
             changelog.add_note(*attributes)
+
+        # create the compare url for each release
+        releases = changelog.releases
+        # we are using len(changelog.releases) - 1 because there is not compare url for the oldest version
+        for release_index in reversed(range(len(changelog.releases) - 1)):
+            releases[release_index].set_compare_url(diff_url, releases[release_index + 1].title)
+
         return changelog
 
     def _issue_from_git_remote_url(self, remote: str) -> Optional[str]:
@@ -72,6 +87,14 @@ class GitRepository(RepositoryInterface):
             return url + "/issues/{id}"
         except ValueError as e:
             logging.error("%s. Turning off issue links.", e)
+            return None
+
+    def _diff_from_git_remote_url(self, remote: str):
+        try:
+            url = self._remote_url(remote)
+            return urljoin(url + "/", "compare/{previous}...{current}")
+        except ValueError as e:
+            logging.error("%s. Turning off compare url links.", e)
             return None
 
     def _remote_url(self, remote: str) -> str:
@@ -117,18 +140,39 @@ class GitRepository(RepositoryInterface):
         return not bool(self.repository.references)
 
     @staticmethod
-    def _init_commit_tags_index(repo: Repo, tag_pattern: str) -> Dict[Commit, List[TagReference]]:
+    def _init_commit_tags_index(
+        repo: Repo, tag_prefix: str, tag_pattern: Optional[str] = None
+    ) -> Dict[Commit, List[TagReference]]:
         """ Create reverse index """
         reverse_tag_index = {}
-        for tagref in filter(lambda tagref_: re.fullmatch(tag_pattern, tagref_.name), repo.tags):
+        semver_regex = default_tag_pattern
+        for tagref in repo.tags:
+            tag_name = tagref.name
             commit = tagref.commit
-            if commit not in reverse_tag_index:
-                reverse_tag_index[commit] = []
-            reverse_tag_index[commit].append(tagref)
+
+            consider_tag = False
+
+            # consider & remove the prefix if we found one
+            if tag_name.startswith(tag_prefix):
+                tag_name = tag_name.replace(tag_prefix, "")
+
+                # if user specified a tag pattern => consider it
+                if tag_pattern is not None:
+                    if re.fullmatch(tag_pattern, tag_name):
+                        consider_tag = True
+                # no tag pattern specified by user => check semver semantic
+                elif re.fullmatch(semver_regex, tag_name):
+                    consider_tag = True
+
+            # good format of the tag => consider it
+            if consider_tag:
+                if commit not in reverse_tag_index:
+                    reverse_tag_index[commit] = []
+                reverse_tag_index[commit].append(tagref)
         return reverse_tag_index
 
     @staticmethod
-    def _extract_release_args(commit, tags) -> Tuple[str, Any, Any]:
+    def _extract_release_args(commit, tags) -> Tuple[str, str, Any, Any]:
         """ Extracts arguments for release """
         title = ", ".join(map(lambda tag: "{}".format(tag.name), tags))
         date_ = commit.authored_datetime.date()
@@ -136,7 +180,7 @@ class GitRepository(RepositoryInterface):
 
         # TODO parse message, be carefull about commit message and tags message
 
-        return title, date_, sha
+        return title, title, date_, sha
 
     @staticmethod
     def _extract_note_args(commit) -> Tuple[str, str, str, str, str, str]:

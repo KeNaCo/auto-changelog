@@ -2,7 +2,7 @@ from datetime import date
 
 import pytest
 
-from auto_changelog.domain_model import Changelog, default_issue_pattern
+from auto_changelog.domain_model import Changelog, default_issue_pattern, default_tag_pattern
 from auto_changelog.presenter import MarkdownPresenter
 
 
@@ -38,7 +38,7 @@ def test_markdown_presenter_empty_changelog(empty_changelog, markdown_presenter)
 
 
 def test_markdown_presenter_changelog_with_features(changelog, markdown_presenter):
-    changelog.add_release("Unreleased", date(2020, 1, 1), None)
+    changelog.add_release("Unreleased", "HEAD", date(2020, 1, 1), None)
     changelog.add_note("", "feat", "description")
     changelog.add_note("", "feat", "description", scope="scope")
     description = "{}\n\n".format(changelog.description) if changelog.description else ""
@@ -50,7 +50,7 @@ def test_markdown_presenter_changelog_with_features(changelog, markdown_presente
 
 
 def test_markdown_presenter_changelog_with_fixes(changelog, markdown_presenter):
-    changelog.add_release("Unreleased", date(2020, 1, 1), None)
+    changelog.add_release("Unreleased", "HEAD", date(2020, 1, 1), None)
     changelog.add_note("", "fix", "description")
     changelog.add_note("", "fix", "description", scope="scope")
     description = "{}\n\n".format(changelog.description) if changelog.description else ""

@@ -50,12 +50,15 @@ class Note:
 
 
 class Release(Note):
-    def __init__(self, title, date, sha, change_type="chore", description="", *args, **kwargs):
+    def __init__(self, title, tag, date, sha, change_type="chore", description="", *args, **kwargs):
         super(Release, self).__init__(sha, change_type, description, *args, **kwargs)
         self.title = title
+        self.tag = tag
         self.date = date
         self._notes = []  # type: List[Note]
         self._changes_indicators = {type_: False for type_ in ChangeType}
+        self.diff_url = None
+        self.previous_tag = None
 
     @property
     def builds(self):
@@ -149,6 +152,10 @@ class Release(Note):
         self._notes.append(note)
         self._changes_indicators[note.change_type] = True
 
+    def set_compare_url(self, diff_url: str, previous_tag: str):
+        self.previous_tag = previous_tag
+        self.diff_url = diff_url.format(previous=previous_tag, current=self.tag)
+
     def _notes_with(self, predicate: Callable) -> Tuple[Note]:
         return tuple(filter(predicate, self._notes))
 
@@ -166,11 +173,15 @@ class Changelog:
         description: str = "",
         issue_pattern: Optional[str] = None,
         issue_url: Optional[str] = None,
+        tag_prefix: str = "",
+        tag_pattern: Optional[str] = None,
     ):
         self.title = title
         self.description = description
         self.issue_pattern = issue_pattern or default_issue_pattern
         self.issue_url = issue_url or ""
+        self.tag_prefix = tag_prefix
+        self.tag_pattern = tag_pattern or default_tag_pattern
         self._releases = []  # type: List[Release]
         self._current_release = None  # type: Optional[Release]
 
@@ -207,6 +218,7 @@ class RepositoryInterface(ABC):
         remote: str,
         issue_pattern: Optional[str],
         issue_url: Optional[str],
+        diff_url: Optional[str],
         starting_commit: str,
         stopping_commit: str,
     ) -> Changelog:

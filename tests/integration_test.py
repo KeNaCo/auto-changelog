@@ -206,6 +206,56 @@ def test_option_tag_pattern(test_repo, runner, open_changelog):
         [
             "touch file",
             "git add file",
+            "git commit -m 'feat: Add file' -q",
+            "git tag v-something",
+            "echo 'change' > file",
+            "git add file",
+            "git commit -m 'chore: Change' -q",
+            "git tag 1.0.0",
+            "git tag v2.0.0",
+        ]
+    ],
+)
+def test_option_tag_prefix(test_repo, runner, open_changelog):
+    result = runner.invoke(main, ["--tag-prefix", "v"])
+    assert result.exit_code == 0, result.stderr
+    changelog = open_changelog().read()
+    assert "1.0.0" not in changelog
+    assert "v-something" not in changelog
+    assert "v2.0.0" in changelog
+
+
+@pytest.mark.parametrize(
+    "commands",
+    [
+        [
+            "touch file",
+            "git add file",
+            "git commit -m 'feat: Add file' -q",
+            "git tag release-1",
+            "echo 'change' > file",
+            "git add file",
+            "git commit -m 'chore: Change' -q",
+            "git tag 1",
+            "git tag release-1.2.3",
+        ]
+    ],
+)
+def test_tag_prefix_and_pattern_combination(test_repo, runner, open_changelog):
+    result = runner.invoke(main, ["--tag-prefix", "release-", "--tag-pattern", r"\d"])
+    assert result.exit_code == 0, result.stderr
+    changelog = open_changelog().read()
+    assert "release-1" in changelog
+    assert "## 1 " not in changelog
+    assert "release-1.2.3" not in changelog
+
+
+@pytest.mark.parametrize(
+    "commands",
+    [
+        [
+            "touch file",
+            "git add file",
             "git commit -m 'feat: Add file PRO-1' -q",
             "echo 'change' > file",
             "git add file",
