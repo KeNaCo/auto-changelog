@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "auto-changelog"
-version = "0.4.0"
+version = "0.5.0"
 description = "Simple tool to generate nice, formatted changelogs from vcs"
 authors = ["Michael F Bryan <michaelfbryan@gmail.com>", "Ken Mijime <kenaco666@gmail.com>"]
 license = "MIT"
@@ -42,7 +42,7 @@ target-version = ['py35','py36','py37', 'py38']
 [tool.poetry.dependencies]
 python = ">=3.5"
 jinja2 = "^2.10"
-gitpython = "^2.1"
+gitpython = ">=2.1"
 docopt = "^0.6.2"
 Click = "^7.0"
 
