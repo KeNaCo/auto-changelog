@@ -75,8 +75,9 @@ class GitRepository(RepositoryInterface):
         # create the compare url for each release
         releases = changelog.releases
         # we are using len(changelog.releases) - 1 because there is not compare url for the oldest version
-        for release_index in reversed(range(len(changelog.releases) - 1)):
-            releases[release_index].set_compare_url(diff_url, releases[release_index + 1].title)
+        if diff_url is not None:  # if links are off
+            for release_index in reversed(range(len(changelog.releases) - 1)):
+                releases[release_index].set_compare_url(diff_url, releases[release_index + 1].title)
 
         return changelog
 
