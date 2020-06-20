@@ -213,16 +213,21 @@ def test_option_tag_pattern(test_repo, runner, open_changelog):
             "git commit -m 'chore: Change' -q",
             "git tag 1.0.0",
             "git tag v2.0.0",
+            "echo 'change2' > file",
+            "git add file",
+            "git commit -m 'chore: Change2' -q",
+            "git tag v3.0.0",
         ]
     ],
 )
-def test_option_tag_prefix(test_repo, runner, open_changelog):
+def test_option_tag_prefix(test_repo, runner, open_changelog, capsys):
     result = runner.invoke(main, ["--tag-prefix", "v"])
-    assert result.exit_code == 0, result.stderr
+    assert result.exit_code == 0, result.exc_info
     changelog = open_changelog().read()
     assert "1.0.0" not in changelog
     assert "v-something" not in changelog
     assert "v2.0.0" in changelog
+    assert "v3.0.0" in changelog
 
 
 @pytest.mark.parametrize(
