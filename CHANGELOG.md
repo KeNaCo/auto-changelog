@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.1 (2020-06-20)
+
+#### Fixes
+
+* Missing link feature control for diffs [#74](https://github.com/Michael-F-Bryan/auto-changelog/issues/74)
+
+Full set of changes: [`0.5.0...0.5.1`](https://github.com/Michael-F-Bryan/auto-changelog/compare/0.5.0...0.5.1)
+
 ## 0.5.0 (2020-05-31)
 
 #### New Features
@@ -21,6 +29,7 @@
 * Catch missing remote [#50](https://github.com/Michael-F-Bryan/auto-changelog/issues/50)
 #### Others
 
+* Release of version 0.5.0
 * (poetry): Update dependencies in lock file
 * Fix Readme contributing description
 * Add support for python3.8 [#51](https://github.com/Michael-F-Bryan/auto-changelog/issues/51)
