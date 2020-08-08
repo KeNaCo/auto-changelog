@@ -330,7 +330,6 @@ def test_single_line_body(test_repo, runner, open_changelog):
     assert "Add file #1" in changelog
 
 
-@pytest.mark.xfail
 @pytest.mark.parametrize(
     "commands",
     [["touch file", "git add file", "git commit -m 'feat: Add file #1\n\nBody line 1\nBody line 2' -q", "git log"]],
@@ -344,7 +343,6 @@ def test_double_line_body(test_repo, runner, open_changelog):
     assert "Add file #1" in changelog
 
 
-@pytest.mark.xfail
 @pytest.mark.parametrize(
     "commands",
     [
@@ -405,7 +403,6 @@ def test_single_line_body_single_footer(test_repo, runner, open_changelog):
     assert "Add file #1" in changelog
 
 
-@pytest.mark.xfail
 @pytest.mark.parametrize(
     "commands",
     [
