@@ -195,13 +195,13 @@ class GitRepository(RepositoryInterface):
     def _parse_conventional_commit(message: str) -> Tuple[str, str, str, str, str]:
         type_ = scope = description = body_footer = body = footer = ""
         # TODO this is less restrictive version of re. I have somewhere more restrictive one, maybe as option?
-        match = re.match(r"^(\w+)(\(\w+\))?: (.*)(\n\n[\w\W]+)?$", message)
+        match = re.match(r"^(\w+)(\(\w+\))?!?: (.*)(\n\n[\w\W]+)?$", message)
         if match:
             type_, scope, description, body_footer = match.groups(default="")
         if scope:
             scope = scope[1:-1]
         if body_footer:
-            bf_match = re.match(r"^(\n\n[\w\W]+?)?(\n\n[a-zA-Z-]+(: | #)[\w\W]+)$", body_footer)
+            bf_match = re.match(r"^(\n\n[\w\W]+?)?(\n\n([a-zA-Z-]+|BREAKING[- ]CHANGE)(: | #)[\w\W]+)$", body_footer)
             if bf_match:
                 result = bf_match.groups(default="")
                 body = result[0][2:]

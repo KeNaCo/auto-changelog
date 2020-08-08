@@ -131,6 +131,18 @@ def test_tag_pattern(tags, tag_prefix, tag_pattern, expected_tags):
                 "Reviewed-by: Z\nRefs #133",
             ),
         ),
+        ("feat!: description\n\nbody\n\nFooter #1", ("feat", "", "description", "body", "Footer #1")),
+        ("feat(scope)!: description\n\nbody\n\nFooter #1", ("feat", "scope", "description", "body", "Footer #1")),
+        (
+            "feat: description\n\nbody\n\nBREAKING-CHANGE: details",
+            ("feat", "", "description", "body", "BREAKING-CHANGE: details"),
+        ),
+        (
+            "feat: description\n\nbody\n\nBREAKING CHANGE: details",
+            ("feat", "", "description", "body", "BREAKING CHANGE: details"),
+        ),
+        ("feat: description\n\nBREAKING-CHANGE: details", ("feat", "", "description", "", "BREAKING-CHANGE: details")),
+        ("feat: description\n\nBREAKING CHANGE: details", ("feat", "", "description", "", "BREAKING CHANGE: details")),
     ],
 )
 def test_parse_conventional_commit_with_empty_message(message, expected):
