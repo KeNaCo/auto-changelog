@@ -92,8 +92,45 @@ def test_tag_pattern(tags, tag_prefix, tag_pattern, expected_tags):
         ("feat: description", ("feat", "", "description", "", "")),
         ("feat(scope): description", ("feat", "scope", "description", "", "")),
         ("feat: description\n\nbody", ("feat", "", "description", "body", "")),
-        ("feat: description\n\nbody\n\nfooter", ("feat", "", "description", "body", "footer")),
-        ("feat(scope): description\n\nbody\n\nfooter", ("feat", "scope", "description", "body", "footer")),
+        ("feat: description\n\nbody\nbody2", ("feat", "", "description", "body\nbody2", "")),
+        ("feat: description\n\nbody\nbody2\nbody3", ("feat", "", "description", "body\nbody2\nbody3", "")),
+        ("feat: description\n\nparagraph1\n\nparagraph2", ("feat", "", "description", "paragraph1\n\nparagraph2", "")),
+        (
+            "feat: description\n\nbody\n\nFooter: footer text",
+            ("feat", "", "description", "body", "Footer: footer text"),
+        ),
+        ("feat: description\n\nbody\n\nCloses #11", ("feat", "", "description", "body", "Closes #11")),
+        (
+            "feat: description\n\nbody\n\nFooter #1\nFooter: second",
+            ("feat", "", "description", "body", "Footer #1\nFooter: second"),
+        ),
+        (
+            "feat: description\n\nbody1\nbody2\n\nbodypara2\n\nFooter #1\nFooter: second but this a rather long footer\nspanning accross two lines\nFooter: third",
+            (
+                "feat",
+                "",
+                "description",
+                "body1\nbody2\n\nbodypara2",
+                "Footer #1\nFooter: second but this a rather long footer\nspanning accross two lines\nFooter: third",
+            ),
+        ),
+        ("feat: description\n\nFooter: footer text", ("feat", "", "description", "", "Footer: footer text"),),
+        ("feat: description\n\nCloses #11", ("feat", "", "description", "", "Closes #11")),
+        (
+            "feat: description\n\nFooter #1\nFooter: second",
+            ("feat", "", "description", "", "Footer #1\nFooter: second"),
+        ),
+        ("feat(scope): description\n\nbody\n\nFooter #1", ("feat", "scope", "description", "body", "Footer #1")),
+        (
+            "fix: correct minor typos in code\n\nsee the issue for details\n\non typos fixed.\n\nReviewed-by: Z\nRefs #133",
+            (
+                "fix",
+                "",
+                "correct minor typos in code",
+                "see the issue for details\n\non typos fixed.",
+                "Reviewed-by: Z\nRefs #133",
+            ),
+        ),
     ],
 )
 def test_parse_conventional_commit_with_empty_message(message, expected):
