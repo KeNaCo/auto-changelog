@@ -1,4 +1,5 @@
 import os
+import logging
 from typing import Optional
 
 import click
@@ -48,6 +49,9 @@ from auto_changelog.repository import GitRepository
 @click.option("--tag-pattern", default=None, help="Override regex pattern for release tags")
 @click.option("--starting-commit", help="Starting commit to use for changelog generation", default="")
 @click.option("--stopping-commit", help="Stopping commit to use for changelog generation", default="HEAD")
+@click.option(
+    "--debug", is_flag=True, help="set logging level to DEBUG",
+)
 def main(
     repo,
     title,
@@ -64,7 +68,12 @@ def main(
     tag_pattern: Optional[str],
     starting_commit: str,
     stopping_commit: str,
+    debug: bool,
 ):
+    if debug:
+        logging.basicConfig(level=logging.DEBUG)
+        logging.debug("Logging level has been set to DEBUG")
+
     # Convert the repository name to an absolute path
     repo = os.path.abspath(repo)
 

@@ -1,3 +1,4 @@
+import logging
 import os
 import pytest
 import subprocess
@@ -27,7 +28,7 @@ def test_repo(tmp_path, commands):
 
 @pytest.fixture
 def runner():
-    return CliRunner()
+    return CliRunner(mix_stderr=False)
 
 
 @pytest.fixture
@@ -316,3 +317,19 @@ def test_stopping_commit(test_repo, runner, open_changelog):
     changelog = open_changelog().read()
     assert "Add file PRO-1" in changelog
     assert "Some file fix" not in changelog
+
+
+def test_debug(caplog, test_repo, runner):
+    caplog.set_level(logging.DEBUG)
+    result = runner.invoke(main, ["--debug"])
+    assert result.exit_code == 0, result.stderr
+    assert result.output == ""
+    assert "Logging level has been set to DEBUG" in caplog.text
+
+
+def test_no_debug(caplog, test_repo, runner):
+    caplog.set_level(logging.DEBUG)
+    result = runner.invoke(main)
+    assert result.exit_code == 0, result.stderr
+    assert result.output == ""
+    assert "Logging level has been set to DEBUG" not in caplog.text
