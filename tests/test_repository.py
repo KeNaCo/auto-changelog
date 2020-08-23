@@ -1,5 +1,6 @@
 import pytest
 from unittest.mock import Mock
+from unittest.mock import MagicMock
 from unittest.mock import patch
 
 from git import Repo, Commit
@@ -12,7 +13,7 @@ from auto_changelog.repository import GitRepository
 @patch.object(GitRepository, "_extract_note_args", return_value=("sha", "change_type", "description"))
 @patch.object(GitRepository, "_get_git_url", return_value="git@github.com:Michael-F-Bryan/auto-changelog.git")
 def test_include_unreleased(mock_ggu, mock_ena, mock_era, mock_repo):
-    mock_repo.return_value.iter_commits.return_value = [Mock(spec=Commit), Mock(spec=Commit)]
+    mock_repo.return_value.iter_commits.return_value = [MagicMock(spec=Commit), MagicMock(spec=Commit)]
 
     repository = GitRepository(".", skip_unreleased=False)
     changelog = repository.generate_changelog()
@@ -25,7 +26,7 @@ def test_include_unreleased(mock_ggu, mock_ena, mock_era, mock_repo):
 @patch.object(GitRepository, "_extract_note_args", return_value=("sha", "change_type", "description"))
 @patch.object(GitRepository, "_get_git_url", return_value="git@github.com:Michael-F-Bryan/auto-changelog.git")
 def test_latest_version(mock_ggu, mock_ena, mock_era, mock_repo):
-    mock_repo.return_value.iter_commits.return_value = [Mock(spec=Commit), Mock(spec=Commit)]
+    mock_repo.return_value.iter_commits.return_value = [MagicMock(spec=Commit), MagicMock(spec=Commit)]
 
     repository = GitRepository(".", latest_version="v1.2.3")
     changelog = repository.generate_changelog()
