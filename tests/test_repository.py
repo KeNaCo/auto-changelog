@@ -128,6 +128,18 @@ def test_issue_from_git_remote_url(mock_ru, mock_repo):
         ("https://github.com/Michael-F-Bryan/auto-changelog.git", "https://github.com/Michael-F-Bryan/auto-changelog"),
         ("git@gitlab.com:Michael-F-Bryan/auto-changelog.git", "https://gitlab.com/Michael-F-Bryan/auto-changelog"),
         ("https://gitlab.com/Michael-F-Bryan/auto-changelog.git", "https://gitlab.com/Michael-F-Bryan/auto-changelog"),
+        (
+            "https://username:0123456789abcdef0123456789abcdef01234567@github.com/Michael-F-Bryan/auto-changelog.git",
+            "https://github.com/Michael-F-Bryan/auto-changelog",
+        ),
+        (
+            "https://0123456789abcdef0123456789abcdef01234567@github.com/Michael-F-Bryan/auto-changelog.git",
+            "https://github.com/Michael-F-Bryan/auto-changelog",
+        ),
+        (
+            "https://username:0123456789abcdef0123456789abcdef01234567@gitlab.com/Michael-F-Bryan/auto-changelog.git",
+            "https://gitlab.com/Michael-F-Bryan/auto-changelog",
+        ),
     ],
 )
 def test_remote_url(input, expected):
