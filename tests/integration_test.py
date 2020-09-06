@@ -319,6 +319,111 @@ def test_stopping_commit(test_repo, runner, open_changelog):
     assert "Some file fix" not in changelog
 
 
+@pytest.mark.parametrize(
+    "commands", [["touch file", "git add file", "git commit -m 'feat: Add file #1\n\nBody line' -q", "git log"]]
+)
+def test_single_line_body(test_repo, runner, open_changelog):
+    result = runner.invoke(main, ["--unreleased"])
+    assert result.exit_code == 0, result.stderr
+    assert result.output == ""
+    changelog = open_changelog().read()
+    print(changelog)
+    assert "Add file #1" in changelog
+
+
+@pytest.mark.parametrize(
+    "commands",
+    [["touch file", "git add file", "git commit -m 'feat: Add file #1\n\nBody line 1\nBody line 2' -q", "git log"]],
+)
+def test_double_line_body(test_repo, runner, open_changelog):
+    result = runner.invoke(main, ["--unreleased"])
+    assert result.exit_code == 0, result.stderr
+    assert result.output == ""
+    changelog = open_changelog().read()
+    print(changelog)
+    assert "Add file #1" in changelog
+
+
+@pytest.mark.parametrize(
+    "commands",
+    [
+        [
+            "touch file",
+            "git add file",
+            "git commit -m 'feat: Add file #1\n\nBody line 1\nBody line 2\nBody line 3' -q",
+            "git log",
+        ]
+    ],
+)
+def test_triple_line_body(test_repo, runner, open_changelog):
+    result = runner.invoke(main, ["--unreleased"])
+    assert result.exit_code == 0, result.stderr
+    assert result.output == ""
+    changelog = open_changelog().read()
+    print(changelog)
+    assert "Add file #1" in changelog
+
+
+@pytest.mark.parametrize(
+    "commands",
+    [
+        [
+            "touch file",
+            "git add file",
+            "git commit -m 'feat: Add file #1\n\nBody paragraph 1\n\nBody paragraph 2' -q",
+            "git log",
+        ]
+    ],
+)
+def test_multi_paragraph_body(test_repo, runner, open_changelog):
+    result = runner.invoke(main, ["--unreleased"])
+    assert result.exit_code == 0, result.stderr
+    assert result.output == ""
+    changelog = open_changelog().read()
+    print(changelog)
+    assert "Add file #1" in changelog
+
+
+@pytest.mark.parametrize(
+    "commands",
+    [
+        [
+            "touch file",
+            "git add file",
+            "git commit -m 'feat: Add file #1\n\nBody line\n\nFooter: first footer' -q",
+            "git log",
+        ]
+    ],
+)
+def test_single_line_body_single_footer(test_repo, runner, open_changelog):
+    result = runner.invoke(main, ["--unreleased"])
+    assert result.exit_code == 0, result.stderr
+    assert result.output == ""
+    changelog = open_changelog().read()
+    print(changelog)
+    assert "Add file #1" in changelog
+
+
+@pytest.mark.parametrize(
+    "commands",
+    [
+        [
+            "touch file",
+            "git add file",
+            "git commit -m 'feat: Add file #1\n\nBody line\n\nFooter: first footer\nFooter: second footer' -q",
+            "git log",
+        ]
+    ],
+)
+def test_single_line_body_double_footer(test_repo, runner, open_changelog):
+    result = runner.invoke(main, ["--unreleased"])
+    assert result.exit_code == 0, result.stderr
+    assert result.output == ""
+    changelog = open_changelog().read()
+    print(changelog)
+    assert "Add file #1" in changelog
+
+
 def test_debug(caplog, test_repo, runner):
     caplog.set_level(logging.DEBUG)
     result = runner.invoke(main, ["--debug"])
