@@ -38,11 +38,12 @@ class GitRepository(RepositoryInterface):
         starting_commit: str = "",
         stopping_commit: str = "HEAD",
     ) -> Changelog:
+        locallogger = logging.getLogger("repository.generate_changelog")
         issue_url = issue_url or self._issue_from_git_remote_url(remote)
         diff_url = diff_url or self._diff_from_git_remote_url(remote)
         changelog = Changelog(title, description, issue_pattern, issue_url, self.tag_prefix, self.tag_pattern)
         if self._repository_is_empty():
-            logging.info("Repository is empty.")
+            locallogger.info("Repository is empty.")
             return changelog
         iter_rev = self._get_iter_rev(starting_commit, stopping_commit)
         commits = self.repository.iter_commits(iter_rev)
@@ -51,8 +52,13 @@ class GitRepository(RepositoryInterface):
         #  release. Then we simply iter over all commits, assign them to current release or create new if we find it.
         first_commit = True
         skip = self._skip_unreleased
+        locallogger.debug("Start iterating commits")
         for commit in commits:
+            sha = commit.hexsha[0:7]
+            locallogger.debug("Found commit {}".format(sha))
+
             if skip and commit not in self.commit_tags_index:
+                locallogger.debug("Skipping unreleased commit " + sha)
                 continue
             else:
                 skip = False
@@ -60,16 +66,20 @@ class GitRepository(RepositoryInterface):
             if first_commit and commit not in self.commit_tags_index:
                 # if no last version specified by the user => consider HEAD
                 if not self._latest_version:
+                    locallogger.debug("Adding release 'unreleased'")
                     changelog.add_release("Unreleased", "HEAD", date.today(), sha256())
                 else:
+                    locallogger.debug("Adding release '{}'".format(self._latest_version))
                     changelog.add_release(self._latest_version, self._latest_version, date.today(), sha256())
             first_commit = False
 
             if commit in self.commit_tags_index:
                 attributes = self._extract_release_args(commit, self.commit_tags_index[commit])
+                locallogger.debug("Adding release '{}' with attributes {}".format(attributes[0], attributes))
                 changelog.add_release(*attributes)
 
             attributes = self._extract_note_args(commit)
+            locallogger.debug("Adding commit {} with attributes {}".format(sha, attributes))
             changelog.add_note(*attributes)
 
         # create the compare url for each release
@@ -198,6 +208,10 @@ class GitRepository(RepositoryInterface):
         match = re.match(r"^(\w+)(\(\w+\))?: (.*)(\n\n.+)?(\n\n.+)?$", message)
         if match:
             type_, scope, description, body, footer = match.groups(default="")
+        else:
+            locallogger = logging.getLogger("repository._parse_conventional_commit")
+            locallogger.debug("Commit message did not match expected pattern: {}".format(message))
+
         if scope:
             scope = scope[1:-1]
         if body:

@@ -1,3 +1,4 @@
+import logging
 from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Callable, Union, List, Optional, Tuple, Any
@@ -195,8 +196,10 @@ class Changelog:
         """ Add new Note to current release. Require same arguments as :class:`Note` """
         try:
             note = Note(*args, **kwargs)
-        except ValueError:
+        except ValueError as err:
             # Ignore exceptions raised by unsupported commit type.
+            locallogger = logging.getLogger("Changelog.add_note")
+            locallogger.debug("Ignore exception raised by unsupported commit: {}".format(err))
             return
 
         if not self._current_release:
