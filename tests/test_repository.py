@@ -169,3 +169,28 @@ def test_issue_from_git_remote_url(mock_ru, mock_repo):
     remote_url = GitRepository(".")._issue_from_git_remote_url(remote="origin")
     expected = "https://github.com/Michael-F-Bryan/auto-changelog/issues/{id}"
     assert expected == remote_url
+
+
+@pytest.mark.parametrize(
+    "input, expected",
+    [
+        ("git@github.com:Michael-F-Bryan/auto-changelog.git", "https://github.com/Michael-F-Bryan/auto-changelog"),
+        ("https://github.com/Michael-F-Bryan/auto-changelog.git", "https://github.com/Michael-F-Bryan/auto-changelog"),
+        ("git@gitlab.com:Michael-F-Bryan/auto-changelog.git", "https://gitlab.com/Michael-F-Bryan/auto-changelog"),
+        ("https://gitlab.com/Michael-F-Bryan/auto-changelog.git", "https://gitlab.com/Michael-F-Bryan/auto-changelog"),
+        (
+            "https://username:0123456789abcdef0123456789abcdef01234567@github.com/Michael-F-Bryan/auto-changelog.git",
+            "https://github.com/Michael-F-Bryan/auto-changelog",
+        ),
+        (
+            "https://0123456789abcdef0123456789abcdef01234567@github.com/Michael-F-Bryan/auto-changelog.git",
+            "https://github.com/Michael-F-Bryan/auto-changelog",
+        ),
+        (
+            "https://username:0123456789abcdef0123456789abcdef01234567@gitlab.com/Michael-F-Bryan/auto-changelog.git",
+            "https://gitlab.com/Michael-F-Bryan/auto-changelog",
+        ),
+    ],
+)
+def test_remote_url(input, expected):
+    assert expected == GitRepository._sanitize_remote_url(input)

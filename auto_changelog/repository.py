@@ -111,10 +111,14 @@ class GitRepository(RepositoryInterface):
     def _remote_url(self, remote: str) -> str:
         """ Extract remote url from remote url """
         url = self._get_git_url(remote=remote)
+        url = GitRepository._sanitize_remote_url(url)
+        return url
+
+    @staticmethod
+    def _sanitize_remote_url(remote: str) -> str:
         # 'git@github.com:Michael-F-Bryan/auto-changelog.git' -> 'https://github.com/Michael-F-Bryan/auto-changelog'
         # 'https://github.com/Michael-F-Bryan/auto-changelog.git' -> 'https://github.com/Michael-F-Bryan/auto-changelog'
-        url = re.sub(r"^(https|git|ssh)(:\/\/|@)([^\/:]+)[\/:]([^\/:]+)\/(.+).git$", r"https://\3/\4/\5", url)
-        return url
+        return re.sub(r"^(https|git|ssh)(:\/\/|@)(.*@)?([^\/:]+)[\/:]([^\/:]+)\/(.+).git$", r"https://\4/\5/\6", remote)
 
     # This part is hard to mock, separate method is nice approach how to overcome this problem
     def _get_git_url(self, remote: str) -> str:
