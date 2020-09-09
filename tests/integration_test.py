@@ -51,7 +51,11 @@ def open_changelog(test_repo, changelog_name):
         file.close()
 
 
-def test_empty_repo(test_repo, runner, open_changelog):
+@pytest.mark.parametrize(
+    "commands",
+    [["git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git"]],
+)
+def test_empty_repo(runner, open_changelog):
     result = runner.invoke(main)
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
@@ -65,6 +69,10 @@ def test_help(runner):
     assert result.output
 
 
+@pytest.mark.parametrize(
+    "commands",
+    [["git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git"]],
+)
 def test_option_repo(test_repo, runner, open_changelog):
     result = runner.invoke(main, ["--repo", test_repo])
     assert result.exit_code == 0, result.stderr
@@ -73,7 +81,11 @@ def test_option_repo(test_repo, runner, open_changelog):
     assert changelog
 
 
-def test_option_title(test_repo, runner, open_changelog):
+@pytest.mark.parametrize(
+    "commands",
+    [["git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git"]],
+)
+def test_option_title(runner, open_changelog):
     result = runner.invoke(main, ["--title", "Title"])
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
@@ -81,7 +93,11 @@ def test_option_title(test_repo, runner, open_changelog):
     assert "# Title\n" == changelog
 
 
-def test_option_description(test_repo, runner, open_changelog):
+@pytest.mark.parametrize(
+    "commands",
+    [["git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git"]],
+)
+def test_option_description(runner, open_changelog):
     result = runner.invoke(main, ["--description", "My description"])
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
@@ -90,7 +106,11 @@ def test_option_description(test_repo, runner, open_changelog):
 
 
 @pytest.mark.parametrize("changelog_name", ["a.out"])
-def test_option_output(test_repo, runner, open_changelog):
+@pytest.mark.parametrize(
+    "commands",
+    [["git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git"]],
+)
+def test_option_output(runner, open_changelog):
     result = runner.invoke(main, ["--output", "a.out"])
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
@@ -102,14 +122,14 @@ def test_option_output(test_repo, runner, open_changelog):
     "commands",
     [
         [
-            "touch file",
+            "echo test > file",
             "git add file",
-            "git commit -m 'feat: Add file #1' -q",
+            'git commit -m "feat: Add file #1" -q',
             "git remote add upstream git@github.com:Michael-F-Bryan/auto-changelog.git",
         ]
     ],
 )
-def test_option_remote(test_repo, runner, open_changelog):
+def test_option_remote(runner, open_changelog):
     result = runner.invoke(main, ["--remote", "upstream", "--unreleased"])
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
@@ -117,8 +137,18 @@ def test_option_remote(test_repo, runner, open_changelog):
     assert "[#1](https://github.com/Michael-F-Bryan/auto-changelog/issues/1)" in changelog
 
 
-@pytest.mark.parametrize("commands", [["touch file", "git add file", "git commit -m 'feat: Add file #1' -q"]])
-def test_option_latest_version(test_repo, runner, open_changelog):
+@pytest.mark.parametrize(
+    "commands",
+    [
+        [
+            "echo test > file",
+            "git add file",
+            'git commit -m "feat: Add file #1" -q',
+            "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
+        ]
+    ],
+)
+def test_option_latest_version(runner, open_changelog):
     result = runner.invoke(main, ["--latest-version", "1.0.0"])
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
@@ -126,8 +156,18 @@ def test_option_latest_version(test_repo, runner, open_changelog):
     assert "## 1.0.0" in changelog
 
 
-@pytest.mark.parametrize("commands", [["touch file", "git add file", "git commit -m 'feat: Add file #1' -q"]])
-def test_option_unreleased(test_repo, runner, open_changelog):
+@pytest.mark.parametrize(
+    "commands",
+    [
+        [
+            "echo test > file",
+            "git add file",
+            'git commit -m "feat: Add file #1" -q',
+            "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
+        ]
+    ],
+)
+def test_option_unreleased(runner, open_changelog):
     result = runner.invoke(main, ["--unreleased"])
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
@@ -135,8 +175,18 @@ def test_option_unreleased(test_repo, runner, open_changelog):
     assert "## Unreleased" in changelog
 
 
-@pytest.mark.parametrize("commands", [["touch file", "git add file", "git commit -m 'feat: Add file #1' -q"]])
-def test_option_skipping_unreleased(test_repo, runner, open_changelog):
+@pytest.mark.parametrize(
+    "commands",
+    [
+        [
+            "echo test > file",
+            "git add file",
+            'git commit -m "feat: Add file #1" -q',
+            "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
+        ]
+    ],
+)
+def test_option_skipping_unreleased(runner, open_changelog):
     result = runner.invoke(main)
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
@@ -144,8 +194,18 @@ def test_option_skipping_unreleased(test_repo, runner, open_changelog):
     assert "## Unreleased" not in changelog
 
 
-@pytest.mark.parametrize("commands", [["touch file", "git add file", "git commit -m 'feat: Add file #1' -q"]])
-def test_option_issue_url(test_repo, runner, open_changelog):
+@pytest.mark.parametrize(
+    "commands",
+    [
+        [
+            "echo test > file",
+            "git add file",
+            'git commit -m "feat: Add file #1" -q',
+            "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
+        ]
+    ],
+)
+def test_option_issue_url(runner, open_changelog):
     result = runner.invoke(main, ["--issue-url", "issues.custom.com/{id}", "--unreleased"])
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
@@ -153,8 +213,18 @@ def test_option_issue_url(test_repo, runner, open_changelog):
     assert "[#1](issues.custom.com/1)" in changelog
 
 
-@pytest.mark.parametrize("commands", [["touch file", "git add file", "git commit -m 'feat: Add file PRO-1' -q"]])
-def test_option_issue_pattern(test_repo, runner, open_changelog):
+@pytest.mark.parametrize(
+    "commands",
+    [
+        [
+            "echo test > file",
+            "git add file",
+            'git commit -m "feat: Add file PRO-1" -q',
+            "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
+        ]
+    ],
+)
+def test_option_issue_pattern(runner, open_changelog):
     result = runner.invoke(
         main, ["--issue-pattern", r" (\w\w\w-\d+)", "--issue-url", "issues.custom.com/{id}", "--unreleased"]
     )
@@ -164,15 +234,29 @@ def test_option_issue_pattern(test_repo, runner, open_changelog):
     assert "[PRO-1](issues.custom.com/PRO-1)" in changelog
 
 
-@pytest.mark.parametrize("commands", [["touch file", "git add file", "git commit -m 'feat: Add file PRO-1' -q"]])
-def test_option_invalid_issue_pattern(test_repo, runner, open_changelog):
+@pytest.mark.parametrize(
+    "commands",
+    [
+        [
+            "echo test > file",
+            "git add file",
+            'git commit -m "feat: Add file PRO-1" -q',
+            "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
+        ]
+    ],
+)
+def test_option_invalid_issue_pattern(runner, open_changelog):
     result = runner.invoke(
         main, ["--issue-pattern", r" \w\w\w-\d+", "--issue-url", "issues.custom.com/{id}", "--unreleased"]
     )
     assert result.exit_code != 0, result.stderr
 
 
-def test_option_stdout(test_repo, runner):
+@pytest.mark.parametrize(
+    "commands",
+    [["git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git"]],
+)
+def test_option_stdout(runner, open_changelog):
     result = runner.invoke(main, ["--stdout"])
     assert result.exit_code == 0, result.stderr
     assert "# Changelog" in result.output
@@ -182,18 +266,19 @@ def test_option_stdout(test_repo, runner):
     "commands",
     [
         [
-            "touch file",
+            "echo test > file",
             "git add file",
-            "git commit -m 'feat: Add file' -q",
+            'git commit -m "feat: Add file" -q',
             "git tag custom-tag",
-            "echo 'change' > file",
+            'echo "change" > file',
             "git add file",
-            "git commit -m 'chore: Change' -q",
+            'git commit -m "chore: Change" -q',
             "git tag 1.0.0",
+            "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
         ]
     ],
 )
-def test_option_tag_pattern(test_repo, runner, open_changelog):
+def test_option_tag_pattern(runner, open_changelog):
     result = runner.invoke(main, ["--tag-pattern", r"\d+.\d+.\d+"])
     assert result.exit_code == 0, result.stderr
     changelog = open_changelog().read()
@@ -205,23 +290,24 @@ def test_option_tag_pattern(test_repo, runner, open_changelog):
     "commands",
     [
         [
-            "touch file",
+            "echo test > file",
             "git add file",
-            "git commit -m 'feat: Add file' -q",
+            'git commit -m "feat: Add file" -q',
             "git tag v-something",
-            "echo 'change' > file",
+            'echo "change" > file',
             "git add file",
-            "git commit -m 'chore: Change' -q",
+            'git commit -m "chore: Change" -q',
             "git tag 1.0.0",
             "git tag v2.0.0",
-            "echo 'change2' > file",
+            'echo "change2" > file',
             "git add file",
-            "git commit -m 'chore: Change2' -q",
+            'git commit -m "chore: Change2" -q',
             "git tag v3.0.0",
+            "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
         ]
     ],
 )
-def test_option_tag_prefix(test_repo, runner, open_changelog, capsys):
+def test_option_tag_prefix(runner, open_changelog):
     result = runner.invoke(main, ["--tag-prefix", "v"])
     assert result.exit_code == 0, result.exc_info
     changelog = open_changelog().read()
@@ -235,19 +321,20 @@ def test_option_tag_prefix(test_repo, runner, open_changelog, capsys):
     "commands",
     [
         [
-            "touch file",
+            "echo test > file",
             "git add file",
-            "git commit -m 'feat: Add file' -q",
+            'git commit -m "feat: Add file" -q',
             "git tag release-1",
-            "echo 'change' > file",
+            'echo "change" > file',
             "git add file",
-            "git commit -m 'chore: Change' -q",
+            'git commit -m "chore: Change" -q',
             "git tag 1",
             "git tag release-1.2.3",
+            "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
         ]
     ],
 )
-def test_tag_prefix_and_pattern_combination(test_repo, runner, open_changelog):
+def test_tag_prefix_and_pattern_combination(runner, open_changelog):
     result = runner.invoke(main, ["--tag-prefix", "release-", "--tag-pattern", r"\d"])
     assert result.exit_code == 0, result.stderr
     changelog = open_changelog().read()
@@ -260,14 +347,15 @@ def test_tag_prefix_and_pattern_combination(test_repo, runner, open_changelog):
     "commands",
     [
         [
-            "touch file",
+            "echo test > file",
             "git add file",
-            "git commit -m 'feat: Add file PRO-1' -q",
+            'git commit -m "feat: Add file PRO-1" -q',
             "echo 'change' > file",
             "git add file",
-            "git commit -m 'fix: Some file fix' -q",
+            'git commit -m "fix: Some file fix" -q',
             "git tag start",
             "git tag 1.0.0",
+            "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
         ]
     ],
 )
@@ -281,9 +369,17 @@ def test_starting_commit(test_repo, runner, open_changelog):
 
 @pytest.mark.parametrize(
     "commands",
-    [["touch file", "git add file", "git commit -m 'fix: Some file fix' -q", "git tag 1.0.0"]],
+    [
+        [
+            "echo test > file",
+            "git add file",
+            'git commit -m "fix: Some file fix" -q',
+            "git tag 1.0.0",
+            "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
+        ]
+    ],
 )
-def test_starting_commit_is_only_commit(test_repo, runner, open_changelog):
+def test_starting_commit_is_only_commit(runner, open_changelog):
     result = runner.invoke(main, ["--starting-commit", "1.0.0"])
     assert result.exit_code == 0, result.stderr
     changelog = open_changelog().read()
@@ -292,7 +388,15 @@ def test_starting_commit_is_only_commit(test_repo, runner, open_changelog):
 
 @pytest.mark.parametrize(
     "commands",
-    [["touch file", "git add file", "git commit -m 'fix: Some file fix' -q", "git tag 1.0.0"]],
+    [
+        [
+            "echo test > file",
+            "git add file",
+            'git commit -m "fix: Some file fix" -q',
+            "git tag 1.0.0",
+            "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
+        ]
+    ],
 )
 def test_starting_commit_not_exist(test_repo, runner, open_changelog):
     result = runner.invoke(main, ["--starting-commit", "nonexist"])
@@ -303,17 +407,18 @@ def test_starting_commit_not_exist(test_repo, runner, open_changelog):
     "commands",
     [
         [
-            "touch file",
+            "echo test > file",
             "git add file",
-            "git commit -m 'feat: Add file PRO-1' -q",
+            'git commit -m "feat: Add file PRO-1" -q',
             "git tag stop",
-            "echo 'change' > file",
+            'echo "change" > file',
             "git add file",
-            "git commit -m 'fix: Some file fix' -q",
+            'git commit -m "fix: Some file fix" -q',
+            "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
         ]
     ],
 )
-def test_stopping_commit(test_repo, runner, open_changelog):
+def test_stopping_commit(runner, open_changelog):
     result = runner.invoke(main, ["--stopping-commit", "stop", "--unreleased"])
     assert result.exit_code == 0, result.stderr
     changelog = open_changelog().read()
@@ -322,111 +427,136 @@ def test_stopping_commit(test_repo, runner, open_changelog):
 
 
 @pytest.mark.parametrize(
-    "commands", [["touch file", "git add file", "git commit -m 'feat: Add file #1\n\nBody line' -q", "git log"]]
-)
-def test_single_line_body(test_repo, runner, open_changelog):
-    result = runner.invoke(main, ["--unreleased"])
-    assert result.exit_code == 0, result.stderr
-    assert result.output == ""
-    changelog = open_changelog().read()
-    print(changelog)
-    assert "Add file #1" in changelog
-
-
-@pytest.mark.parametrize(
     "commands",
-    [["touch file", "git add file", "git commit -m 'feat: Add file #1\n\nBody line 1\nBody line 2' -q", "git log"]],
+    [
+        [
+            "echo test > file",
+            "git add file",
+            'git commit -m "feat: Add file #1\n\nBody line" -q',
+            "git log",
+            "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
+        ]
+    ],
 )
-def test_double_line_body(test_repo, runner, open_changelog):
+def test_single_line_body(runner, open_changelog):
     result = runner.invoke(main, ["--unreleased"])
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
     changelog = open_changelog().read()
     print(changelog)
-    assert "Add file #1" in changelog
+    assert "Add file [#1]" in changelog
 
 
 @pytest.mark.parametrize(
     "commands",
     [
         [
-            "touch file",
+            "echo test > file",
             "git add file",
-            "git commit -m 'feat: Add file #1\n\nBody line 1\nBody line 2\nBody line 3' -q",
+            'git commit -m "feat: Add file #1\n\nBody line 1\nBody line 2" -q',
             "git log",
+            "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
         ]
     ],
 )
-def test_triple_line_body(test_repo, runner, open_changelog):
+def test_double_line_body(runner, open_changelog):
     result = runner.invoke(main, ["--unreleased"])
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
     changelog = open_changelog().read()
     print(changelog)
-    assert "Add file #1" in changelog
+    assert "Add file [#1]" in changelog
 
 
 @pytest.mark.parametrize(
     "commands",
     [
         [
-            "touch file",
+            "echo test > file",
             "git add file",
-            "git commit -m 'feat: Add file #1\n\nBody paragraph 1\n\nBody paragraph 2' -q",
+            'git commit -m "feat: Add file #1\n\nBody line 1\nBody line 2\nBody line 3" -q',
             "git log",
+            "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
         ]
     ],
 )
-def test_multi_paragraph_body(test_repo, runner, open_changelog):
+def test_triple_line_body(runner, open_changelog):
     result = runner.invoke(main, ["--unreleased"])
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
     changelog = open_changelog().read()
     print(changelog)
-    assert "Add file #1" in changelog
+    assert "Add file [#1]" in changelog
 
 
 @pytest.mark.parametrize(
     "commands",
     [
         [
-            "touch file",
+            "echo test > file",
             "git add file",
-            "git commit -m 'feat: Add file #1\n\nBody line\n\nFooter: first footer' -q",
+            'git commit -m "feat: Add file #1\n\nBody paragraph 1\n\nBody paragraph 2" -q',
             "git log",
+            "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
         ]
     ],
 )
-def test_single_line_body_single_footer(test_repo, runner, open_changelog):
+def test_multi_paragraph_body(runner, open_changelog):
     result = runner.invoke(main, ["--unreleased"])
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
     changelog = open_changelog().read()
     print(changelog)
-    assert "Add file #1" in changelog
+    assert "Add file [#1]" in changelog
 
 
 @pytest.mark.parametrize(
     "commands",
     [
         [
-            "touch file",
+            "echo test > file",
             "git add file",
-            "git commit -m 'feat: Add file #1\n\nBody line\n\nFooter: first footer\nFooter: second footer' -q",
+            'git commit -m "feat: Add file #1\n\nBody line\n\nFooter: first footer" -q',
             "git log",
+            "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
         ]
     ],
 )
-def test_single_line_body_double_footer(test_repo, runner, open_changelog):
+def test_single_line_body_single_footer(runner, open_changelog):
     result = runner.invoke(main, ["--unreleased"])
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
     changelog = open_changelog().read()
     print(changelog)
-    assert "Add file #1" in changelog
+    assert "Add file [#1]" in changelog
 
 
-def test_debug(caplog, test_repo, runner):
+@pytest.mark.parametrize(
+    "commands",
+    [
+        [
+            "echo test > file",
+            "git add file",
+            'git commit -m "feat: Add file #1\n\nBody line\n\nFooter: first footer\nFooter: second footer" -q',
+            "git log",
+            "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
+        ]
+    ],
+)
+def test_single_line_body_double_footer(runner, open_changelog):
+    result = runner.invoke(main, ["--unreleased"])
+    assert result.exit_code == 0, result.stderr
+    assert result.output == ""
+    changelog = open_changelog().read()
+    print(changelog)
+    assert "Add file [#1]" in changelog
+
+
+@pytest.mark.parametrize(
+    "commands",
+    [["git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git"]],
+)
+def test_debug(caplog, runner, open_changelog):
     caplog.set_level(logging.DEBUG)
     result = runner.invoke(main, ["--debug"])
     assert result.exit_code == 0, result.stderr
@@ -434,7 +564,11 @@ def test_debug(caplog, test_repo, runner):
     assert "Logging level has been set to DEBUG" in caplog.text
 
 
-def test_no_debug(caplog, test_repo, runner):
+@pytest.mark.parametrize(
+    "commands",
+    [["git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git"]],
+)
+def test_no_debug(caplog, runner, open_changelog):
     caplog.set_level(logging.DEBUG)
     result = runner.invoke(main)
     assert result.exit_code == 0, result.stderr
