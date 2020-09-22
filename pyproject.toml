@@ -27,7 +27,6 @@ classifiers = [
 
     # The python versions actively being supported
     'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.5',
     'Programming Language :: Python :: 3.6',
     'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',
@@ -40,7 +39,7 @@ line-length = 120
 target-version = ['py35','py36','py37', 'py38']
 
 [tool.poetry.dependencies]
-python = ">=3.5"
+python = ">=3.6"
 jinja2 = "^2.10"
 gitpython = ">=2.1"
 docopt = "^0.6.2"
