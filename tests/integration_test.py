@@ -280,7 +280,8 @@ def test_starting_commit(test_repo, runner, open_changelog):
 
 
 @pytest.mark.parametrize(
-    "commands", [["touch file", "git add file", "git commit -m 'fix: Some file fix' -q", "git tag 1.0.0"]],
+    "commands",
+    [["touch file", "git add file", "git commit -m 'fix: Some file fix' -q", "git tag 1.0.0"]],
 )
 def test_starting_commit_is_only_commit(test_repo, runner, open_changelog):
     result = runner.invoke(main, ["--starting-commit", "1.0.0"])
@@ -290,7 +291,8 @@ def test_starting_commit_is_only_commit(test_repo, runner, open_changelog):
 
 
 @pytest.mark.parametrize(
-    "commands", [["touch file", "git add file", "git commit -m 'fix: Some file fix' -q", "git tag 1.0.0"]],
+    "commands",
+    [["touch file", "git add file", "git commit -m 'fix: Some file fix' -q", "git tag 1.0.0"]],
 )
 def test_starting_commit_not_exist(test_repo, runner, open_changelog):
     result = runner.invoke(main, ["--starting-commit", "nonexist"])
