@@ -43,7 +43,8 @@ def test_markdown_presenter_changelog_with_features(changelog, markdown_presente
     changelog.add_note("", "feat", "description", scope="scope")
     description = "{}\n\n".format(changelog.description) if changelog.description else ""
     assert_markdown = (
-        "# {title}\n\n{description}## Unreleased (2020-01-01)\n\n#### New Features\n\n* description\n* (scope): description\n"
+        "# {title}\n\n{description}## Unreleased (2020-01-01)\n\n#### New Features\n\n"
+        "* description\n* (scope): description\n"
     ).format(title=changelog.title, description=description)
     markdown = markdown_presenter.present(changelog)
     assert assert_markdown == markdown
