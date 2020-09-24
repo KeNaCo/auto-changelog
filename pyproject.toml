@@ -48,6 +48,7 @@ Click = "^7.0"
 [tool.poetry.dev-dependencies]
 pytest = "^4.6"
 black = {version = "*", allow-prereleases = true}
+flake8 = "*"
 
 [tool.poetry.scripts]
 auto-changelog = 'auto_changelog.__main__:main'
