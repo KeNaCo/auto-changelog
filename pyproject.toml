@@ -49,6 +49,7 @@ Click = "^7.0"
 pytest = "^4.6"
 black = {version = "*", allow-prereleases = true}
 flake8 = "*"
+pre-commit = "*"
 
 [tool.poetry.scripts]
 auto-changelog = 'auto_changelog.__main__:main'
