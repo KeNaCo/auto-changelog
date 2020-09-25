@@ -50,9 +50,37 @@ pytest = "^4.6"
 black = {version = "*", allow-prereleases = true}
 flake8 = "*"
 pre-commit = "*"
+tox = "*"
 
 [tool.poetry.scripts]
 auto-changelog = 'auto_changelog.__main__:main'
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+skipsdist = True
+envlist = py36, py37, py38, flake8
+
+[travis]
+python =
+    3.8: py38
+    3.7: py37
+    3.6: py36
+
+[testenv:flake8]
+basepython = python
+deps = flake8
+commands = flake8 auto_changelog tests
+
+[testenv]
+whitelist_externals = poetry
+skip_install = true
+setenv =
+    PYTHONPATH = {toxinidir}
+commands =
+    poetry install -v
+    poetry run pytest --basetemp={envtmpdir}
+"""
 
 [build-system]
 requires = ["poetry>=0.12"]
