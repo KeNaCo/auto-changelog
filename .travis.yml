@@ -1,0 +1,37 @@
+# Config file for automatic testing at travis-ci.com
+
+language: python
+stages:
+  - test
+jobs:
+  include:
+    - python: "3.8"
+    - python: "3.7"
+    - python: "3.6"
+    - name: "Python 3.8 on Windows"
+      os: windows
+      language: shell       # 'language: python' is an error on Travis CI Windows
+      before_install:
+        - choco install python --version 3.8.0
+        - python -m pip install --upgrade pip
+      env: PATH=/c/Python38:/c/Python38/Scripts:$PATH
+
+# Command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
+install:
+  - export MY_GH_OWNER_NAME=$(echo ${TRAVIS_REPO_SLUG} | cut -f 1 -d /)
+  - export MY_GH_REPO_NAME=$(echo ${TRAVIS_REPO_SLUG} | cut -f 2 -d /)
+  - pip install -U poetry
+  - pip install -U tox-travis
+  - pip install -U coverage
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ~/cc-test-reporter
+  - chmod +x ~/cc-test-reporter
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then ~/cc-test-reporter before-build; fi
+
+# Command to run tests, e.g. python setup.py test
+script:
+  - tox
+
+after_script:
+  - coverage run --source auto_changelog -m pytest
+  - coverage report -m
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then ~/cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi
