@@ -62,6 +62,9 @@ skipsdist = True
 envlist = py36, py37, py38, flake8
 
 [travis]
+os =
+    linux: py{36,37,38}
+    windows: py38
 python =
     3.8: py38
     3.7: py37
