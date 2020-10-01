@@ -209,6 +209,8 @@ class GitRepository(RepositoryInterface):
     def _parse_conventional_commit(message: str) -> Tuple[str, str, str, str, str]:
         type_ = scope = description = body_footer = body = footer = ""
         # TODO this is less restrictive version of re. I have somewhere more restrictive one, maybe as option?
+        if "\n" in message:
+            message = message[:message.find("\n")]
         match = re.match(r"^(\w+)(\(\w+\))?!?: (.*)(\n\n[\w\W]+)?$", message)
         if match:
             type_, scope, description, body_footer = match.groups(default="")
