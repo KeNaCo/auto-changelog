@@ -84,33 +84,50 @@ A simple example
 Contributing
 ------------
 
-To setup development environment, you may use `Poetry`_:
+To setup development environment, you may use `Poetry`_.
+These instructions will assume that you have already `Poetry`_ as well as GNU make locally installed
+on your development computer.
 
-.. code-block:: text
+These instructions will assume that you have already poetry (https://python-poetry.org/) locally installed
+on your development computer.
 
-    poetry install
+1. Fork the `auto-changelog` repo on GitHub.
+2. Clone your fork locally::
 
-To activate virtualenv:
+    $ git clone git@github.com:your_name_here/auto-changelog.git
 
-.. code-block:: text
+3. Initialize your local development environment of auto-changelog.
+   This will include creating a virtualenv using poetry, installing dependencies and registering git hooks
+   using pre-commit::
 
-    poetry shell
+    $ cd auto-changelog/
+    $ make init-dev
 
-To run tests:
+4. Create a branch for local development::
 
-.. code-block:: text
+    $ git checkout -b name-of-your-bugfix-or-feature
 
-    pytest
+   Now you can make your changes locally.
 
-For consistent formatting, you may use `Black`_:
+5. When you're done making changes, check that your changes pass linting, formating, and the
+   tests, including testing other Python versions with tox::
 
-.. code-block:: text
+    $ make lint         # check style with flake8
+    $ make format       # run autoformat with isort and black
+    $ make test         # run tests quickly with the default Python
+    $ make test-all     # run tests on every Python version with tox
 
-    black .
 
-.. note::
+6. Commit your changes and push your branch to GitHub. Upon commit pre-commit will automatically run 
+   flake8 and black and report if changes have been made or need to be fixed by you::
 
-    Instead of manual run of black tool, you can consider using `Pre-commit`_.
+    $ git add .
+    $ git commit -m "Your detailed description of your changes."
+    $ git push origin name-of-your-bugfix-or-feature
+
+7. Submit a pull request through the GitHub website.
+
+
 
 .. _Black: https://black.readthedocs.io/en/stable/
 .. _conventional style: https://www.conventionalcommits.org/en
