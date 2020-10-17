@@ -50,7 +50,9 @@ from auto_changelog.repository import GitRepository
 @click.option("--starting-commit", help="Starting commit to use for changelog generation", default="")
 @click.option("--stopping-commit", help="Stopping commit to use for changelog generation", default="HEAD")
 @click.option(
-    "--debug", is_flag=True, help="set logging level to DEBUG",
+    "--debug",
+    is_flag=True,
+    help="set logging level to DEBUG",
 )
 def main(
     repo,

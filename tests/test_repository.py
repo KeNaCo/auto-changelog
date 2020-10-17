@@ -115,7 +115,10 @@ def test_tag_pattern(tags, tag_prefix, tag_pattern, expected_tags):
                 "Footer #1\nFooter: second but this a rather long footer\nspanning accross two lines\nFooter: third",
             ),
         ),
-        ("feat: description\n\nFooter: footer text", ("feat", "", "description", "", "Footer: footer text"),),
+        (
+            "feat: description\n\nFooter: footer text",
+            ("feat", "", "description", "", "Footer: footer text"),
+        ),
         ("feat: description\n\nCloses #11", ("feat", "", "description", "", "Closes #11")),
         (
             "feat: description\n\nFooter #1\nFooter: second",
