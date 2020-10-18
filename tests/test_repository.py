@@ -106,7 +106,8 @@ def test_tag_pattern(tags, tag_prefix, tag_pattern, expected_tags):
             ("feat", "", "description", "body", "Footer #1\nFooter: second"),
         ),
         (
-            "feat: description\n\nbody1\nbody2\n\nbodypara2\n\nFooter #1\nFooter: second but this a rather long footer\nspanning accross two lines\nFooter: third",
+            "feat: description\n\nbody1\nbody2\n\nbodypara2\n\nFooter #1\n"
+            "Footer: second but this a rather long footer\nspanning accross two lines\nFooter: third",
             (
                 "feat",
                 "",
@@ -126,7 +127,8 @@ def test_tag_pattern(tags, tag_prefix, tag_pattern, expected_tags):
         ),
         ("feat(scope): description\n\nbody\n\nFooter #1", ("feat", "scope", "description", "body", "Footer #1")),
         (
-            "fix: correct minor typos in code\n\nsee the issue for details\n\non typos fixed.\n\nReviewed-by: Z\nRefs #133",
+            "fix: correct minor typos in code\n\nsee the issue for details\n\non typos fixed.\n\n"
+            "Reviewed-by: Z\nRefs #133",
             (
                 "fix",
                 "",
