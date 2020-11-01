@@ -89,6 +89,10 @@ class GitRepository(RepositoryInterface):
             for release_index in reversed(range(len(changelog.releases) - 1)):
                 releases[release_index].set_compare_url(diff_url, releases[release_index + 1].title)
 
+        # Close the link to the repository
+        # If we are not closing it, some references are not cleaned on windows
+        self.repository.close()
+
         return changelog
 
     def _issue_from_git_remote_url(self, remote: str) -> Optional[str]:
