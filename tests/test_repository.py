@@ -94,6 +94,7 @@ def test_tag_pattern(tags, tag_prefix, tag_pattern, expected_tags):
         ("feat(scope): description", ("feat", "scope", "description", "", "")),
         ("feat: description\n\nbody", ("feat", "", "description", "body", "")),
         ("feat: description\n\nbody\nbody2", ("feat", "", "description", "body\nbody2", "")),
+        ("feat: description\n\n", ("feat", "", "description", "", "")),
         ("feat: description\n\nbody\nbody2\nbody3", ("feat", "", "description", "body\nbody2\nbody3", "")),
         ("feat: description\n\nparagraph1\n\nparagraph2", ("feat", "", "description", "paragraph1\n\nparagraph2", "")),
         (
