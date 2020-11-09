@@ -44,8 +44,8 @@ You can list the command line options by running `auto-changelog --help`:
     Usage: auto-changelog [OPTIONS]
     
     Options:
-      -r, --repo PATH            Path to the repository's root directory [Default:
-                                 .]
+      -p, --path-repo PATH       Path to the repository's root directory 
+                                 [Default: .]
     
       -t, --title TEXT           The changelog's title [Default: Changelog]
       -d, --description TEXT     Your project's description
