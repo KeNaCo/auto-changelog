@@ -1,0 +1,18 @@
+{% import 'macros.jinja2' as macros -%}
+# {{ changelog.title }}
+{% if changelog.description %}
+{{ changelog.description }}
+{% endif -%}
+{%- for release in changelog.releases %}
+## {{ release.title }} ({{release.date}})
+
+{{ macros.section('New Features', release.features) -}}
+{{- macros.section('Fixes', release.fixes) -}}
+{{- macros.section('Performance improvements', release.performance_improvements) -}}
+{{- macros.section('Refactorings', release.refactorings) -}}
+{{- macros.section('Docs', release.docs) -}}
+{{- macros.section('Others', release.builds+release.ci+release.chore+release.reverts+release.style_changes+release.tests) -}}
+{% if release.diff_url %}
+Full set of changes: [`{{release.previous_tag}}...{{release.tag}}`]({{release.diff_url}})
+{% endif -%}
+{% endfor -%}

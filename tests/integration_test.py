@@ -14,6 +14,11 @@ def commands():
 
 
 @pytest.fixture
+def path_project():
+    return os.getcwd()
+
+
+@pytest.fixture
 def test_repo(tmp_path, commands):
     cwd = os.getcwd()
     os.chdir(str(tmp_path))
@@ -470,7 +475,15 @@ def test_empty_line_body(test_repo, runner, open_changelog):
 
 @pytest.mark.parametrize(
     "commands",
-    [["touch file", "git add file", "git commit -m 'feat: Add file #1\n\nBody line 1\nBody line 2' -q", "git log"]],
+    [
+        [
+            "echo test > file",
+            "git add file",
+            'git commit -m "feat: Add file #1\n\nBody line 1\nBody line 2" -q',
+            "git log",
+            "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
+        ]
+    ],
 )
 def test_double_line_body(runner, open_changelog):
     result = runner.invoke(main, ["--unreleased"])
@@ -563,6 +576,30 @@ def test_single_line_body_double_footer(runner, open_changelog):
     changelog = open_changelog().read()
     print(changelog)
     assert "Add file [#1]" in changelog
+
+
+@pytest.mark.parametrize(
+    "commands",
+    [
+        [
+            "echo test > file",
+            "git add file",
+            'git commit -m "feat(scope): Add file #1\n\nBody line 1\nBody line 2\nBody line 3" -q',
+            "git log",
+            "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
+        ]
+    ],
+)
+def test_custom_template(path_project, runner, open_changelog):
+    print(os.getenv("PYTEST_CURRENT_TEST"))
+    result = runner.invoke(
+        main, ["--unreleased", "--template", path_project + "/tests/custom_template/custom_template.jinja2"]
+    )
+    assert result.exit_code == 0, result.stderr
+    assert result.output == ""
+    changelog = open_changelog().read()
+    print(changelog)
+    assert "**scope**: Add file [#1]" in changelog
 
 
 @pytest.mark.parametrize(

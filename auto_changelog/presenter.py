@@ -6,16 +6,20 @@ from jinja2 import FileSystemLoader, Environment
 from auto_changelog.domain_model import Changelog, PresenterInterface
 
 default_template_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), "templates")
-default_template_name = "default.jinja2"
+
+default_template = {"compact": "compact.jinja2"}
 
 
 class MarkdownPresenter(PresenterInterface):
-    def __init__(self, template_path=None, issue_url=None):
-        if template_path:
-            template_dir, template_name = os.path.split(template_path)
-        else:
+    def __init__(self, template=None, issue_url=None):
+
+        # It is an embedded template
+        if template in default_template:
             template_dir = default_template_dir
-            template_name = default_template_name
+            template_name = default_template[template]
+        # It is a custom template
+        else:
+            template_dir, template_name = os.path.split(template)
 
         env = Environment(loader=FileSystemLoader(template_dir))
 

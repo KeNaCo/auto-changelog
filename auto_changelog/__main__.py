@@ -5,8 +5,20 @@ from typing import Optional
 import click
 
 from auto_changelog import generate_changelog
-from auto_changelog.presenter import MarkdownPresenter
+from auto_changelog.presenter import MarkdownPresenter, default_template
 from auto_changelog.repository import GitRepository
+
+
+def validate_template(ctx, param, value):
+
+    # Check if an embedded template is passed in parameter
+    if value in default_template:
+        return value
+    # Check if the custom template is a jinja2 file
+    elif value.endswith(".jinja2"):
+        return value
+    else:
+        raise click.BadParameter("Need to pass an embedded template name or a .jinja2 file")
 
 
 @click.command()
@@ -29,6 +41,13 @@ from auto_changelog.repository import GitRepository
 @click.option("-r", "--remote", default="origin", help="Specify git remote to use for links")
 @click.option("-v", "--latest-version", type=str, help="use specified version as latest release")
 @click.option("-u", "--unreleased", is_flag=True, default=False, help="Include section for unreleased changes")
+@click.option(
+    "-t",
+    "--template",
+    callback=validate_template,
+    default="compact",
+    help="specify template to use [compact] or a path to a custom template, default: compact ",
+)
 @click.option("--diff-url", default=None, help="override url for compares, use {current} and {previous} for tags")
 @click.option("--issue-url", default=None, help="Override url for issues, use {id} for issue id")
 @click.option(
@@ -62,6 +81,7 @@ def main(
     remote,
     latest_version: str,
     unreleased: bool,
+    template,
     diff_url,
     issue_url,
     issue_pattern,
@@ -86,7 +106,7 @@ def main(
         tag_prefix=tag_prefix,
         tag_pattern=tag_pattern,
     )
-    presenter = MarkdownPresenter()
+    presenter = MarkdownPresenter(template=template)
     changelog = generate_changelog(
         repository,
         presenter,
