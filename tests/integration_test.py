@@ -127,9 +127,7 @@ def test_option_output(runner, open_changelog):
     "commands",
     [
         [
-            "echo test > file",
-            "git add file",
-            'git commit -m "feat: Add file #1" -q',
+            'git commit --allow-empty -q -m "feat: Add file #1"',
             "git remote add upstream git@github.com:Michael-F-Bryan/auto-changelog.git",
         ]
     ],
@@ -146,9 +144,7 @@ def test_option_remote(runner, open_changelog):
     "commands",
     [
         [
-            "echo test > file",
-            "git add file",
-            'git commit -m "feat: Add file #1" -q',
+            'git commit --allow-empty -q -m "feat: Add file #1"',
             "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
         ]
     ],
@@ -165,10 +161,7 @@ def test_option_latest_version(runner, open_changelog):
     "commands",
     [
         [
-            "echo test > file",
-            "git add file",
-            'git commit -m "feat: Add file #1" -q',
-            "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
+            'git commit --allow-empty -q -m "feat: Add file #1"',
         ]
     ],
 )
@@ -184,9 +177,7 @@ def test_option_unreleased(runner, open_changelog):
     "commands",
     [
         [
-            "echo test > file",
-            "git add file",
-            'git commit -m "feat: Add file #1" -q',
+            'git commit --allow-empty -q -m "feat: Add file #1"',
             "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
         ]
     ],
@@ -203,9 +194,7 @@ def test_option_skipping_unreleased(runner, open_changelog):
     "commands",
     [
         [
-            "echo test > file",
-            "git add file",
-            'git commit -m "feat: Add file #1" -q',
+            'git commit --allow-empty -q -m "feat: Add file #1"',
             "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
         ]
     ],
@@ -222,9 +211,7 @@ def test_option_issue_url(runner, open_changelog):
     "commands",
     [
         [
-            "echo test > file",
-            "git add file",
-            'git commit -m "feat: Add file PRO-1" -q',
+            'git commit --allow-empty -q -m "feat: Add file PRO-1"',
             "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
         ]
     ],
@@ -243,9 +230,7 @@ def test_option_issue_pattern(runner, open_changelog):
     "commands",
     [
         [
-            "echo test > file",
-            "git add file",
-            'git commit -m "feat: Add file PRO-1" -q',
+            'git commit --allow-empty -q -m "feat: Add file PRO-1"',
             "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
         ]
     ],
@@ -271,13 +256,9 @@ def test_option_stdout(runner, open_changelog):
     "commands",
     [
         [
-            "echo test > file",
-            "git add file",
-            'git commit -m "feat: Add file" -q',
+            'git commit --allow-empty -q -m "feat: Add file"',
             "git tag custom-tag",
-            'echo "change" > file',
-            "git add file",
-            'git commit -m "chore: Change" -q',
+            'git commit --allow-empty -q -m "chore: Change"',
             "git tag 1.0.0",
             "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
         ]
@@ -295,18 +276,12 @@ def test_option_tag_pattern(runner, open_changelog):
     "commands",
     [
         [
-            "echo test > file",
-            "git add file",
-            'git commit -m "feat: Add file" -q',
+            'git commit --allow-empty -q -m "feat: Add file"',
             "git tag v-something",
-            'echo "change" > file',
-            "git add file",
-            'git commit -m "chore: Change" -q',
+            'git commit --allow-empty -q -m "chore: Change"',
             "git tag 1.0.0",
             "git tag v2.0.0",
-            'echo "change2" > file',
-            "git add file",
-            'git commit -m "chore: Change2" -q',
+            'git commit --allow-empty -q -m "chore: Change2"',
             "git tag v3.0.0",
             "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
         ]
@@ -326,13 +301,9 @@ def test_option_tag_prefix(runner, open_changelog):
     "commands",
     [
         [
-            "echo test > file",
-            "git add file",
-            'git commit -m "feat: Add file" -q',
+            'git commit --allow-empty -q -m "feat: Add file"',
             "git tag release-1",
-            'echo "change" > file',
-            "git add file",
-            'git commit -m "chore: Change" -q',
+            'git commit --allow-empty -q -m "chore: Change"',
             "git tag 1",
             "git tag release-1.2.3",
             "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
@@ -352,12 +323,8 @@ def test_tag_prefix_and_pattern_combination(runner, open_changelog):
     "commands",
     [
         [
-            "echo test > file",
-            "git add file",
-            'git commit -m "feat: Add file PRO-1" -q',
-            "echo 'change' > file",
-            "git add file",
-            'git commit -m "fix: Some file fix" -q',
+            'git commit --allow-empty -q -m "feat: Add file PRO-1"',
+            'git commit --allow-empty -q -m "fix: Some file fix"',
             "git tag start",
             "git tag 1.0.0",
             "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
@@ -376,9 +343,7 @@ def test_starting_commit(test_repo, runner, open_changelog):
     "commands",
     [
         [
-            "echo test > file",
-            "git add file",
-            'git commit -m "fix: Some file fix" -q',
+            'git commit --allow-empty -q -m "fix: Some file fix"',
             "git tag 1.0.0",
             "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
         ]
@@ -395,9 +360,7 @@ def test_starting_commit_is_only_commit(runner, open_changelog):
     "commands",
     [
         [
-            "echo test > file",
-            "git add file",
-            'git commit -m "fix: Some file fix" -q',
+            'git commit --allow-empty -q -m "fix: Some file fix"',
             "git tag 1.0.0",
             "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
         ]
@@ -412,13 +375,9 @@ def test_starting_commit_not_exist(test_repo, runner, open_changelog):
     "commands",
     [
         [
-            "echo test > file",
-            "git add file",
-            'git commit -m "feat: Add file PRO-1" -q',
+            'git commit --allow-empty -q -m "feat: Add file PRO-1"',
             "git tag stop",
-            'echo "change" > file',
-            "git add file",
-            'git commit -m "fix: Some file fix" -q',
+            'git commit --allow-empty -q -m "fix: Some file fix"',
             "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
         ]
     ],
@@ -435,11 +394,7 @@ def test_stopping_commit(runner, open_changelog):
     "commands",
     [
         [
-            "echo test > file",
-            "git add file",
-            'git commit -m "feat: Add file #1\n\nBody line" -q',
-            "git log",
-            "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
+            'git commit --allow-empty -q -m "feat: Add file #1\n\n"',
         ]
     ],
 )
@@ -456,11 +411,7 @@ def test_single_line_body(runner, open_changelog):
     "commands",
     [
         [
-            "echo test > file",
-            "git add file",
-            'git commit -m "feat: Add file #1\n\n" -q',
-            "git log",
-            "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
+            'git commit --allow-empty -q -m "feat: Add file #1\n\nBody line"',
         ]
     ],
 )
@@ -475,15 +426,7 @@ def test_empty_line_body(test_repo, runner, open_changelog):
 
 @pytest.mark.parametrize(
     "commands",
-    [
-        [
-            "echo test > file",
-            "git add file",
-            'git commit -m "feat: Add file #1\n\nBody line 1\nBody line 2" -q',
-            "git log",
-            "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
-        ]
-    ],
+    [["git commit --allow-empty -q -m 'feat: Add file #1\n\nBody line 1\nBody line 2'"]],
 )
 def test_double_line_body(runner, open_changelog):
     result = runner.invoke(main, ["--unreleased"])
@@ -498,11 +441,7 @@ def test_double_line_body(runner, open_changelog):
     "commands",
     [
         [
-            "echo test > file",
-            "git add file",
-            'git commit -m "feat: Add file #1\n\nBody line 1\nBody line 2\nBody line 3" -q',
-            "git log",
-            "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
+            'git commit --allow-empty -q -m "feat: Add file #1\n\nBody line 1\nBody line 2\nBody line 3"',
         ]
     ],
 )
@@ -519,11 +458,7 @@ def test_triple_line_body(runner, open_changelog):
     "commands",
     [
         [
-            "echo test > file",
-            "git add file",
-            'git commit -m "feat: Add file #1\n\nBody paragraph 1\n\nBody paragraph 2" -q',
-            "git log",
-            "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
+            'git commit --allow-empty -q -m "feat: Add file #1\n\nBody paragraph 1\n\nBody paragraph 2"',
         ]
     ],
 )
@@ -540,11 +475,7 @@ def test_multi_paragraph_body(runner, open_changelog):
     "commands",
     [
         [
-            "echo test > file",
-            "git add file",
-            'git commit -m "feat: Add file #1\n\nBody line\n\nFooter: first footer" -q',
-            "git log",
-            "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
+            'git commit --allow-empty -q -m "feat: Add file #1\n\nBody line\n\nFooter: first footer"',
         ]
     ],
 )
@@ -561,11 +492,7 @@ def test_single_line_body_single_footer(runner, open_changelog):
     "commands",
     [
         [
-            "echo test > file",
-            "git add file",
-            'git commit -m "feat: Add file #1\n\nBody line\n\nFooter: first footer\nFooter: second footer" -q',
-            "git log",
-            "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
+            'git commit --allow-empty -q -m "feat: Add file #1\n\nBody line\n\nFooter: first footer\nFooter: second footer"',
         ]
     ],
 )
@@ -582,11 +509,7 @@ def test_single_line_body_double_footer(runner, open_changelog):
     "commands",
     [
         [
-            "echo test > file",
-            "git add file",
-            'git commit -m "feat(scope): Add file #1\n\nBody line 1\nBody line 2\nBody line 3" -q',
-            "git log",
-            "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
+            'git commit --allow-empty -q -m "feat(scope): Add file #1\n\nBody line 1\nBody line 2\nBody line 3"',
         ]
     ],
 )
