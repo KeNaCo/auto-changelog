@@ -22,7 +22,12 @@ def path_project():
 def test_repo(tmp_path, commands):
     cwd = os.getcwd()
     os.chdir(str(tmp_path))
-    init_commands = ["git init -q", "git config user.name 'John Doe'", "git config user.email john.doe@email"]
+    init_commands = [
+        "git init -q",
+        "git config user.name 'John Doe'",
+        "git config user.email john.doe@email",
+        "git config commit.gpgsign false",  # will prevent gpg pass failures
+    ]
     for command in init_commands + commands:
         # shell argument fixes error for strings. Details in link below:
         # https://stackoverflow.com/questions/9935151/popen-error-errno-2-no-such-file-or-directory
