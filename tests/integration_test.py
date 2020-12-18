@@ -491,7 +491,7 @@ def test_double_line_body(runner, open_changelog):
     assert result.output == ""
     changelog = open_changelog().read()
     print(changelog)
-    assert "Add file [#1]" in changelog
+    assert "Add file #1" in changelog
 
 
 @pytest.mark.parametrize(
