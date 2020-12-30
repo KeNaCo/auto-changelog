@@ -11,8 +11,8 @@ from auto_changelog.repository import GitRepository
 
 @click.command()
 @click.option(
-    "-r",
-    "--repo",
+    "-p",
+    "--path-repo",
     type=click.Path(exists=True),
     default=".",
     help="Path to the repository's root directory [Default: .]",
@@ -55,7 +55,7 @@ from auto_changelog.repository import GitRepository
     help="set logging level to DEBUG",
 )
 def main(
-    repo,
+    path_repo,
     title,
     description,
     output,
@@ -77,7 +77,7 @@ def main(
         logging.debug("Logging level has been set to DEBUG")
 
     # Convert the repository name to an absolute path
-    repo = os.path.abspath(repo)
+    repo = os.path.abspath(path_repo)
 
     repository = GitRepository(
         repo,

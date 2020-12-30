@@ -74,7 +74,7 @@ def test_help(runner):
     [["git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git"]],
 )
 def test_option_repo(test_repo, runner, open_changelog):
-    result = runner.invoke(main, ["--repo", test_repo])
+    result = runner.invoke(main, ["--path-repo", test_repo])
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
     changelog = open_changelog().read()
