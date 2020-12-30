@@ -28,7 +28,7 @@ def changelog(title, description):
 
 @pytest.fixture
 def markdown_presenter():
-    return MarkdownPresenter()
+    return MarkdownPresenter("compact")
 
 
 def test_markdown_presenter_empty_changelog(empty_changelog, markdown_presenter):
@@ -50,6 +50,21 @@ def test_markdown_presenter_changelog_with_features(changelog, markdown_presente
     assert assert_markdown == markdown
 
 
+def test_markdown_presenter_custom_template_changelog_with_features(changelog, markdown_presenter):
+    # scope in bold
+    markdown_presenter = MarkdownPresenter("tests/custom_template/custom_template.jinja2")
+    changelog.add_release("Unreleased", "HEAD", date(2020, 1, 1), None)
+    changelog.add_note("", "feat", "description")
+    changelog.add_note("", "feat", "description", scope="scope")
+    description = "{}\n\n".format(changelog.description) if changelog.description else ""
+    assert_markdown = (
+        "# {title}\n\n{description}## Unreleased (2020-01-01)\n\n#### New Features\n\n"
+        "* description\n* **scope**: description\n"
+    ).format(title=changelog.title, description=description)
+    markdown = markdown_presenter.present(changelog)
+    assert assert_markdown == markdown
+
+
 def test_markdown_presenter_changelog_with_fixes(changelog, markdown_presenter):
     changelog.add_release("Unreleased", "HEAD", date(2020, 1, 1), None)
     changelog.add_note("", "fix", "description")
@@ -57,6 +72,21 @@ def test_markdown_presenter_changelog_with_fixes(changelog, markdown_presenter):
     description = "{}\n\n".format(changelog.description) if changelog.description else ""
     assert_markdown = (
         "# {title}\n\n{description}## Unreleased (2020-01-01)\n\n#### Fixes\n\n* description\n* (scope): description\n"
+    ).format(title=changelog.title, description=description)
+    markdown = markdown_presenter.present(changelog)
+    assert assert_markdown == markdown
+
+
+def test_markdown_presenter_changelog_custom_template_with_fixes(changelog):
+    # scope in bold
+    markdown_presenter = MarkdownPresenter("tests/custom_template/custom_template.jinja2")
+    changelog.add_release("Unreleased", "HEAD", date(2020, 1, 1), None)
+    changelog.add_note("", "fix", "description")
+    changelog.add_note("", "fix", "description", scope="scope")
+    description = "{}\n\n".format(changelog.description) if changelog.description else ""
+    assert_markdown = (
+        "# {title}\n\n{description}## Unreleased (2020-01-01)\n"
+        + "\n#### Fixes\n\n* description\n* **scope**: description\n"
     ).format(title=changelog.title, description=description)
     markdown = markdown_presenter.present(changelog)
     assert assert_markdown == markdown
