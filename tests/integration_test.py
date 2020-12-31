@@ -163,6 +163,49 @@ def test_option_remote(runner, open_changelog):
     [
         [
             'git commit --allow-empty -q -m "feat: Add file #1"',
+            "git remote add upstream git@github.com:Michael-F-Bryan/auto-changelog.git",
+            "git remote add origin git@github.com:KeNaCo/auto-changelog.git",
+        ]
+    ],
+)
+def test_option_default_remote(runner, open_changelog):
+    result = runner.invoke(main, ["--unreleased"])  # --remote default: origin
+    assert result.exit_code == 0, result.stderr
+    assert result.output == ""
+    changelog = open_changelog().read()
+    assert_content = (
+        f"# Changelog\n\n## Unreleased ({date.today().strftime('%Y-%m-%d')})\n\n#### New Features\n\n"
+        f"* Add file [#1](https://github.com/KeNaCo/auto-changelog/issues/1)\n"
+    )
+    assert changelog == assert_content
+
+
+@pytest.mark.parametrize(
+    "commands",
+    [
+        [
+            'git commit --allow-empty -q -m "feat: Add file #1"',
+            "git remote add upstream git@github.com:Michael-F-Bryan/auto-changelog.git",
+        ]
+    ],
+)
+def test_option_default_missing_remote(runner, open_changelog):
+    result = runner.invoke(main, ["--unreleased"])  # --remote default: origin
+    assert result.exit_code == 0, result.stderr
+    assert result.output == ""
+    changelog = open_changelog().read()
+    assert_content = (
+        f"# Changelog\n\n## Unreleased ({date.today().strftime('%Y-%m-%d')})\n\n#### New Features\n\n"
+        f"* Add file #1\n"
+    )
+    assert changelog == assert_content
+
+
+@pytest.mark.parametrize(
+    "commands",
+    [
+        [
+            'git commit --allow-empty -q -m "feat: Add file #1"',
             "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
         ]
     ],
