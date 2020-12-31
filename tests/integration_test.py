@@ -140,6 +140,7 @@ def test_option_output(runner, open_changelog):
         [
             'git commit --allow-empty -q -m "feat: Add file #1"',
             "git remote add upstream git@github.com:Michael-F-Bryan/auto-changelog.git",
+            "git remote add origin git@github.com:KeNaCo/auto-changelog.git",
         ]
     ],
 )
@@ -292,7 +293,8 @@ def test_option_issue_url(runner, open_changelog):
 )
 def test_option_issue_pattern(runner, open_changelog):
     result = runner.invoke(
-        main, ["--issue-pattern", r" (\w\w\w-\d+)", "--issue-url", "issues.custom.com/{id}", "--unreleased"]
+        main,
+        ["--issue-pattern", r"([a-zA-Z][a-zA-Z][a-zA-Z]-\d+)", "--issue-url", "issues.custom.com/{id}", "--unreleased"],
     )
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
@@ -315,7 +317,8 @@ def test_option_issue_pattern(runner, open_changelog):
 )
 def test_option_invalid_issue_pattern(runner, open_changelog):
     result = runner.invoke(
-        main, ["--issue-pattern", r" \w\w\w-\d+", "--issue-url", "issues.custom.com/{id}", "--unreleased"]
+        main,
+        ["--issue-pattern", r" [a-zA-Z][a-zA-Z][a-zA-Z]-\d+", "--issue-url", "issues.custom.com/{id}", "--unreleased"],
     )
     assert result.exit_code != 0, result.stderr
 
@@ -338,6 +341,8 @@ def test_option_stdout(runner, open_changelog):
             "git tag custom-tag",
             'git commit --allow-empty -q -m "chore: Change"',
             "git tag 1.0.0",
+            'git commit --allow-empty -q -m "chore: Change2"'
+            "git tag v2.0.0"
             "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git",
         ]
     ],
@@ -646,10 +651,8 @@ def test_single_line_body_double_footer(runner, open_changelog):
     ],
 )
 def test_custom_template(path_project, runner, open_changelog):
-    print(os.getenv("PYTEST_CURRENT_TEST"))
-    result = runner.invoke(
-        main, ["--unreleased", "--template", path_project + "/tests/custom_template/custom_template.jinja2"]
-    )
+    custom_template_path = os.path.join(path_project, "tests/custom_template/custom_template.jinja2")
+    result = runner.invoke(main, ["--unreleased", "--template", custom_template_path])
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
     changelog = open_changelog().read()
