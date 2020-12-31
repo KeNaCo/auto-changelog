@@ -194,3 +194,5 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# sandbox manual testing directory
+sandbox/
