@@ -2,6 +2,7 @@ import logging
 import os
 import pytest
 import subprocess
+from datetime import date
 
 from click.testing import CliRunner
 
@@ -61,6 +62,12 @@ def open_changelog(test_repo, changelog_name):
         file.close()
 
 
+def test_help(runner):
+    result = runner.invoke(main, ["--help"])
+    assert result.exit_code == 0, result.stderr
+    assert result.output
+
+
 @pytest.mark.parametrize(
     "commands",
     [["git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git"]],
@@ -78,12 +85,6 @@ def test_empty_repo(runner, open_changelog):
     assert changelog == "# Changelog\n"
 
 
-def test_help(runner):
-    result = runner.invoke(main, ["--help"])
-    assert result.exit_code == 0, result.stderr
-    assert result.output
-
-
 @pytest.mark.parametrize(
     "commands",
     [["git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git"]],
@@ -93,7 +94,7 @@ def test_option_repo(test_repo, runner, open_changelog):
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
     changelog = open_changelog().read()
-    assert changelog
+    assert changelog == "# Changelog\n"
 
 
 @pytest.mark.parametrize(
@@ -105,7 +106,7 @@ def test_option_title(runner, open_changelog):
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
     changelog = open_changelog().read()
-    assert "# Title\n" == changelog
+    assert changelog == "# Title\n"
 
 
 @pytest.mark.parametrize(
@@ -117,7 +118,7 @@ def test_option_description(runner, open_changelog):
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
     changelog = open_changelog().read()
-    assert "My description\n" in changelog
+    assert changelog == "# Changelog\n\nMy description\n"
 
 
 @pytest.mark.parametrize("changelog_name", ["a.out"])
@@ -130,7 +131,7 @@ def test_option_output(runner, open_changelog):
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
     changelog = open_changelog().read()
-    assert changelog
+    assert changelog == "# Changelog\n"
 
 
 @pytest.mark.parametrize(
@@ -150,7 +151,11 @@ def test_option_remote(runner, open_changelog):
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
     changelog = open_changelog().read()
-    assert "[#1](https://github.com/Michael-F-Bryan/auto-changelog/issues/1)" in changelog
+    assert_content = (
+        f"# Changelog\n\n## Unreleased ({date.today().strftime('%Y-%m-%d')})\n\n#### New Features\n\n"
+        f"* Add file [#1](https://github.com/Michael-F-Bryan/auto-changelog/issues/1)\n"
+    )
+    assert changelog == assert_content
 
 
 @pytest.mark.parametrize(
@@ -167,7 +172,11 @@ def test_option_latest_version(runner, open_changelog):
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
     changelog = open_changelog().read()
-    assert "## 1.0.0" in changelog
+    assert_content = (
+        f"# Changelog\n\n## 1.0.0 ({date.today().strftime('%Y-%m-%d')})\n\n#### New Features\n\n"
+        f"* Add file [#1](https://github.com/Michael-F-Bryan/auto-changelog/issues/1)\n"
+    )
+    assert changelog == assert_content
 
 
 @pytest.mark.parametrize(
@@ -183,7 +192,11 @@ def test_option_unreleased(runner, open_changelog):
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
     changelog = open_changelog().read()
-    assert "## Unreleased" in changelog
+    assert_content = (
+        f"# Changelog\n\n## Unreleased ({date.today().strftime('%Y-%m-%d')})\n\n#### New Features\n\n"
+        f"* Add file #1\n"
+    )
+    assert changelog == assert_content
 
 
 @pytest.mark.parametrize(
@@ -200,6 +213,7 @@ def test_option_skipping_unreleased(runner, open_changelog):
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
     changelog = open_changelog().read()
+    assert "# Changelog\n" == changelog
     assert "## Unreleased" not in changelog
 
 
@@ -217,7 +231,11 @@ def test_option_issue_url(runner, open_changelog):
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
     changelog = open_changelog().read()
-    assert "[#1](issues.custom.com/1)" in changelog
+    assert_content = (
+        f"# Changelog\n\n## Unreleased ({date.today().strftime('%Y-%m-%d')})\n\n#### New Features\n\n"
+        f"* Add file [#1](issues.custom.com/1)\n"
+    )
+    assert changelog == assert_content
 
 
 @pytest.mark.parametrize(
@@ -236,7 +254,11 @@ def test_option_issue_pattern(runner, open_changelog):
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
     changelog = open_changelog().read()
-    assert "[PRO-1](issues.custom.com/PRO-1)" in changelog
+    assert_content = (
+        f"# Changelog\n\n## Unreleased ({date.today().strftime('%Y-%m-%d')})\n\n#### New Features\n\n"
+        f"* Add file [PRO-1](issues.custom.com/PRO-1)\n"
+    )
+    assert changelog == assert_content
 
 
 @pytest.mark.parametrize(
@@ -262,7 +284,7 @@ def test_option_invalid_issue_pattern(runner, open_changelog):
 def test_option_stdout(runner, open_changelog):
     result = runner.invoke(main, ["--stdout"])
     assert result.exit_code == 0, result.stderr
-    assert "# Changelog" in result.output
+    assert "# Changelog\n\n" == result.output
 
 
 @pytest.mark.parametrize(
@@ -285,7 +307,11 @@ def test_option_tag_pattern(runner, open_changelog):
     assert result.exit_code == 0, result.stderr
     changelog = open_changelog().read()
     assert "1.0.0" in changelog
-    assert "custom-tag" not in changelog
+    assert_content = (
+        f"# Changelog\n\n## 1.0.0 ({date.today().strftime('%Y-%m-%d')})\n\n#### New Features\n\n"
+        f"* Add file\n#### Others\n\n* Change\n"
+    )
+    assert changelog == assert_content
 
 
 @pytest.mark.parametrize(
@@ -310,6 +336,13 @@ def test_option_tag_prefix(runner, open_changelog):
     result = runner.invoke(main, ["--tag-prefix", "v"])
     assert result.exit_code == 0, result.exc_info
     changelog = open_changelog().read()
+    assert_content = (
+        f"# Changelog\n\n## v3.0.0 ({date.today().strftime('%Y-%m-%d')})\n\n#### Others\n\n* Change2\n\n"
+        f"Full set of changes: [`v2.0.0...v3.0.0`](https://github.com/Michael-F-Bryan/auto-changelog/compare/v2.0.0...v3.0.0)\n\n"
+        f"## v2.0.0 ({date.today().strftime('%Y-%m-%d')})\n\n#### New Features\n\n* Add file\n"
+        f"#### Others\n\n* Change\n"
+    )
+    assert changelog == assert_content
     assert "1.0.0" not in changelog
     assert "v-something" not in changelog
     assert "v2.0.0" in changelog
@@ -339,7 +372,10 @@ def test_tag_prefix_and_pattern_combination(runner, open_changelog):
     result = runner.invoke(main, ["--tag-prefix", "release-", "--tag-pattern", r"\d"])
     assert result.exit_code == 0, result.stderr
     changelog = open_changelog().read()
-    assert "release-1" in changelog
+    assert_content = (
+        f"# Changelog\n\n## release-1 ({date.today().strftime('%Y-%m-%d')})\n\n" f"#### New Features\n\n* Add file\n"
+    )
+    assert changelog == assert_content
     assert "## 1 " not in changelog
     assert "release-1.2.3" not in changelog
 
@@ -365,8 +401,9 @@ def test_starting_commit(test_repo, runner, open_changelog):
     result = runner.invoke(main, ["--starting-commit", "start"])
     assert result.exit_code == 0, result.stderr
     changelog = open_changelog().read()
+    assert_content = f"# Changelog\n\n## 1.0.0 ({date.today().strftime('%Y-%m-%d')})\n\n#### Fixes\n\n* Some file fix\n"
+    assert changelog == assert_content
     assert "Add file PRO-1" not in changelog
-    assert "Some file fix" in changelog
 
 
 @pytest.mark.parametrize(
@@ -386,7 +423,8 @@ def test_starting_commit_is_only_commit(runner, open_changelog):
     result = runner.invoke(main, ["--starting-commit", "1.0.0"])
     assert result.exit_code == 0, result.stderr
     changelog = open_changelog().read()
-    assert "Some file fix" in changelog
+    assert_content = f"# Changelog\n\n## 1.0.0 ({date.today().strftime('%Y-%m-%d')})\n\n#### Fixes\n\n* Some file fix\n"
+    assert changelog == assert_content
 
 
 @pytest.mark.parametrize(
@@ -422,7 +460,10 @@ def test_stopping_commit(runner, open_changelog):
     result = runner.invoke(main, ["--stopping-commit", "stop", "--unreleased"])
     assert result.exit_code == 0, result.stderr
     changelog = open_changelog().read()
-    assert "Add file PRO-1" in changelog
+    assert_content = (
+        f"# Changelog\n\n## Unreleased ({date.today().strftime('%Y-%m-%d')})\n\n#### New Features\n\n* Add file PRO-1\n"
+    )
+    assert changelog == assert_content
     assert "Some file fix" not in changelog
 
 
@@ -434,13 +475,15 @@ def test_stopping_commit(runner, open_changelog):
         ]
     ],
 )
-def test_single_line_body(runner, open_changelog):
+def test_empty_line_body(test_repo, runner, open_changelog):
     result = runner.invoke(main, ["--unreleased"])
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
     changelog = open_changelog().read()
-    print(changelog)
-    assert "Add file [#1]" in changelog
+    assert_content = (
+        f"# Changelog\n\n## Unreleased ({date.today().strftime('%Y-%m-%d')})\n\n#### New Features\n\n* Add file #1\n"
+    )
+    assert changelog == assert_content
 
 
 @pytest.mark.parametrize(
@@ -451,13 +494,15 @@ def test_single_line_body(runner, open_changelog):
         ]
     ],
 )
-def test_empty_line_body(test_repo, runner, open_changelog):
+def test_single_line_body(runner, open_changelog):
     result = runner.invoke(main, ["--unreleased"])
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
     changelog = open_changelog().read()
-    print(changelog)
-    assert "Add file [#1]" in changelog
+    assert_content = (
+        f"# Changelog\n\n## Unreleased ({date.today().strftime('%Y-%m-%d')})\n\n#### New Features\n\n* Add file #1\n"
+    )
+    assert changelog == assert_content
 
 
 @pytest.mark.parametrize(
@@ -486,8 +531,10 @@ def test_triple_line_body(runner, open_changelog):
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
     changelog = open_changelog().read()
-    print(changelog)
-    assert "Add file [#1]" in changelog
+    assert_content = (
+        f"# Changelog\n\n## Unreleased ({date.today().strftime('%Y-%m-%d')})\n\n#### New Features\n\n* Add file #1\n"
+    )
+    assert changelog == assert_content
 
 
 @pytest.mark.parametrize(
@@ -503,8 +550,10 @@ def test_multi_paragraph_body(runner, open_changelog):
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
     changelog = open_changelog().read()
-    print(changelog)
-    assert "Add file [#1]" in changelog
+    assert_content = (
+        f"# Changelog\n\n## Unreleased ({date.today().strftime('%Y-%m-%d')})\n\n#### New Features\n\n* Add file #1\n"
+    )
+    assert changelog == assert_content
 
 
 @pytest.mark.parametrize(
@@ -520,8 +569,10 @@ def test_single_line_body_single_footer(runner, open_changelog):
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
     changelog = open_changelog().read()
-    print(changelog)
-    assert "Add file [#1]" in changelog
+    assert_content = (
+        f"# Changelog\n\n## Unreleased ({date.today().strftime('%Y-%m-%d')})\n\n#### New Features\n\n* Add file #1\n"
+    )
+    assert changelog == assert_content
 
 
 @pytest.mark.parametrize(
@@ -537,8 +588,10 @@ def test_single_line_body_double_footer(runner, open_changelog):
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
     changelog = open_changelog().read()
-    print(changelog)
-    assert "Add file [#1]" in changelog
+    assert_content = (
+        f"# Changelog\n\n## Unreleased ({date.today().strftime('%Y-%m-%d')})\n\n#### New Features\n\n* Add file #1\n"
+    )
+    assert changelog == assert_content
 
 
 @pytest.mark.parametrize(
@@ -557,8 +610,8 @@ def test_custom_template(path_project, runner, open_changelog):
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
     changelog = open_changelog().read()
-    print(changelog)
-    assert "**scope**: Add file [#1]" in changelog
+    assert_content = f"# Changelog\n\n## Unreleased ({date.today().strftime('%Y-%m-%d')})\n\n#### New Features\n\n* **scope**: Add file #1\n"
+    assert changelog == assert_content
 
 
 @pytest.mark.parametrize(
