@@ -3,11 +3,9 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Callable, Union, List, Optional, Tuple, Any
 
-default_issue_pattern = r"(#([\w-]+))"
 # Default aim for Semver tags.
 # Original Semver source: https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
 default_tag_pattern = r"(?P<version>((?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*))(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)"  # noqa: E501
-
 
 class ChangeType(Enum):
     BUILD = "build"
@@ -179,7 +177,7 @@ class Changelog:
     ):
         self.title = title
         self.description = description
-        self.issue_pattern = issue_pattern or default_issue_pattern
+        self.issue_pattern = issue_pattern or auto_changelog.default_issue_pattern
         self.issue_url = issue_url or ""
         self.tag_prefix = tag_prefix
         self.tag_pattern = tag_pattern or default_tag_pattern
