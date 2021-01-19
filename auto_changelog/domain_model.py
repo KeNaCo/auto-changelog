@@ -1,4 +1,5 @@
 import logging
+import auto_changelog
 from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Callable, Union, List, Optional, Tuple, Any
@@ -177,8 +178,12 @@ class Changelog:
     ):
         self.title = title
         self.description = description
+        logging.debug(auto_changelog.default_issue_pattern)
         self.issue_pattern = issue_pattern or auto_changelog.default_issue_pattern
+        logging.debug(self.issue_pattern)
         self.issue_url = issue_url or ""
+        logging.debug(issue_url)
+        logging.debug(self.issue_url)
         self.tag_prefix = tag_prefix
         self.tag_pattern = tag_pattern or default_tag_pattern
         self._releases = []  # type: List[Release]

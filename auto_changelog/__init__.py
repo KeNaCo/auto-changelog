@@ -9,7 +9,7 @@ github_issue_url = "{base_url}/issues/{{id}}"
 github_diff_url = "{base_url}/compare/{{previous}}...{{current}}"
 github_last_release = "HEAD"
 
-gitlab_issue_pattern = r"(\!([\w-]+)"
+gitlab_issue_pattern = r"(\!([\w-]+))"
 gitlab_issue_url = "{base_url}/-/merge_requests/{{id}}"
 gitlab_diff_url = "{base_url}/-/compare/{{previous}}...{{current}}"
 gitlab_last_release = "master"
