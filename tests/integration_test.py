@@ -386,7 +386,8 @@ def test_option_tag_prefix(runner, open_changelog):
     changelog = open_changelog().read()
     assert_content = (
         f"# Changelog\n\n## v3.0.0 ({date.today().strftime('%Y-%m-%d')})\n\n#### Others\n\n* Change2\n\n"
-        f"Full set of changes: [`v2.0.0...v3.0.0`](https://github.com/Michael-F-Bryan/auto-changelog/compare/v2.0.0...v3.0.0)\n\n"
+        f"Full set of changes: [`v2.0.0...v3.0.0`]"
+        f"(https://github.com/Michael-F-Bryan/auto-changelog/compare/v2.0.0...v3.0.0)\n\n"
         f"## v2.0.0 ({date.today().strftime('%Y-%m-%d')})\n\n#### New Features\n\n* Add file\n"
         f"#### Others\n\n* Change\n"
     )
@@ -627,7 +628,8 @@ def test_single_line_body_single_footer(runner, open_changelog):
     "commands",
     [
         [
-            'git commit --allow-empty -q -m "feat: Add file #1\n\nBody line\n\nFooter: first footer\nFooter: second footer"',
+            'git commit --allow-empty -q -m "feat: Add file #1\n\nBody line\n\n'
+            'Footer: first footer\nFooter: second footer"',
         ]
     ],
 )
@@ -656,7 +658,10 @@ def test_custom_template(path_project, runner, open_changelog):
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
     changelog = open_changelog().read()
-    assert_content = f"# Changelog\n\n## Unreleased ({date.today().strftime('%Y-%m-%d')})\n\n#### New Features\n\n* **scope**: Add file #1\n"
+    assert_content = (
+        f"# Changelog\n\n## Unreleased ({date.today().strftime('%Y-%m-%d')})\n\n"
+        f"#### New Features\n\n* **scope**: Add file #1\n"
+    )
     assert changelog == assert_content
 
 
