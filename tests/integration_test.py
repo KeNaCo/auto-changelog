@@ -665,6 +665,11 @@ def test_custom_template(path_project, runner, open_changelog):
     assert changelog == assert_content
 
 
+def test_custom_template_invalid_file(path_project, runner, caplog):
+    result = runner.invoke(main, ["--template", "nonsense"])
+    assert result.exit_code != 0, result.stderr
+
+
 @pytest.mark.parametrize(
     "commands",
     [["git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git"]],
