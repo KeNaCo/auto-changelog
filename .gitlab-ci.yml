@@ -11,10 +11,6 @@ stages:
   script:
     - poetry run py.test
 
-test-python3.5:
-  image: python:3.5
-  <<: *test
-
 test-python3.6:
   image: python:3.6
   <<: *test
@@ -27,8 +23,12 @@ test-python3.8:
   image: python:3.8
   <<: *test
 
+test-python3.9:
+  image: python:3.9
+  <<: *test
+
 build:
-  image: python:3.7
+  image: python:3.9
   stage: build
   only:
     - tags
@@ -43,7 +43,7 @@ build:
     expire_in: 30 days
 
 release:
-  image: python:3.7
+  image: python:3.9
   stage: release
   only:
     - tags
