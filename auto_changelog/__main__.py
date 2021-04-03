@@ -53,7 +53,6 @@ def validate_template(ctx, param, value):
 @click.option("-v", "--latest-version", type=str, help="use specified version as latest release")
 @click.option("-u", "--unreleased", is_flag=True, default=False, help="Include section for unreleased changes")
 @click.option(
-    "-t",
     "--template",
     callback=validate_template,
     default="compact",
