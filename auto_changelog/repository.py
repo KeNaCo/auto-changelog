@@ -4,7 +4,6 @@ import auto_changelog
 from datetime import date
 from hashlib import sha256
 from typing import Dict, List, Tuple, Any, Optional
-from urllib.parse import urljoin
 
 from git import Repo, Commit, TagReference
 
