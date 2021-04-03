@@ -37,7 +37,7 @@ include = ["auto_changelog/templates/*.jinja2"]
 
 [tool.black]
 line-length = 120
-target-version = ['py36','py37', 'py38', 'py39']
+target-version = ['py36','py37', 'py38']
 
 [tool.poetry.dependencies]
 python = ">=3.6"

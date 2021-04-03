@@ -19,27 +19,30 @@ default_issue_url = github_issue_url
 default_diff_url = github_diff_url
 default_last_release = github_last_release
 
+
 def set_gitlab():
     global default_issue_pattern
     global default_issue_url
     global default_diff_url
     global default_last_release
-    
+
     default_issue_pattern = gitlab_issue_pattern
     default_issue_url = gitlab_issue_url
     default_diff_url = gitlab_diff_url
     default_last_release = gitlab_last_release
+
 
 def set_github():
     global default_issue_pattern
     global default_issue_url
     global default_diff_url
     global default_last_release
-    
+
     default_issue_pattern = github_issue_pattern
     default_issue_url = github_issue_url
     default_diff_url = github_diff_url
     default_last_release = github_last_release
+
 
 def generate_changelog(repository: RepositoryInterface, presenter: PresenterInterface, *args, **kwargs) -> Any:
     """ Use-case function coordinates repository and interface """
