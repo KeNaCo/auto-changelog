@@ -2,7 +2,8 @@ from datetime import date
 
 import pytest
 
-from auto_changelog.domain_model import Changelog, default_issue_pattern
+from auto_changelog import default_issue_pattern
+from auto_changelog.domain_model import Changelog
 from auto_changelog.presenter import MarkdownPresenter
 
 

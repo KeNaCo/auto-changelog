@@ -1,5 +1,6 @@
 import os
 import logging
+import auto_changelog
 from typing import Optional
 
 import click
@@ -22,6 +23,16 @@ def validate_template(ctx, param, value):
 
 
 @click.command()
+@click.option(
+    "--gitlab",
+    help="Set Gitlab Pattern Generation.",
+    is_flag=True
+)
+@click.option(
+    "--github",
+    help="Set GitHub Pattern Generation.",
+    is_flag=True
+)
 @click.option(
     "-p",
     "--path-repo",
@@ -74,6 +85,8 @@ def validate_template(ctx, param, value):
 )
 def main(
     path_repo,
+    gitlab,
+    github,
     title,
     description,
     output,
@@ -94,6 +107,12 @@ def main(
     if debug:
         logging.basicConfig(level=logging.DEBUG)
         logging.debug("Logging level has been set to DEBUG")
+
+    if gitlab:
+        auto_changelog.set_gitlab()
+    
+    if github:
+        auto_changelog.set_github()
 
     # Convert the repository name to an absolute path
     repo = os.path.abspath(path_repo)

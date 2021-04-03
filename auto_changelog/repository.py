@@ -1,5 +1,6 @@
 import logging
 import re
+import auto_changelog
 from datetime import date
 from hashlib import sha256
 from typing import Dict, List, Tuple, Any, Optional
@@ -67,7 +68,7 @@ class GitRepository(RepositoryInterface):
                 # if no last version specified by the user => consider HEAD
                 if not self._latest_version:
                     locallogger.debug("Adding release 'unreleased'")
-                    changelog.add_release("Unreleased", "HEAD", date.today(), sha256())
+                    changelog.add_release("Unreleased", sha, date.today(), sha256())
                 else:
                     locallogger.debug("Adding release '{}'".format(self._latest_version))
                     changelog.add_release(self._latest_version, self._latest_version, date.today(), sha256())
@@ -99,7 +100,7 @@ class GitRepository(RepositoryInterface):
         """ Creates issue url with {id} format key """
         try:
             url = self._remote_url(remote)
-            return url + "/issues/{id}"
+            return auto_changelog.default_issue_url.format(base_url=url)
         except ValueError as e:
             logging.error("%s. Turning off issue links.", e)
             return None
@@ -107,7 +108,7 @@ class GitRepository(RepositoryInterface):
     def _diff_from_git_remote_url(self, remote: str):
         try:
             url = self._remote_url(remote)
-            return urljoin(url + "/", "compare/{previous}...{current}")
+            return auto_changelog.default_diff_url.format(base_url=url)
         except ValueError as e:
             logging.error("%s. Turning off compare url links.", e)
             return None
@@ -213,7 +214,7 @@ class GitRepository(RepositoryInterface):
     def _parse_conventional_commit(message: str) -> Tuple[str, str, str, str, str]:
         type_ = scope = description = body_footer = body = footer = ""
         # TODO this is less restrictive version of re. I have somewhere more restrictive one, maybe as option?
-        match = re.match(r"^(\w+)(\(\w+\))?!?: (.*)(\n\n[\w\W]*)?$", message)
+        match = re.match(r"^(\w+)(\(\w+\))?!?: (.*)(\n\n[\w\W]*)?$", message.strip())
         if match:
             type_, scope, description, body_footer = match.groups(default="")
         else:
