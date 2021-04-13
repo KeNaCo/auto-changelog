@@ -23,16 +23,8 @@ def validate_template(ctx, param, value):
 
 
 @click.command()
-@click.option(
-    "--gitlab",
-    help="Set Gitlab Pattern Generation.",
-    is_flag=True
-)
-@click.option(
-    "--github",
-    help="Set GitHub Pattern Generation.",
-    is_flag=True
-)
+@click.option("--gitlab", help="Set Gitlab Pattern Generation.", is_flag=True)
+@click.option("--github", help="Set GitHub Pattern Generation.", is_flag=True)
 @click.option(
     "-p",
     "--path-repo",
@@ -110,7 +102,7 @@ def main(
 
     if gitlab:
         auto_changelog.set_gitlab()
-    
+
     if github:
         auto_changelog.set_github()
 
