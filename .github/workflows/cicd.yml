@@ -1,0 +1,14 @@
+name: CICD
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.6, 3.7, 3.8, 3.9]
+    container: python:${{matrix.python-version}}
+
+    steps:
+      - pip install poetry
+      - poetry install
+      - poetry run py.test
