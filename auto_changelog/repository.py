@@ -47,7 +47,7 @@ class GitRepository(RepositoryInterface):  # pylint: disable=too-few-public-meth
             locallogger.info("Repository is empty.")
             return changelog
         iter_rev = self._get_iter_rev(starting_commit, stopping_commit)
-        commits = self.repository.iter_commits(iter_rev)
+        commits = self.repository.iter_commits(iter_rev, topo_order=True) # Fixes this bug: https://github.com/KeNaCo/auto-changelog/issues/112
         # Some thoughts here
         #  First we need to check if all commits are "released". If not, we have to create our special "Unreleased"
         #  release. Then we simply iter over all commits, assign them to current release or create new if we find it.
