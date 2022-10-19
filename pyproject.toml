@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "auto-changelog"
-version = "0.5.3"
+version = "0.5.3.9001"
 description = "Simple tool to generate nice, formatted changelogs from vcs"
 authors = ["Michael F Bryan <michaelfbryan@gmail.com>", "Ken Mijime <kenaco666@gmail.com>"]
 license = "MIT"
@@ -37,14 +37,14 @@ include = ["auto_changelog/templates/*.jinja2"]
 
 [tool.black]
 line-length = 120
-target-version = ['py36','py37', 'py38']
+target-version = ['py36','py37', 'py38', 'py39']
 
 [tool.poetry.dependencies]
 python = ">=3.6"
-jinja2 = "^2.10"
+jinja2 = "^3.0"
 gitpython = ">=2.1"
 docopt = "^0.6.2"
-Click = "^7.0"
+Click = "^8.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^4.6"
