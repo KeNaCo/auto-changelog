@@ -27,7 +27,6 @@ classifiers = [
 
     # The python versions actively being supported
     'Programming Language :: Python :: 3',
-    'Programming Language :: Python :: 3.6',
     'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',
     'Programming Language :: Python :: 3.9',
@@ -37,10 +36,10 @@ include = ["auto_changelog/templates/*.jinja2"]
 
 [tool.black]
 line-length = 120
-target-version = ['py36','py37', 'py38', 'py39']
+target-version = ['py37', 'py38', 'py39']
 
 [tool.poetry.dependencies]
-python = ">=3.6"
+python = ">=3.7"
 jinja2 = "^3.0"
 gitpython = ">=2.1"
 docopt = "^0.6.2"
@@ -60,7 +59,7 @@ auto-changelog = 'auto_changelog.__main__:main'
 legacy_tox_ini = """
 [tox]
 skipsdist = True
-envlist = py36, py37, py38, py39, flake8
+envlist = py37, py38, py39, flake8
 
 [travis]
 python =

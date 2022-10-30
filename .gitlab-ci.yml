@@ -11,10 +11,6 @@ stages:
   script:
     - poetry run py.test
 
-test-python3.6:
-  image: python:3.6
-  <<: *test
-
 test-python3.7:
   image: python:3.7
   <<: *test
