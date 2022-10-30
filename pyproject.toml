@@ -46,7 +46,7 @@ gitpython = ">=2.1"
 docopt = "^0.6.2"
 Click = "^8.0"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 pytest = "^4.6"
 black = {version = "*", allow-prereleases = true}
 flake8 = "*"
