@@ -17,6 +17,7 @@ def description(request):
     return request.param
 
 
+# pylint: disable=redefined-outer-name
 @pytest.fixture
 def empty_changelog(title, description):
     return Changelog(title, description)
@@ -42,11 +43,11 @@ def test_markdown_presenter_changelog_with_features(changelog, markdown_presente
     changelog.add_release("Unreleased", "HEAD", date(2020, 1, 1), None)
     changelog.add_note("", "feat", "description")
     changelog.add_note("", "feat", "description", scope="scope")
-    description = "{}\n\n".format(changelog.description) if changelog.description else ""
+    description = f"{changelog.description}\n\n" if changelog.description else ""
     assert_markdown = (
-        "# {title}\n\n{description}## Unreleased (2020-01-01)\n\n#### New Features\n\n"
-        "* description\n* (scope): description\n"
-    ).format(title=changelog.title, description=description)
+        f"# {changelog.title}\n\n{description}## Unreleased (2020-01-01)\n\n#### New Features\n\n* "
+        f"description\n* (scope): description\n"
+    )
     markdown = markdown_presenter.present(changelog)
     assert assert_markdown == markdown
 
@@ -57,11 +58,11 @@ def test_markdown_presenter_custom_template_changelog_with_features(changelog, m
     changelog.add_release("Unreleased", "HEAD", date(2020, 1, 1), None)
     changelog.add_note("", "feat", "description")
     changelog.add_note("", "feat", "description", scope="scope")
-    description = "{}\n\n".format(changelog.description) if changelog.description else ""
+    description = f"{changelog.description}\n\n" if changelog.description else ""
     assert_markdown = (
-        "# {title}\n\n{description}## Unreleased (2020-01-01)\n\n#### New Features\n\n"
-        "* description\n* **scope**: description\n"
-    ).format(title=changelog.title, description=description)
+        f"# {changelog.title}\n\n{description}## Unreleased (2020-01-01)\n\n#### New Features\n\n"
+        f"* description\n* **scope**: description\n"
+    )
     markdown = markdown_presenter.present(changelog)
     assert assert_markdown == markdown
 
@@ -70,10 +71,11 @@ def test_markdown_presenter_changelog_with_fixes(changelog, markdown_presenter):
     changelog.add_release("Unreleased", "HEAD", date(2020, 1, 1), None)
     changelog.add_note("", "fix", "description")
     changelog.add_note("", "fix", "description", scope="scope")
-    description = "{}\n\n".format(changelog.description) if changelog.description else ""
+    description = f"{changelog.description}\n\n" if changelog.description else ""
     assert_markdown = (
-        "# {title}\n\n{description}## Unreleased (2020-01-01)\n\n#### Fixes\n\n* description\n* (scope): description\n"
-    ).format(title=changelog.title, description=description)
+        f"# {changelog.title}\n\n{description}## Unreleased (2020-01-01)\n\n#### Fixes\n\n* "
+        f"description\n* (scope): description\n"
+    )
     markdown = markdown_presenter.present(changelog)
     assert assert_markdown == markdown
 
@@ -84,11 +86,11 @@ def test_markdown_presenter_changelog_custom_template_with_fixes(changelog):
     changelog.add_release("Unreleased", "HEAD", date(2020, 1, 1), None)
     changelog.add_note("", "fix", "description")
     changelog.add_note("", "fix", "description", scope="scope")
-    description = "{}\n\n".format(changelog.description) if changelog.description else ""
+    description = f"{changelog.description}\n\n" if changelog.description else ""
     assert_markdown = (
-        "# {title}\n\n{description}## Unreleased (2020-01-01)\n"
-        + "\n#### Fixes\n\n* description\n* **scope**: description\n"
-    ).format(title=changelog.title, description=description)
+        f"# {changelog.title}\n\n{description}## Unreleased (2020-01-01)\n"
+        f"\n#### Fixes\n\n* description\n* **scope**: description\n"
+    )
     markdown = markdown_presenter.present(changelog)
     assert assert_markdown == markdown
 
@@ -110,10 +112,12 @@ def test_markdown_presenter_changelog_custom_template_with_fixes(changelog):
 )
 def test_link_default_match(text, expected, markdown_presenter):
     issue_url = "http://gitlab.com/issues/{id}"
-    linked_text = markdown_presenter._link(issue_url, default_issue_pattern, text)
+    linked_text = markdown_presenter._link(issue_url, default_issue_pattern, text)  # pylint: disable=protected-access
     assert linked_text == expected
 
 
 def test_link_default_url(markdown_presenter):
-    linked_text = markdown_presenter._link("", default_issue_pattern, "Some text about #42")
+    linked_text = markdown_presenter._link(  # pylint: disable=protected-access
+        "", default_issue_pattern, "Some text about #42"
+    )
     assert linked_text == "Some text about #42"

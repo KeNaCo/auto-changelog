@@ -1,6 +1,6 @@
 from typing import Any
 
-from auto_changelog.domain_model import RepositoryInterface, PresenterInterface
+from auto_changelog.domain_model import PresenterInterface, RepositoryInterface
 
 __version__ = "1.0.0dev1"
 
@@ -21,10 +21,10 @@ default_last_release = github_last_release
 
 
 def set_gitlab():
-    global default_issue_pattern
-    global default_issue_url
-    global default_diff_url
-    global default_last_release
+    global default_issue_pattern  # pylint: disable=global-statement
+    global default_issue_url  # pylint: disable=global-statement
+    global default_diff_url  # pylint: disable=global-statement
+    global default_last_release  # pylint: disable=global-statement
 
     default_issue_pattern = gitlab_issue_pattern
     default_issue_url = gitlab_issue_url
@@ -33,10 +33,10 @@ def set_gitlab():
 
 
 def set_github():
-    global default_issue_pattern
-    global default_issue_url
-    global default_diff_url
-    global default_last_release
+    global default_issue_pattern  # pylint: disable=global-statement
+    global default_issue_url  # pylint: disable=global-statement
+    global default_diff_url  # pylint: disable=global-statement
+    global default_last_release  # pylint: disable=global-statement
 
     default_issue_pattern = github_issue_pattern
     default_issue_url = github_issue_url
@@ -45,6 +45,6 @@ def set_github():
 
 
 def generate_changelog(repository: RepositoryInterface, presenter: PresenterInterface, *args, **kwargs) -> Any:
-    """ Use-case function coordinates repository and interface """
+    """Use-case function coordinates repository and interface"""
     changelog = repository.generate_changelog(*args, **kwargs)
     return presenter.present(changelog)

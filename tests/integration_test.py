@@ -1,14 +1,15 @@
 import logging
 import os
-import pytest
 import subprocess
 from datetime import date
 
+import pytest
 from click.testing import CliRunner
 
 from auto_changelog.__main__ import main
 
 
+# pylint: disable=redefined-outer-name
 @pytest.fixture
 def commands():
     return []
@@ -32,7 +33,7 @@ def test_repo(tmp_path, commands):
     for command in init_commands + commands:
         # shell argument fixes error for strings. Details in link below:
         # https://stackoverflow.com/questions/9935151/popen-error-errno-2-no-such-file-or-directory
-        subprocess.run(command, shell=True)
+        subprocess.run(command, shell=True)  # pylint: disable=subprocess-run-check
     yield str(tmp_path)
     os.chdir(cwd)
 
@@ -47,13 +48,14 @@ def changelog_name():
     return "CHANGELOG.md"
 
 
+# pylint: disable=redefined-outer-name
 @pytest.fixture
 def open_changelog(test_repo, changelog_name):
     file = None
 
     def _open_changelog():
         nonlocal file
-        file = open(changelog_name, "r")
+        file = open(changelog_name, encoding="utf-8")  # pylint: disable=consider-using-with
         return file
 
     yield _open_changelog

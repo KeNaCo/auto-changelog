@@ -1,16 +1,16 @@
-import os
 import logging
-import auto_changelog
+import os
 from typing import Optional
 
 import click
 
+import auto_changelog
 from auto_changelog import generate_changelog
 from auto_changelog.presenter import MarkdownPresenter, default_template
 from auto_changelog.repository import GitRepository
 
 
-def validate_template(ctx, param, value):
+def validate_template(ctx, param, value):  # pylint: disable=unused-argument
 
     # Check if an embedded template is passed in parameter
     if value in default_template:
@@ -75,7 +75,7 @@ def validate_template(ctx, param, value):
     is_flag=True,
     help="set logging level to DEBUG",
 )
-def main(
+def main(  # pylint: disable=too-many-arguments,too-many-locals
     path_repo,
     gitlab,
     github,
@@ -134,7 +134,3 @@ def main(
         print(changelog)
     else:
         output.write(changelog)
-
-
-if __name__ == "__main__":
-    main()

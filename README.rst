@@ -44,7 +44,7 @@ You can list the command line options by running `auto-changelog --help`:
     Usage: auto-changelog [OPTIONS]
 
     Options:
-      -p, --path-repo PATH       Path to the repository's root directory 
+      -p, --path-repo PATH       Path to the repository's root directory
                                  [Default: .]
 
       -t, --title TEXT           The changelog's title [Default: Changelog]
@@ -122,7 +122,7 @@ on your development computer.
     $ make test-all     # run tests on every Python version with tox
 
 
-6. Commit your changes and push your branch to GitHub. Upon commit pre-commit will automatically run 
+6. Commit your changes and push your branch to GitHub. Upon commit pre-commit will automatically run
    flake8 and black and report if changes have been made or need to be fixed by you::
 
     $ git add .

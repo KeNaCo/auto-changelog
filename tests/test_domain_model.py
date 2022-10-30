@@ -1,5 +1,6 @@
-import pytest
 from datetime import date, timedelta
+
+import pytest
 
 from auto_changelog.domain_model import Changelog
 
@@ -33,7 +34,7 @@ def test_changelog_add_note():
     assert releases[0].fixes[0].sha == "123"
     assert len(releases[0].features) == 1
     assert releases[0].features[0].sha == "345"
-    assert len(releases[0]._notes) == 2
+    assert len(releases[0]._notes) == 2  # pylint: disable=protected-access
 
 
 def test_changelog_sorted_releases():
