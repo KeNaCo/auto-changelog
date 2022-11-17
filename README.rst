@@ -1,11 +1,14 @@
 Auto Changelog
 ==============
 
-|ci| |pypi| |version| |licence| |black|
+|actions| |ci| |pypi| |version| |licence| |black|
 
-.. |ci| image:: https://gitlab.com/KeNaCo/auto-changelog-ci-test/badges/master/pipeline.svg
-   :target: https://gitlab.com/KeNaCo/auto-changelog-ci-test/commits/master
-   :alt: CI Pipeline
+.. |ci| image:: https://gitlab.com/KeNaCo/auto-changelog/badges/master/pipeline.svg
+   :target: https://gitlab.com/KeNaCo/auto-changelog/-/commits/master
+   :alt: Gitlab CI
+.. |actions| image:: https://github.com/KeNaCo/auto-changelog/actions/workflows/ci.yml/badge.svg?branch=master
+   :target: https://github.com/KeNaCo/auto-changelog/actions/workflows/ci.yml
+   :alt: Github Actions
 .. |pypi| image:: https://img.shields.io/pypi/v/auto-changelog
    :target: https://pypi.org/project/auto-changelog/
    :alt: PyPI
@@ -27,7 +30,7 @@ Install and update using `pip`_:
 
     pip install auto-changelog
 
-or directly from source(via poetry):
+or directly from source(via `Poetry`_):
 
 .. code-block:: text
 
