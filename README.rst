@@ -1,11 +1,14 @@
 Auto Changelog
 ==============
 
-|ci| |pypi| |version| |licence| |black|
+|actions| |ci| |pypi| |version| |licence| |black|
 
-.. |ci| image:: https://gitlab.com/KeNaCo/auto-changelog-ci-test/badges/master/pipeline.svg
-   :target: https://gitlab.com/KeNaCo/auto-changelog-ci-test/commits/master
-   :alt: CI Pipeline
+.. |ci| image:: https://gitlab.com/KeNaCo/auto-changelog/badges/master/pipeline.svg
+   :target: https://gitlab.com/KeNaCo/auto-changelog/-/commits/master
+   :alt: Gitlab CI
+.. |actions| image:: https://github.com/KeNaCo/auto-changelog/actions/workflows/ci.yml/badge.svg?branch=master
+   :target: https://github.com/KeNaCo/auto-changelog/actions/workflows/ci.yml
+   :alt: Github Actions
 .. |pypi| image:: https://img.shields.io/pypi/v/auto-changelog
    :target: https://pypi.org/project/auto-changelog/
    :alt: PyPI
@@ -27,7 +30,7 @@ Install and update using `pip`_:
 
     pip install auto-changelog
 
-or directly from source(via poetry):
+or directly from source(via `Poetry`_):
 
 .. code-block:: text
 
@@ -44,7 +47,7 @@ You can list the command line options by running `auto-changelog --help`:
     Usage: auto-changelog [OPTIONS]
 
     Options:
-      -p, --path-repo PATH       Path to the repository's root directory 
+      -p, --path-repo PATH       Path to the repository's root directory
                                  [Default: .]
 
       -t, --title TEXT           The changelog's title [Default: Changelog]
@@ -122,7 +125,7 @@ on your development computer.
     $ make test-all     # run tests on every Python version with tox
 
 
-6. Commit your changes and push your branch to GitHub. Upon commit pre-commit will automatically run 
+6. Commit your changes and push your branch to GitHub. Upon commit pre-commit will automatically run
    flake8 and black and report if changes have been made or need to be fixed by you::
 
     $ git add .

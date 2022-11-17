@@ -1,12 +1,13 @@
 import logging
-import auto_changelog
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Callable, Union, List, Optional, Tuple, Any
+from typing import Any, Callable, List, Optional, Tuple, Union
+
+import auto_changelog
 
 # Default aim for Semver tags.
 # Original Semver source: https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
-default_tag_pattern = r"(?P<version>((?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*))(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)"  # noqa: E501
+default_tag_pattern = r"(?P<version>((?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*))(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)"  # pylint: disable=line-too-long,invalid-name
 
 
 class ChangeType(Enum):
@@ -23,8 +24,8 @@ class ChangeType(Enum):
     TEST = "test"
 
 
-class Note:
-    def __init__(
+class Note:  # pylint: disable=too-few-public-methods
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         sha: str,
         change_type: Union[ChangeType, str],
@@ -50,9 +51,9 @@ class Note:
         )
 
 
-class Release(Note):
-    def __init__(self, title, tag, date, sha, change_type="chore", description="", *args, **kwargs):
-        super(Release, self).__init__(sha, change_type, description, *args, **kwargs)
+class Release(Note):  # pylint: disable=too-many-public-methods
+    def __init__(self, title, tag, date, sha, *args, change_type="chore", description="", **kwargs):
+        super().__init__(sha, change_type, description, *args, **kwargs)
         self.title = title
         self.tag = tag
         self.date = date
@@ -66,7 +67,7 @@ class Release(Note):
         return self._notes_with_type(ChangeType.BUILD)
 
     @property
-    def ci(self):
+    def ci(self):  # pylint: disable=invalid-name
         return self._notes_with_type(ChangeType.CI)
 
     @property
@@ -157,18 +158,18 @@ class Release(Note):
         self.previous_tag = previous_tag
         self.diff_url = diff_url.format(previous=previous_tag, current=self.tag)
 
-    def _notes_with(self, predicate: Callable) -> Tuple[Note]:
+    def _notes_with(self, predicate: Callable) -> Tuple[Note, ...]:
         return tuple(filter(predicate, self._notes))
 
-    def _notes_with_type(self, type_: ChangeType) -> Tuple[Note]:
+    def _notes_with_type(self, type_: ChangeType) -> Tuple[Note, ...]:
         return self._notes_with(lambda x: x.change_type == type_)
 
     def _has(self, type_: ChangeType) -> bool:
         return type_ in self._changes_indicators
 
 
-class Changelog:
-    def __init__(
+class Changelog:  # pylint: disable=too-many-instance-attributes
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         title: str = "Changelog",
         description: str = "",
@@ -191,19 +192,19 @@ class Changelog:
         self._current_release = None  # type: Optional[Release]
 
     def add_release(self, *args, **kwargs):
-        """ Add new Release. Require same arguments as :class:`Release` """
+        """Add new Release. Require same arguments as :class:`Release`"""
         release = Release(*args, **kwargs)
         self._releases.append(release)
         self._current_release = release
 
     def add_note(self, *args, **kwargs):
-        """ Add new Note to current release. Require same arguments as :class:`Note` """
+        """Add new Note to current release. Require same arguments as :class:`Note`"""
         try:
             note = Note(*args, **kwargs)
         except ValueError as err:
             # Ignore exceptions raised by unsupported commit type.
             locallogger = logging.getLogger("Changelog.add_note")
-            locallogger.debug("Ignore exception raised by unsupported commit: {}".format(err))
+            locallogger.debug("Ignore exception raised by unsupported commit: %s", err)
             return
 
         if not self._current_release:
@@ -211,14 +212,14 @@ class Changelog:
         self._current_release.add_note(note)
 
     @property
-    def releases(self) -> Tuple[Release]:
-        """ Returns iterable of releases sorted by date (newer first)"""
+    def releases(self) -> Tuple[Release, ...]:
+        """Returns iterable of releases sorted by date (newer first)"""
         return tuple(sorted(self._releases, key=lambda r: r.date, reverse=True))
 
 
-class RepositoryInterface(ABC):
+class RepositoryInterface(ABC):  # pylint: disable=too-few-public-methods
     @abstractmethod
-    def generate_changelog(
+    def generate_changelog(  # pylint: disable=too-many-arguments
         self,
         title: str,
         description: str,
@@ -232,7 +233,7 @@ class RepositoryInterface(ABC):
         raise NotImplementedError
 
 
-class PresenterInterface(ABC):
+class PresenterInterface(ABC):  # pylint: disable=too-few-public-methods
     @abstractmethod
     def present(self, changelog: Changelog) -> Any:
         raise NotImplementedError

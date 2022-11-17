@@ -1,7 +1,30 @@
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+    - if: $CI_PIPELINE_SOURCE == "web"
+    - when: never
+
 stages:
+  - analyse
   - test
   - build
   - release
+
+image: python:3.9
+
+pre-commit:
+  stage: analyse
+  before_script:
+    - set -x
+    - echo $PWD
+    - pip install poetry
+    - poetry install
+  script:
+    - poetry run pre-commit run --all-files --color=always
+  cache:
+    key: pre-commit
+    paths:
+      - ~/.cache/pre-commit
 
 .test: &test
   stage: test
@@ -10,10 +33,6 @@ stages:
     - poetry install
   script:
     - poetry run py.test
-
-test-python3.6:
-  image: python:3.6
-  <<: *test
 
 test-python3.7:
   image: python:3.7
@@ -28,10 +47,7 @@ test-python3.9:
   <<: *test
 
 build:
-  image: python:3.9
   stage: build
-  only:
-    - tags
   before_script:
     - pip install poetry
     - poetry install
@@ -41,12 +57,11 @@ build:
     paths:
       - dist/
     expire_in: 30 days
+  rules:
+    - if: $CI_COMMIT_TAG
 
 release:
-  image: python:3.9
   stage: release
-  only:
-    - tags
   dependencies:
     - build
   before_script:
@@ -54,3 +69,5 @@ release:
   script:
     - echo $PYPI_USERNAME
     - poetry publish -u $PYPI_USERNAME -p $PYPI_PASSWORD
+  rules:
+    - if: $CI_COMMIT_TAG

@@ -1,7 +1,7 @@
-import re
 import os
+import re
 
-from jinja2 import FileSystemLoader, Environment
+from jinja2 import Environment, FileSystemLoader
 
 from auto_changelog.domain_model import Changelog, PresenterInterface
 
@@ -10,7 +10,7 @@ default_template_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 
 default_template = {"compact": "compact.jinja2"}
 
 
-class MarkdownPresenter(PresenterInterface):
+class MarkdownPresenter(PresenterInterface):  # pylint: disable=too-few-public-methods
     def __init__(self, template=None, issue_url=None):
 
         # It is an embedded template
@@ -32,7 +32,7 @@ class MarkdownPresenter(PresenterInterface):
 
     @staticmethod
     def _link(url, pattern, text: str) -> str:
-        """ Replaces all occurrences of pattern in text with markdown links based on url template """
+        """Replaces all occurrences of pattern in text with markdown links based on url template"""
         if not url or not pattern:
             return text
 
@@ -46,6 +46,6 @@ class MarkdownPresenter(PresenterInterface):
             else:
                 raise ValueError("Invalid pattern")
             ticket_url = url.format(id=ticket_id)
-            return "[{matching_text}]({ticket_url})".format(matching_text=matching_text, ticket_url=ticket_url)
+            return f"[{matching_text}]({ticket_url})"
 
         return re.sub(pattern, replace, text)

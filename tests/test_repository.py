@@ -1,9 +1,8 @@
-import pytest
-from unittest.mock import Mock
-from unittest.mock import MagicMock
-from unittest.mock import patch
+from unittest.mock import MagicMock, Mock, patch
 
-from git import Repo, Commit
+import pytest
+from git import Repo
+from git.objects import Commit
 
 from auto_changelog.repository import GitRepository
 
@@ -51,7 +50,9 @@ def test_index_init():
     # we are using default tag pattern => semantic versioning
     tag_pattern = None
 
-    index = GitRepository._init_commit_tags_index(repo_mock, tag_prefix, tag_pattern)
+    index = GitRepository._init_commit_tags_index(  # pylint: disable=protected-access
+        repo_mock, tag_prefix, tag_pattern
+    )
     assert index == {commit1: [tagref1], commit2: [tagref2, tagref3]}
 
 
@@ -76,7 +77,9 @@ def test_tag_pattern(tags, tag_prefix, tag_pattern, expected_tags):
 
     repo_mock = Mock(spec=Repo, tags=tag_refs)
 
-    selected_tag_refs = GitRepository._init_commit_tags_index(repo_mock, tag_prefix, tag_pattern)
+    selected_tag_refs = GitRepository._init_commit_tags_index(  # pylint: disable=protected-access
+        repo_mock, tag_prefix, tag_pattern
+    )
 
     selected_tags = []
     for selected_tag_ref_list in selected_tag_refs.values():
@@ -153,18 +156,18 @@ def test_tag_pattern(tags, tag_prefix, tag_pattern, expected_tags):
     ],
 )
 def test_parse_conventional_commit_with_empty_message(message, expected):
-    assert expected == GitRepository._parse_conventional_commit(message)
+    assert expected == GitRepository._parse_conventional_commit(message)  # pylint: disable=protected-access
 
 
 @patch("auto_changelog.repository.Repo", autospec=True)
 @patch.object(GitRepository, "_get_git_url")
 def test_get_remote_url(mock_ggu, mock_repo):
     mock_ggu.return_value = "git@github.com:Michael-F-Bryan/auto-changelog.git"
-    remote_url = GitRepository(".")._remote_url(remote="origin")
+    remote_url = GitRepository(".")._remote_url(remote="origin")  # pylint: disable=protected-access
     expected = "https://github.com/Michael-F-Bryan/auto-changelog"
     assert expected == remote_url
     mock_ggu.return_value = "https://github.com/Michael-F-Bryan/auto-changelog.git"
-    remote_url = GitRepository(".")._remote_url(remote="origin")
+    remote_url = GitRepository(".")._remote_url(remote="origin")  # pylint: disable=protected-access
     expected = "https://github.com/Michael-F-Bryan/auto-changelog"
     assert expected == remote_url
 
@@ -172,7 +175,7 @@ def test_get_remote_url(mock_ggu, mock_repo):
 @patch("auto_changelog.repository.Repo", autospec=True)
 @patch.object(GitRepository, "_remote_url", return_value="https://github.com/Michael-F-Bryan/auto-changelog")
 def test_issue_from_git_remote_url(mock_ru, mock_repo):
-    remote_url = GitRepository(".")._issue_from_git_remote_url(remote="origin")
+    remote_url = GitRepository(".")._issue_from_git_remote_url(remote="origin")  # pylint: disable=protected-access
     expected = "https://github.com/Michael-F-Bryan/auto-changelog/issues/{id}"
     assert expected == remote_url
 
@@ -198,5 +201,5 @@ def test_issue_from_git_remote_url(mock_ru, mock_repo):
         ),
     ],
 )
-def test_remote_url(input, expected):
-    assert expected == GitRepository._sanitize_remote_url(input)
+def test_remote_url(input, expected):  # pylint: disable=redefined-builtin
+    assert expected == GitRepository._sanitize_remote_url(input)  # pylint: disable=protected-access

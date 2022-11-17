@@ -1,0 +1,35 @@
+name: CI
+on: [push]
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: pipx install poetry
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          cache: 'poetry'
+      - run: poetry install
+      - uses: actions/cache@v3  # from pre-commit action
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
+      - run: poetry run pre-commit run --all-files --color=always
+
+  pytest:
+    name: pytest python${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    needs: pre-commit
+    strategy:
+      matrix:
+        python-version: [ 3.7, 3.8, 3.9 ]
+    steps:
+      - uses: actions/checkout@v3
+      - run: pipx install poetry
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'poetry'
+      - run: poetry install
+      - run: poetry run pytest

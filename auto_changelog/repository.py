@@ -1,17 +1,18 @@
 import logging
 import re
-import auto_changelog
 from datetime import date
 from hashlib import sha256
-from typing import Dict, List, Tuple, Any, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
-from git import Repo, Commit, TagReference
+from git import Repo, TagReference
+from git.objects import Commit
 
-from auto_changelog.domain_model import RepositoryInterface, Changelog, default_tag_pattern
+import auto_changelog
+from auto_changelog.domain_model import Changelog, RepositoryInterface, default_tag_pattern
 
 
-class GitRepository(RepositoryInterface):
-    def __init__(
+class GitRepository(RepositoryInterface):  # pylint: disable=too-few-public-methods
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         repository_path,
         latest_version: Optional[str] = None,
@@ -27,7 +28,7 @@ class GitRepository(RepositoryInterface):
         self._skip_unreleased = skip_unreleased and not bool(latest_version)
         self._latest_version = latest_version or None
 
-    def generate_changelog(
+    def generate_changelog(  # pylint: disable=too-many-arguments,too-many-locals
         self,
         title: str = "Changelog",
         description: str = "",
@@ -55,13 +56,12 @@ class GitRepository(RepositoryInterface):
         locallogger.debug("Start iterating commits")
         for commit in commits:
             sha = commit.hexsha[0:7]
-            locallogger.debug("Found commit {}".format(sha))
+            locallogger.debug("Found commit %s", sha)
 
             if skip and commit not in self.commit_tags_index:
-                locallogger.debug("Skipping unreleased commit " + sha)
+                locallogger.debug("Skipping unreleased commit %s", sha)
                 continue
-            else:
-                skip = False
+            skip = False
 
             if first_commit and commit not in self.commit_tags_index:
                 # if no last version specified by the user => consider HEAD
@@ -69,18 +69,18 @@ class GitRepository(RepositoryInterface):
                     locallogger.debug("Adding release 'unreleased'")
                     changelog.add_release("Unreleased", sha, date.today(), sha256())
                 else:
-                    locallogger.debug("Adding release '{}'".format(self._latest_version))
+                    locallogger.debug("Adding release '%s'", self._latest_version)
                     changelog.add_release(self._latest_version, self._latest_version, date.today(), sha256())
             first_commit = False
 
             if commit in self.commit_tags_index:
-                attributes = self._extract_release_args(commit, self.commit_tags_index[commit])
-                locallogger.debug("Adding release '{}' with attributes {}".format(attributes[0], attributes))
-                changelog.add_release(*attributes)
+                release_attributes = self._extract_release_args(commit, self.commit_tags_index[commit])
+                locallogger.debug("Adding release '%s' with attributes %s", release_attributes[0], release_attributes)
+                changelog.add_release(*release_attributes)
 
-            attributes = self._extract_note_args(commit)
-            locallogger.debug("Adding commit {} with attributes {}".format(sha, attributes))
-            changelog.add_note(*attributes)
+            note_attributes = self._extract_note_args(commit)
+            locallogger.debug("Adding commit %s with attributes %s", sha, note_attributes)
+            changelog.add_note(*note_attributes)
 
         # create the compare url for each release
         releases = changelog.releases
@@ -96,7 +96,7 @@ class GitRepository(RepositoryInterface):
         return changelog
 
     def _issue_from_git_remote_url(self, remote: str) -> Optional[str]:
-        """ Creates issue url with {id} format key """
+        """Creates issue url with {id} format key"""
         try:
             url = self._remote_url(remote)
             return auto_changelog.default_issue_url.format(base_url=url)
@@ -113,7 +113,7 @@ class GitRepository(RepositoryInterface):
             return None
 
     def _remote_url(self, remote: str) -> str:
-        """ Extract remote url from remote url """
+        """Extract remote url from remote url"""
         url = self._get_git_url(remote=remote)
         url = GitRepository._sanitize_remote_url(url)
         return url
@@ -150,9 +150,9 @@ class GitRepository(RepositoryInterface):
                 # but not contains the second rev.
                 # Here we set the second rev to its previous one then the
                 # second rev would be included.
-                starting_commit = "{}~1".format(starting_commit)
+                starting_commit = f"{starting_commit}~1"
 
-        iter_rev = "{0}...{1}".format(stopping_commit, starting_commit) if starting_commit else stopping_commit
+        iter_rev = f"{stopping_commit}...{starting_commit}" if starting_commit else stopping_commit
         return iter_rev
 
     def _repository_is_empty(self):
@@ -162,8 +162,8 @@ class GitRepository(RepositoryInterface):
     def _init_commit_tags_index(
         repo: Repo, tag_prefix: str, tag_pattern: Optional[str] = None
     ) -> Dict[Commit, List[TagReference]]:
-        """ Create reverse index """
-        reverse_tag_index = {}
+        """Create reverse index"""
+        reverse_tag_index: Dict[Commit, List[TagReference]] = {}
         semver_regex = default_tag_pattern
         for tagref in repo.tags:
             tag_name = tagref.name
@@ -192,8 +192,8 @@ class GitRepository(RepositoryInterface):
 
     @staticmethod
     def _extract_release_args(commit, tags) -> Tuple[str, str, Any, Any]:
-        """ Extracts arguments for release """
-        title = ", ".join(map(lambda tag: "{}".format(tag.name), tags))
+        """Extracts arguments for release"""
+        title = ", ".join(map(lambda tag: f"{tag.name}", tags))
         date_ = commit.authored_datetime.date()
         sha = commit.hexsha
 
@@ -203,7 +203,7 @@ class GitRepository(RepositoryInterface):
 
     @staticmethod
     def _extract_note_args(commit) -> Tuple[str, str, str, str, str, str]:
-        """ Extracts arguments for release Note from commit """
+        """Extracts arguments for release Note from commit"""
         sha = commit.hexsha
         message = commit.message
         type_, scope, description, body, footer = GitRepository._parse_conventional_commit(message)
@@ -218,7 +218,7 @@ class GitRepository(RepositoryInterface):
             type_, scope, description, body_footer = match.groups(default="")
         else:
             locallogger = logging.getLogger("repository._parse_conventional_commit")
-            locallogger.debug("Commit message did not match expected pattern: {}".format(message))
+            locallogger.debug("Commit message did not match expected pattern: %s", message)
         if scope:
             scope = scope[1:-1]
         if body_footer:
