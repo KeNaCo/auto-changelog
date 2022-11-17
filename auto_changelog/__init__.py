@@ -1,7 +1,3 @@
-from typing import Any
-
-from auto_changelog.domain_model import PresenterInterface, RepositoryInterface
-
 __version__ = "1.0.0dev1"
 
 github_issue_pattern = r"(#([\w-]+))"
@@ -42,9 +38,3 @@ def set_github():
     default_issue_url = github_issue_url
     default_diff_url = github_diff_url
     default_last_release = github_last_release
-
-
-def generate_changelog(repository: RepositoryInterface, presenter: PresenterInterface, *args, **kwargs) -> Any:
-    """Use-case function coordinates repository and interface"""
-    changelog = repository.generate_changelog(*args, **kwargs)
-    return presenter.present(changelog)

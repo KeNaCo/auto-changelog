@@ -1,11 +1,11 @@
 import logging
 import os
-from typing import Optional
+from typing import Any, Optional
 
 import click
 
-import auto_changelog
-from auto_changelog import generate_changelog
+from auto_changelog import set_github, set_gitlab
+from auto_changelog.domain_model import PresenterInterface, RepositoryInterface
 from auto_changelog.presenter import MarkdownPresenter, default_template
 from auto_changelog.repository import GitRepository
 
@@ -20,6 +20,12 @@ def validate_template(ctx, param, value):  # pylint: disable=unused-argument
         return value
     else:
         raise click.BadParameter("Need to pass an embedded template name or a .jinja2 file")
+
+
+def generate_changelog(repository: RepositoryInterface, presenter: PresenterInterface, *args, **kwargs) -> Any:
+    """Use-case function coordinates repository and interface"""
+    changelog = repository.generate_changelog(*args, **kwargs)
+    return presenter.present(changelog)
 
 
 @click.command()
@@ -101,10 +107,10 @@ def main(  # pylint: disable=too-many-arguments,too-many-locals
         logging.debug("Logging level has been set to DEBUG")
 
     if gitlab:
-        auto_changelog.set_gitlab()
+        set_gitlab()
 
     if github:
-        auto_changelog.set_github()
+        set_github()
 
     # Convert the repository name to an absolute path
     repo = os.path.abspath(path_repo)
