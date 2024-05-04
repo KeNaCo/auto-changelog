@@ -694,3 +694,29 @@ def test_no_debug(caplog, runner, open_changelog):
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
     assert "Logging level has been set to DEBUG" not in caplog.text
+
+@pytest.mark.parametrize(
+    "commands",
+    [[
+        'git commit --allow-empty -q -m "feat: Add file #1"',
+        'git commit --allow-empty -q -m "feat: Add file #2 IGNORE"',
+        'git commit --allow-empty -q -m "feat: Add file #3 ERROR"',
+        'git commit --allow-empty -q -m "feat: Add file #4"',
+        "git tag 1.0.0",
+        # "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git"
+    ]],
+)
+def test_option_output(runner, open_changelog):
+    result = runner.invoke(main, ["--ignore", "IGNORE, ERROR"])
+    assert result.exit_code == 0, result.stderr
+    assert result.output == ""
+    changelog = open_changelog().read()
+    assert_content = (
+        f"# Changelog\n\n" +
+        f"## 1.0.0 ({date.today().strftime('%Y-%m-%d')})\n\n" +
+        f"#### New Features\n\n" +
+        f"* Add file #4\n" +
+        f"* Add file #1\n"
+    )
+    ''
+    assert changelog == assert_content
