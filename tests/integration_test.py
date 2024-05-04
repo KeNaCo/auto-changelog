@@ -703,10 +703,9 @@ def test_no_debug(caplog, runner, open_changelog):
         'git commit --allow-empty -q -m "feat: Add file #3 ERROR"',
         'git commit --allow-empty -q -m "feat: Add file #4"',
         "git tag 1.0.0",
-        # "git remote add origin https://github.com/Michael-F-Bryan/auto-changelog.git"
     ]],
 )
-def test_option_output(runner, open_changelog):
+def test_option_ignore(runner, open_changelog):
     result = runner.invoke(main, ["--ignore", "IGNORE, ERROR"])
     assert result.exit_code == 0, result.stderr
     assert result.output == ""
@@ -718,5 +717,4 @@ def test_option_output(runner, open_changelog):
         f"* Add file #4\n" +
         f"* Add file #1\n"
     )
-    ''
     assert changelog == assert_content

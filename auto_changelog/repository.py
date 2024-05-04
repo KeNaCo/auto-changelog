@@ -38,7 +38,7 @@ class GitRepository(RepositoryInterface):  # pylint: disable=too-few-public-meth
         diff_url: Optional[str] = None,
         starting_commit: str = "",
         stopping_commit: str = "HEAD",
-        ignore_keyword: str = None,
+        ignore: str = "",
     ) -> Changelog:
         locallogger = logging.getLogger("repository.generate_changelog")
         issue_url = issue_url or self._issue_from_git_remote_url(remote)
@@ -57,9 +57,9 @@ class GitRepository(RepositoryInterface):  # pylint: disable=too-few-public-meth
         first_commit = True
         skip = self._skip_unreleased
         locallogger.debug("Start iterating commits")
-        ignore_keyword_list = ignore_keyword.strip().split(',')
+        ignore_keyword_list = ignore.strip().split(',')
         for commit in commits:
-            if any(_keyword.strip() in commit.message for _keyword in ignore_keyword_list):
+            if ignore_keyword_list and any(_keyword.strip() in commit.message for _keyword in ignore_keyword_list):
                 continue
             sha = commit.hexsha[0:7]
             locallogger.debug("Found commit %s", sha)

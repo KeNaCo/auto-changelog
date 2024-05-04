@@ -229,7 +229,7 @@ class RepositoryInterface(ABC):  # pylint: disable=too-few-public-methods
         diff_url: Optional[str],
         starting_commit: str,
         stopping_commit: str,
-        ignore_keyword: str,
+        ignore: str,
     ) -> Changelog:
         raise NotImplementedError
 
