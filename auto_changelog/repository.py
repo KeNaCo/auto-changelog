@@ -57,7 +57,7 @@ class GitRepository(RepositoryInterface):  # pylint: disable=too-few-public-meth
         first_commit = True
         skip = self._skip_unreleased
         locallogger.debug("Start iterating commits")
-        ignore_keyword_list = ignore.strip().split(',')
+        ignore_keyword_list = ignore.strip().split(',') if ignore else None
         for commit in commits:
             if ignore_keyword_list and any(_keyword.strip() in commit.message for _keyword in ignore_keyword_list):
                 continue
