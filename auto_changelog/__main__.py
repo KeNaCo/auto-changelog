@@ -1,6 +1,6 @@
 import logging
 import os
-from typing import Any, Optional
+from typing import Any, Optional, Tuple
 
 import click
 
@@ -41,6 +41,13 @@ def generate_changelog(repository: RepositoryInterface, presenter: PresenterInte
 @click.option("-t", "--title", default="Changelog", help="The changelog's title [Default: Changelog]")
 @click.option("-d", "--description", help="Your project's description")
 @click.option(
+    "-a",
+    "--affects-path",
+    type=click.Path(),
+    multiple=True,
+    help="Filter commits to those that affect the specified path (can be used multiple times)",
+)
+@click.option(
     "-o",
     "--output",
     type=click.File("w"),
@@ -73,7 +80,6 @@ def generate_changelog(repository: RepositoryInterface, presenter: PresenterInte
 )
 @click.option("--tag-prefix", default="", help='prefix used in version tags, default: "" ')
 @click.option("--stdout", is_flag=True)
-@click.option("--tag-pattern", default=None, help="Override regex pattern for release tags")
 @click.option("--starting-commit", help="Starting commit to use for changelog generation", default="")
 @click.option("--stopping-commit", help="Stopping commit to use for changelog generation", default="HEAD")
 @click.option(
@@ -101,6 +107,7 @@ def main(  # pylint: disable=too-many-arguments,too-many-locals
     starting_commit: str,
     stopping_commit: str,
     debug: bool,
+    affects_path: Tuple[str, ...],
 ):
     if debug:
         logging.basicConfig(level=logging.DEBUG)
@@ -134,6 +141,7 @@ def main(  # pylint: disable=too-many-arguments,too-many-locals
         diff_url=diff_url,
         starting_commit=starting_commit,
         stopping_commit=stopping_commit,
+        affects_path=affects_path,
     )
 
     if stdout:

@@ -7,7 +7,7 @@ import auto_changelog
 
 # Default aim for Semver tags.
 # Original Semver source: https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
-default_tag_pattern = r"(?P<version>((?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*))(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)"  # pylint: disable=line-too-long,invalid-name
+default_tag_pattern = r"(?P<version>((?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*))(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?)"  # noqa: E501 pylint: disable=line-too-long,invalid-name
 
 
 class ChangeType(Enum):
@@ -188,8 +188,8 @@ class Changelog:  # pylint: disable=too-many-instance-attributes
         logging.debug(self.issue_url)
         self.tag_prefix = tag_prefix
         self.tag_pattern = tag_pattern or default_tag_pattern
-        self._releases = []  # type: List[Release]
-        self._current_release = None  # type: Optional[Release]
+        self._releases: List[Release] = []
+        self._current_release: Optional[Release] = None
 
     def add_release(self, *args, **kwargs):
         """Add new Release. Require same arguments as :class:`Release`"""
@@ -229,6 +229,7 @@ class RepositoryInterface(ABC):  # pylint: disable=too-few-public-methods
         diff_url: Optional[str],
         starting_commit: str,
         stopping_commit: str,
+        affects_path: Tuple[str, ...] = (),
     ) -> Changelog:
         raise NotImplementedError
 

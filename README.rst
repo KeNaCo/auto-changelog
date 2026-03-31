@@ -55,6 +55,9 @@ You can list the command line options by running `auto-changelog --help`:
       -o, --output FILENAME      The place to save the generated changelog
                                  [Default: CHANGELOG.md]
 
+      -a, --affects-path PATH    Filter commits to those that affect the specified
+                                 path. Can be used multiple times.
+
       -r, --remote TEXT          Specify git remote to use for links
       -v, --latest-version TEXT  use specified version as latest release
       -u, --unreleased           Include section for unreleased changes
@@ -87,6 +90,21 @@ A simple example
 
 .. image:: example-usage.gif
    :alt: Example usage of auto-changelog
+
+Supporting Monolithic Repositories
+----------------------------------
+
+If you are using a monolithic repository where multiple projects or packages are stored within the same
+repository, you might want to generate a changelog for a specific, isolated project rather than the entire
+codebase.
+
+You can use the ``-a`` or ``--affects-path`` option to filter the commit history so that only commits that
+modify files within a specific path are included in the generated changelog. Can be used multiple times.
+
+.. code-block:: text
+
+    auto-changelog --unreleased --affects-path packages/my-project/ --output packages/my-project/CHANGELOG.md
+
 
 Contributing
 ------------

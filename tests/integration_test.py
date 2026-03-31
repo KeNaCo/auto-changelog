@@ -40,7 +40,7 @@ def test_repo(tmp_path, commands):
 
 @pytest.fixture
 def runner():
-    return CliRunner(mix_stderr=False)
+    return CliRunner()
 
 
 @pytest.fixture
@@ -261,6 +261,53 @@ def test_option_skipping_unreleased(runner, open_changelog):
     changelog = open_changelog().read()
     assert "# Changelog\n" == changelog
     assert "## Unreleased" not in changelog
+
+
+@pytest.mark.parametrize(
+    "commands",
+    [
+        [
+            "mkdir -p folder1 folder2",
+            "touch folder1/file1 folder2/file2",
+            "git add folder1/file1 folder2/file2",
+            'git commit -q -m "feat: Add files to both folders"',
+            "touch folder2/file3",
+            "git add folder2/file3",
+            'git commit -q -m "fix: Add file just to folder2"',
+        ]
+    ],
+)
+def test_option_affects_path(runner, open_changelog):
+    result = runner.invoke(main, ["--unreleased", "-a", "folder1"])
+    assert result.exit_code == 0, result.stderr
+    assert result.output == ""
+    changelog = open_changelog().read()
+
+    assert_content = (
+        f"# Changelog\n\n## Unreleased ({date.today().strftime('%Y-%m-%d')})\n\n#### New Features\n\n"
+        f"* Add files to both folders\n"
+    )
+    assert changelog == assert_content
+
+    # Run again but target folder2, both commits should show up
+    result2 = runner.invoke(main, ["--unreleased", "-a", "folder2"])
+    assert result2.exit_code == 0, result2.stderr
+
+    changelog = open_changelog().read()
+
+    assert_content2 = (
+        f"# Changelog\n\n## Unreleased ({date.today().strftime('%Y-%m-%d')})\n\n#### New Features\n\n"
+        f"* Add files to both folders\n"
+        f"#### Fixes\n\n"
+        f"* Add file just to folder2\n"
+    )
+    assert changelog == assert_content2
+
+    # Run again but target both folders explicitly using multiple flags
+    result3 = runner.invoke(main, ["--unreleased", "-a", "folder1", "-a", "folder2"])
+    assert result3.exit_code == 0, result3.stderr
+    changelog = open_changelog().read()
+    assert changelog == assert_content2
 
 
 @pytest.mark.parametrize(

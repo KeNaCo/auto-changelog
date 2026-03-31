@@ -52,7 +52,7 @@ clean-test: ## remove test and coverage artifacts
 	rm -fr .pytest_cache
 
 lint: ## check style with flake8
-	poetry run flake8 auto_changelog tests
+	poetry run flake8 --max-line-length 120 auto_changelog tests
 
 format: ## run autoformat with black
 	poetry run black auto_changelog tests

@@ -28,7 +28,7 @@ class GitRepository(RepositoryInterface):  # pylint: disable=too-few-public-meth
         self._skip_unreleased = skip_unreleased and not bool(latest_version)
         self._latest_version = latest_version or None
 
-    def generate_changelog(  # pylint: disable=too-many-arguments,too-many-locals
+    def generate_changelog(  # pylint: disable=too-many-arguments,too-many-locals,too-many-branches
         self,
         title: str = "Changelog",
         description: str = "",
@@ -38,6 +38,7 @@ class GitRepository(RepositoryInterface):  # pylint: disable=too-few-public-meth
         diff_url: Optional[str] = None,
         starting_commit: str = "",
         stopping_commit: str = "HEAD",
+        affects_path: Tuple[str, ...] = (),
     ) -> Changelog:
         locallogger = logging.getLogger("repository.generate_changelog")
         issue_url = issue_url or self._issue_from_git_remote_url(remote)
@@ -47,25 +48,43 @@ class GitRepository(RepositoryInterface):  # pylint: disable=too-few-public-meth
             locallogger.info("Repository is empty.")
             return changelog
         iter_rev = self._get_iter_rev(starting_commit, stopping_commit)
+
+        # Mapping from all commits to their closest mapped release tag
+        all_commits = self.repository.iter_commits(iter_rev, topo_order=True)
+        commit_to_release = {}
+        current_release = None  # None denotes Unreleased
+        for commit in all_commits:
+            if commit in self.commit_tags_index:
+                current_release = commit  # storing the commit object that has the tag(s)
+            commit_to_release[commit] = current_release
+
+        iter_kwargs: Dict[str, Any] = {"topo_order": True}
+        if affects_path:
+            iter_kwargs["paths"] = affects_path
+
         commits = self.repository.iter_commits(
-            iter_rev, topo_order=True
+            iter_rev, **iter_kwargs
         )  # Fixes this bug: https://github.com/KeNaCo/auto-changelog/issues/112
         # Some thoughts here
         #  First we need to check if all commits are "released". If not, we have to create our special "Unreleased"
         #  release. Then we simply iter over all commits, assign them to current release or create new if we find it.
         first_commit = True
         skip = self._skip_unreleased
+        last_seen_release = None
+
         locallogger.debug("Start iterating commits")
         for commit in commits:
             sha = commit.hexsha[0:7]
             locallogger.debug("Found commit %s", sha)
 
-            if skip and commit not in self.commit_tags_index:
+            expected_release = commit_to_release.get(commit)
+
+            if skip and expected_release is None:
                 locallogger.debug("Skipping unreleased commit %s", sha)
                 continue
             skip = False
 
-            if first_commit and commit not in self.commit_tags_index:
+            if first_commit and expected_release is None:
                 # if no last version specified by the user => consider HEAD
                 if not self._latest_version:
                     locallogger.debug("Adding release 'unreleased'")
@@ -75,10 +94,16 @@ class GitRepository(RepositoryInterface):  # pylint: disable=too-few-public-meth
                     changelog.add_release(self._latest_version, self._latest_version, date.today(), sha256())
             first_commit = False
 
-            if commit in self.commit_tags_index:
-                release_attributes = self._extract_release_args(commit, self.commit_tags_index[commit])
-                locallogger.debug("Adding release '%s' with attributes %s", release_attributes[0], release_attributes)
-                changelog.add_release(*release_attributes)
+            if expected_release != last_seen_release:
+                if expected_release is not None:
+                    release_attributes = self._extract_release_args(
+                        expected_release, self.commit_tags_index[expected_release]
+                    )
+                    locallogger.debug(
+                        "Adding release '%s' with attributes %s", release_attributes[0], release_attributes
+                    )
+                    changelog.add_release(*release_attributes)
+                last_seen_release = expected_release
 
             note_attributes = self._extract_note_args(commit)
             locallogger.debug("Adding commit %s with attributes %s", sha, note_attributes)
